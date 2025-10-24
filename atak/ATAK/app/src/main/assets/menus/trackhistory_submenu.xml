@@ -1,0 +1,5 @@
+<menu buttonRadius='65' buttonSpan='36' buttonWidth='90' buttonBg='bgs/button.xml'>
+
+    <button icon='icons/trackhistory_icon.png'
+        onClick='actions/search_trackhistory.xml' />
+</menu>

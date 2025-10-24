@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/coordEntryPreference"
+        android:key="coordEntryPreferences">
+        <com.atakmap.android.gui.PanPreference
+            android:key="pull_elevation_mode"
+            android:title="@string/pull_elevation_pref_title"
+            android:summary="@string/pull_elevation_pref_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>
+

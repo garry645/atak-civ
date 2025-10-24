@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.atakmap.android.tools.ActionBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp"
+    android:layout_marginTop="0dp"
+    android:orientation="horizontal" >
+
+    <ImageButton
+        android:id="@+id/buttonTrackStartNewTrack"
+        android:src="@drawable/ic_track_new"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonTrackMultiSelect"
+        android:src="@drawable/multiselect"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonTrackSearch"
+        android:src="@drawable/ic_track_search"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonTrackListClear"
+        android:src="@drawable/ic_track_clear"
+        style="@style/ActionBarViewImageButton"/>
+
+</com.atakmap.android.tools.ActionBarView>

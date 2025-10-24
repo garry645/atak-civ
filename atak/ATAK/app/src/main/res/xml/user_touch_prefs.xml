@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/usertouchPreferences"
+        android:key="user_touch_preferences_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text48"
+            android:defaultValue="false"
+            android:key="atakControlQuitOnBack" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text50"
+            android:defaultValue="true"
+            android:key="atakControlAskToQuit" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/disable_back_button_center_on_self_title"
+            android:summary="@string/disable_back_button_center_on_self_summary"
+            android:defaultValue="false"
+            android:key="atakBackButtonCenterSelf" />
+        <com.atakmap.android.gui.PanListPreference
+            android:title="@string/preferences_text52"
+            android:entryValues="@array/longpress_map_values"
+            android:entries="@array/longpress_map_names"
+            android:defaultValue="actionbar"
+            android:key="atakLongPressMap" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text56"
+            android:defaultValue="false"
+            android:key="atakDoubleTapToZoom" />
+    </PreferenceCategory>
+</PreferenceScreen>

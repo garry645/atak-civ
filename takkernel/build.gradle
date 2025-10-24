@@ -1,0 +1,57 @@
+buildscript { scriptHandler ->
+    apply from: 'gradle/repositories.gradle', to: scriptHandler
+    apply from: 'gradle/utils.gradle', to: project
+    apply from: 'gradle/takrepo.gradle', to: project
+    apply from: 'gradle/versions.gradle', to: project
+
+    repositories.addAll(ext.repos)
+    dependencies {
+        if(project.findProperty('kernelBuildTarget') == 'android')
+            classpath "com.android.tools.build:gradle:$androidToolsBuildGradleVersion"
+        // `gradle-cmake-plugin` is not required for Android builds and is observed to cause Gradle
+        // sync issues in Android Studio when using the ATAK monorepo configuration; command-line
+        // builds and standalone `takkernel` development in Android Studio are not affected.
+        if(project.findProperty('kernelBuildTarget') != 'android') {
+            classpath "gov.tak.gradle.cmake:gradle-cmake-plugin:$gradleCmakePluginVersion"
+        }
+        classpath "org.owasp:dependency-check-gradle:${owaspDependencyCheckVersion}"
+        classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
+    }
+}
+
+// library version
+
+def majorVersion = 8
+def minorVersion = 30
+def patchVersion = 3
+
+// Version code for Android builds, you MUST increase this by 1 if you change ANY of the version components above
+ext.versionCode = 784
+
+apply from: 'gradle/buildtype.gradle'
+apply from: 'gradle/buildconfig.gradle'
+
+allprojects {
+    group = 'gov.tak.kernel'
+    version = "${majorVersion}.${minorVersion}.${patchVersion}"
+}
+
+subprojects { subProject ->
+    apply from: configProject.file('gradle/buildconfig.gradle'), to: subProject
+    apply from: configProject.file('gradle/takrepo.gradle'), to: subProject
+    apply from: configProject.file('gradle/externalnativebuild.gradle'), to: subProject
+    apply from: configProject.file('gradle/multiproject.gradle'), to: subProject
+    apply from: configProject.file('gradle/jacocosub.gradle'), to: subProject
+
+    subProject.afterEvaluate {
+        apply from: configProject.file('gradle/publishing.gradle'), to: it
+    }
+}
+
+apply from: configProject.file('gradle/jacocoroot.gradle')
+
+task printVersion {
+    doLast {
+        println version
+    }
+}

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="10dp"
+    android:weightSum="1"
+    android:orientation="vertical">
+
+    <HorizontalScrollView
+        android:id="@+id/coordEntryHolderPortrait"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:fadeScrollbars="false" >
+    </HorizontalScrollView>
+
+    <View
+        android:id="@+id/portrait_divider"
+        android:layout_marginTop="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_weight="0"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="@android:color/darker_gray" >
+    </View>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+
+
+        <ScrollView
+            android:id="@+id/coordEntryHolderLandscape"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:layout_weight="0"
+            android:fadeScrollbars="false">
+
+        <com.atakmap.android.gui.DragLinearLayout
+            android:id="@+id/coordEntryList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal" />
+
+        </ScrollView>
+
+        <View
+            android:id="@+id/landscape_divider"
+            android:layout_marginTop="3dp"
+            android:layout_width="1dp"
+            android:layout_weight="0"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:background="@android:color/darker_gray" >
+        </View>
+
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:weightSum="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/currentCoordPane"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/currentCoordPane"
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/coordDialogElevationView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout android:id="@+id/focusWidget"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:layout_width="0px"
+                        android:layout_height="0px">
+                        <requestFocus/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/auto_margin"
+                        android:layout_marginEnd="@dimen/auto_margin"
+                        android:text="@string/elevation"
+                        android:textSize="@dimen/draper_title_font"/>
+
+                    <EditText
+                        android:id="@+id/coordDialogElevationText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/auto_margin"
+                        android:minEms="5"
+                        android:inputType="numberSigned|numberDecimal"
+                        android:textColorHint="@android:color/transparent"/>
+
+                    <TextView
+                        android:id="@+id/coordDialogElevationUnits"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="@dimen/auto_margin"
+                        android:text="@string/ft_msl5"/>
+
+                    <Button
+                        android:id="@+id/coordDialogDtedButton"
+                        style="@style/darkButton"
+                        android:padding="@dimen/auto_margin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:lines="2"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center"
+                        android:text="@string/pull_elevation"
+                        android:textSize="@dimen/draper_font"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/coordDialogElevationSource"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/smallFont"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:gravity="left"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="@dimen/auto_margin"
+                    android:text=""/>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".60"
+                        android:orientation="vertical">
+                        <com.atakmap.android.gui.NestedRadioGroup
+                            android:id="@+id/affiliationGroup"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:visibility="invisible">
+
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropNothing"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/nopoint"
+                                android:checked="true"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropGeneric"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/generic"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropUnknown"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/unknown"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropNeutral"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/neutral"
+                                style="@style/darkButton"/>
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropHostile"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/hostile"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogDropFriendly"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/friendly"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogMoveRedX"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/select_point_icon"
+                                style="@style/darkButton"/>
+
+                            <com.atakmap.android.gui.ImageRadioButton
+                                android:id="@+id/coordDialogMovePOI"
+                                android:padding="4dp"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:button="@drawable/poi"
+                                style="@style/darkButton"/>
+                            </LinearLayout>
+                        </com.atakmap.android.gui.NestedRadioGroup>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".40"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
+
+                        <Button
+                            android:id="@+id/coordDialogMGRSGridButton"
+                            style="@style/darkButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:padding="6dp"
+                            android:layout_weight="0.5"
+                            android:layout_gravity="center_vertical"
+                            android:textSize="@dimen/draper_font"
+                            android:text="@string/auto_fill"/>
+
+                        <Button
+                            android:id="@+id/clearButton"
+                            style="@style/darkButton"
+                            android:padding="6dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_weight="0.4"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"
+                            android:textSize="@dimen/draper_font"
+                            android:lines="1"
+                            android:text="@string/clear"/>
+                        <ImageButton
+                            android:id="@+id/copyButton"
+                            style="@style/darkButton"
+                            android:paddingTop="6dp"
+                            android:paddingBottom="6dp"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_weight="0.1"
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center"
+                            android:textSize="@dimen/draper_font"
+                            android:lines="1"
+                            android:src="@drawable/ic_menu_copy"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

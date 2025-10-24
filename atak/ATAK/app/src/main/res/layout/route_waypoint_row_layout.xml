@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingStart="6dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/route_waypoint_add"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/add_waypoint_icon" />
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/nav_point" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/route_waypoint_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/route_dest_address"
+            android:hint="@string/waypoint_address_hint"
+            android:textSize="16sp"
+            android:inputType="textNoSuggestions" />
+
+        <TextView
+            android:id="@+id/route_start_coord"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/waypoint_menu"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:padding="@dimen/auto_space_big"
+        android:src="@drawable/ic_menu"
+        style="@style/darkButton"/>
+
+    <LinearLayout
+        android:id="@+id/waypointExtraOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/route_waypoint_coordinate_entry"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="4dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_mgrs_goto"
+                style="@style/darkButton"/>
+            <ImageButton
+                android:id="@+id/route_waypoint_map_select"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="4dp"
+                android:src="@drawable/ic_crosshair"
+                style="@style/darkButton"/>
+            <ImageButton
+                android:id="@+id/route_waypoint_address_history"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:padding="6dp"
+                android:src="@drawable/clock"
+                style="@style/darkButton"/>
+            <ImageButton
+                android:id="@+id/waypoint_clear"
+                style="@style/darkButton"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_clear_results"/>
+            <ImageButton
+                android:id="@+id/route_waypoint_delete"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:padding="6dp"
+                android:src="@drawable/ic_menu_delete"
+                style="@style/darkButton" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

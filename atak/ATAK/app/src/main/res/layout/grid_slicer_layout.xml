@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/list_button"
+            android:layout_width="@dimen/dropdown_bottom_bar_height"
+            android:layout_height="@dimen/dropdown_bottom_bar_height"
+            android:padding="5dp"
+            android:src="@drawable/list_icon"
+            android:scaleType="fitXY"
+            android:background="@drawable/overlay_title_background"/>
+
+        <ImageButton
+            android:id="@+id/hierarchy_multiselect_btn"
+            android:layout_width="@dimen/dropdown_bottom_bar_height"
+            android:layout_height="@dimen/dropdown_bottom_bar_height"
+            android:background="@drawable/overlay_title_background"
+            android:src="@drawable/multiselect"
+            android:scaleType="fitXY"
+            android:enabled="false"
+            android:padding="5dp"/>
+
+        <ImageButton
+            android:id="@+id/hierarchy_search_btn"
+            android:layout_width="@dimen/dropdown_bottom_bar_height"
+            android:layout_height="@dimen/dropdown_bottom_bar_height"
+            android:background="@drawable/overlay_title_background"
+            android:scaleType="fitXY"
+            android:enabled="false"
+            android:src="@android:drawable/ic_menu_search"
+            android:padding="5dp"/>
+
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fadeScrollbars="false"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:rowCount="5"
+            android:columnCount="6">
+
+            <Button
+                android:id="@+id/allButton"
+                android:tag="E-a-a"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="0"
+                android:padding="6dp"
+                android:text="All" />
+            <Button
+                android:id="@+id/c1Button"
+                android:tag="E-c-P"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="1"
+                android:padding="6dp"
+                android:text="P" />
+            <Button
+                android:id="@+id/c2Button"
+                android:tag="E-c-A"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="2"
+                android:padding="6dp"
+                android:text="A" />
+            <Button
+                android:id="@+id/c3Button"
+                android:tag="E-c-G"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="3"
+                android:padding="6dp"
+                android:text="G" />
+            <Button
+                android:id="@+id/c4Button"
+                android:tag="E-c-S"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="4"
+                android:padding="6dp"
+                android:text="S" />
+            <Button
+                android:id="@+id/c5Button"
+                android:tag="E-c-U"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:layout_row="0"
+                android:layout_column="5"
+                android:padding="6dp"
+                android:text="U" />
+
+            <Button
+                android:id="@+id/r1Button"
+                android:tag="E-r-f"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_row="1"
+                android:layout_column="0"
+                android:padding="6dp"
+                android:text="F" />
+            <RelativeLayout
+                android:layout_row="1"
+                android:layout_column="1"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e11Button"
+                    android:tag="E-f-P"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="1"
+                android:layout_column="2"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e12Button"
+                    android:tag="E-f-A"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="1"
+                android:layout_column="3"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e13Button"
+                    android:tag="E-f-G"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="1"
+                android:layout_column="4"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e14Button"
+                    android:tag="E-f-S"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="1"
+                android:layout_column="5"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e15Button"
+                    android:tag="E-f-U"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/r2Button"
+                android:tag="E-r-n"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_row="2"
+                android:layout_column="0"
+                android:padding="6dp"
+                android:text="N" />
+            <RelativeLayout
+                android:layout_row="2"
+                android:layout_column="1"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e21Button"
+                    android:tag="E-n-P"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="2"
+                android:layout_column="2"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e22Button"
+                    android:tag="E-n-A"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="2"
+                android:layout_column="3"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e23Button"
+                    android:tag="E-n-G"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="2"
+                android:layout_column="4"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e24Button"
+                    android:tag="E-n-S"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="2"
+                android:layout_column="5"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e25Button"
+                    android:tag="E-n-U"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <Button
+                android:id="@+id/r3Button"
+                android:tag="E-r-h"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_row="3"
+                android:layout_column="0"
+                android:padding="6dp"
+                android:text="H" />
+            <RelativeLayout
+                android:layout_row="3"
+                android:layout_column="1"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e31Button"
+                    android:tag="E-h-P"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="3"
+                android:layout_column="2"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e32Button"
+                    android:tag="E-h-A"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="3"
+                android:layout_column="3"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e33Button"
+                    android:tag="E-h-G"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="3"
+                android:layout_column="4"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e34Button"
+                    android:tag="E-h-S"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="3"
+                android:layout_column="5"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e35Button"
+                    android:tag="E-h-U"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/r4Button"
+                android:tag="E-r-u"
+                style="@style/darkButton"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="0dp"
+                android:layout_rowWeight="1"
+                android:layout_row="4"
+                android:layout_column="0"
+                android:padding="6dp"
+                android:text="U" />
+            <RelativeLayout
+                android:layout_row="4"
+                android:layout_column="1"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e41Button"
+                    android:tag="E-u-P"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="4"
+                android:layout_column="2"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e42Button"
+                    android:tag="E-u-A"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="4"
+                android:layout_column="3"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e43Button"
+                    android:tag="E-u-G"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="4"
+                android:layout_column="4"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e44Button"
+                    android:tag="E-u-S"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_row="4"
+                android:layout_column="5"
+                android:padding="6dp"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="match_parent">
+                <ImageButton
+                    android:id="@+id/e45Button"
+                    android:tag="E-u-U"
+                    style="@style/darkButton"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent" />
+                <ImageView
+                    android:tag="disabled"
+                    android:src="@drawable/disabled"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+                <ImageView
+                    android:tag="min"
+                    android:layout_width="@dimen/dropdown_bottom_bar_height"
+                    android:layout_height="@dimen/dropdown_bottom_bar_height"
+                    android:scaleType="fitXY"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </GridLayout>
+    </ScrollView>
+</LinearLayout>

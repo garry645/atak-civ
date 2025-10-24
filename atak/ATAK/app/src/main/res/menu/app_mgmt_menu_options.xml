@@ -1,0 +1,44 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/app_mgmt_search"
+        android:title="@string/search"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_multiselect"
+        android:title="@string/multiselect"
+        android:icon="@drawable/multiselect"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_syncnow"
+        android:title="@string/sync_now"
+        android:icon="@drawable/sync_original"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_edit"
+        android:title="@string/settings"
+        android:icon="@drawable/ic_menu_settings"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_check_version"
+        android:title="@string/check_versions"
+        android:icon="@drawable/ic_check"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_about"
+        android:title="@string/about"
+        android:icon="@drawable/ic_dialog_hint"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_multi_done"
+        android:visible="false"
+        android:title="@string/done"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/app_mgmt_multi_cancel"
+        android:visible="false"
+        android:title="@string/cancel"
+        android:showAsAction="ifRoom" />
+</menu> 

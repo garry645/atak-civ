@@ -1,0 +1,144 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+def getVersionName() {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--short=8', 'HEAD'
+            standardOutput = stdout
+        }
+        def describe = stdout.toString().trim()
+        println("versionName[git]: $describe")
+        return describe
+    } catch (Exception ignored) {
+       println("error occurred, using revision of 1")
+       return 1
+    }
+}
+
+def getVersionCode() {
+    def vc = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takStaticVersion')
+    if (vc != null) {
+        try {
+            def vci = vc.toInteger()
+            println("Using static version from properties: " + vci)
+            return vci
+        } catch (Exception ignored) {
+            throw new GradleException('takStaticVersion is not an integer - stopping build')
+        }
+    }
+    try {
+        new ByteArrayOutputStream().withStream { os ->
+                exec {
+                    executable = 'git'
+                    args = ['show', '-s', '--format=%ct']
+                    standardOutput = os
+                    ignoreExitValue = true
+                }
+            def outputAsString = os.toString()
+            ext.revision = "$outputAsString".toInteger()
+            println("version[git]: $revision")
+        }
+    } catch (Exception ignored) {
+       println("error occurred, using revision of 1")
+       ext.revision = 1
+    }
+
+    return revision
+}
+
+
+def getVersionSource() {
+    try {
+        new ByteArrayOutputStream().withStream { os ->
+                exec {
+                    executable = 'git'
+                    args = ['symbolic-ref', '--short', 'HEAD']
+                    standardOutput = os
+                    ignoreExitValue = true
+                }
+            def outputAsString = os.toString()
+            ext.source = "$outputAsString".trim()
+            println("source[git]: $source")
+        }
+    } catch (Exception ignored) {
+       println("error occurred, using source of BETA-trunk")
+       ext.source = "BETA-trunk"
+    }
+    return ext.source
+}
+
+// modified code to find the current flavor in progress
+def getCommandFlavor() {
+    String  tskReqStr = getGradle().getStartParameter().getTaskRequests().toString()
+
+    Pattern pattern
+    if( tskReqStr.contains( "assemble" ) )
+        pattern = Pattern.compile("assemble(\\w+)(Release|Debug|Sdk|Odk)")
+    else if( tskReqStr.contains( "install" ) )
+        pattern = Pattern.compile("install(\\w+)(Release|Debug|Sdk|Odk)")
+    else
+        pattern = Pattern.compile("generate(\\w+)(Release|Debug|Sdk|Odk)")
+
+    Matcher matcher = pattern.matcher(tskReqStr)
+
+    if( matcher.find() ) {
+        return matcher.group(1)
+    } else {
+        return ""
+    }
+}
+
+// modified code to find the current flavor in progress
+def getCommandVariant() {
+    String  tskReqStr = getGradle().getStartParameter().getTaskRequests().toString()
+
+    Pattern pattern
+    if( tskReqStr.contains( "assemble" ) )
+        pattern = Pattern.compile("assemble(\\w+)?(Release|Debug|Sdk|Odk)")
+    else if( tskReqStr.contains( "install" ) )
+        pattern = Pattern.compile("install(\\w+)?(Release|Debug|Sdk|Odk)")
+    else
+        pattern = Pattern.compile("generate(\\w+)?(Release|Debug|Sdk|Odk)")
+
+    return pattern.matcher(tskReqStr)
+}
+
+
+def getCurrentFlavor() {
+    return getCommandFlavor().toLowerCase()
+}
+
+def getFlavorDir() {
+    if (getCommandFlavor().length() > 1) {
+        return getCommandFlavor().substring(0,1).toLowerCase() + getCommandFlavor().substring(1)
+    }
+}
+
+def getValueFromPropertiesFile(File propFile, String key) {
+    if(!propFile.isFile() || !propFile.canRead())
+        return null
+    def prop = new Properties()
+    def reader = propFile.newReader()
+    try {
+        prop.load(reader)
+    } finally {
+        reader.close()
+    }
+    return prop.get(key)
+}
+
+
+ext {
+
+    getValueFromPropertiesFile = this.&getValueFromPropertiesFile
+    getVersionName = this.&getVersionName
+    getVersionCode = this.&getVersionCode
+    getVersionSource = this.&getVersionSource
+    getCommandFlavor = this.&getCommandFlavor
+    getCommandVariant = this.&getCommandVariant
+    getCurrentFlavor = this.&getCurrentFlavor
+    getFlavorDir = this.&getFlavorDir
+
+}

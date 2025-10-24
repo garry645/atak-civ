@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <ImageButton
+            android:id="@+id/hierarchy_search_btn"
+            style="@style/darkButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dropdown_bottom_bar_height"
+            android:scaleType="fitCenter"
+            android:src="@android:drawable/ic_menu_search"
+            android:padding="5dp"/>
+
+        <ImageButton
+            android:id="@+id/BackB"
+            style="@style/darkButton"
+            android:layout_width="55dp"
+            android:layout_height="fill_parent"
+            android:src="@drawable/arrow_left" >
+        </ImageButton>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <EditText
+            android:id="@+id/hierarchy_search_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/enter_at_least_3_characters"
+            android:scaleType="fitXY"
+            android:enabled="true"
+            android:visibility="visible"
+            android:padding="5dp"
+            android:inputType="text"
+            android:textColor="@color/cot_selector_search_state"
+            android:importantForAutofill="no" />
+        <LinearLayout
+            android:id="@+id/MainLL"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" />
+    </LinearLayout>
+</LinearLayout>

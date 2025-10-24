@@ -1,0 +1,34 @@
+
+package com.atakmap.map.layer.feature;
+
+import com.atakmap.android.androidtest.util.RandomUtils;
+import gov.tak.test.KernelJniTest;
+import com.atakmap.map.layer.feature.style.BasicStrokeStyle;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class BasicStrokeStyleTests extends KernelJniTest {
+
+    @Test
+    public void BasicStrokeStyle_constructor_roundtrip() {
+        final int color = RandomUtils.rng().nextInt();
+        final float width = RandomUtils.rng().nextFloat() * 100;
+        BasicStrokeStyle style = new BasicStrokeStyle(color, width);
+        Assert.assertEquals(style.getColor(), color);
+        Assert.assertEquals(style.getStrokeWidth(), width, 0.0);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void BasicStrokeStyle_constructor_negative_width_throws() {
+        final int color = RandomUtils.rng().nextInt();
+        BasicStrokeStyle style = new BasicStrokeStyle(color, -1f);
+        Assert.fail();
+    }
+
+    static BasicStrokeStyle random() {
+        final int color = RandomUtils.rng().nextInt();
+        final float width = RandomUtils.rng().nextFloat() * 100;
+        return new BasicStrokeStyle(color, width);
+    }
+}

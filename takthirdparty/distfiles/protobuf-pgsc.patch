@@ -1,0 +1,83 @@
+diff -U5 -r protobuf.pristine/cmake/extract_includes.bat.in protobuf/cmake/extract_includes.bat.in
+--- protobuf.pristine/cmake/extract_includes.bat.in	2022-05-25 19:48:55.000000000 -0400
++++ protobuf/cmake/extract_includes.bat.in	2024-08-26 10:15:54.501257100 -0400
+@@ -49,10 +49,11 @@
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\descriptor.pb.h" include\google\protobuf\descriptor.pb.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\descriptor_database.h" include\google\protobuf\descriptor_database.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\duration.pb.h" include\google\protobuf\duration.pb.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\dynamic_message.h" include\google\protobuf\dynamic_message.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\empty.pb.h" include\google\protobuf\empty.pb.h
++copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\endian.h" include\google\protobuf\endian.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\explicitly_constructed.h" include\google\protobuf\explicitly_constructed.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\extension_set.h" include\google\protobuf\extension_set.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\extension_set_inl.h" include\google\protobuf\extension_set_inl.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\field_access_listener.h" include\google\protobuf\field_access_listener.h
+ copy "${PROTOBUF_SOURCE_WIN32_PATH}\..\src\google\protobuf\field_mask.pb.h" include\google\protobuf\field_mask.pb.h
+diff '--color=auto' -U5 -r protobuf.pristine/configure protobuf/configure
+--- protobuf.pristine/configure	2022-05-25 19:49:34.000000000 -0400
++++ protobuf/configure	2024-08-16 18:46:40.696823437 -0400
+@@ -9388,17 +9388,17 @@
+ ac_prog=ld
+ if test yes = "$GCC"; then
+   # Check if gcc -print-prog-name=ld gives a path.
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ld used by $CC" >&5
+ printf %s "checking for ld used by $CC... " >&6; }
+-  case $host in
+-  *-*-mingw*)
++#  case $host in
++#  *-*-mingw*)
+     # gcc leaves a trailing carriage return, which upsets mingw
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'` ;;
+-  *)
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
+-  esac
++    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'`
++#  *)
++#    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
++#  esac
+   case $ac_prog in
+     # Accept absolute paths.
+     [\\/]* | ?:[\\/]*)
+       re_direlt='/[^/][^/]*/\.\./'
+       # Canonicalize the pathname of ld
+@@ -17294,17 +17294,17 @@
+ ac_prog=ld
+ if test yes = "$GCC"; then
+   # Check if gcc -print-prog-name=ld gives a path.
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ld used by $CC" >&5
+ printf %s "checking for ld used by $CC... " >&6; }
+-  case $host in
+-  *-*-mingw*)
++#  case $host in
++#  *-*-mingw*)
+     # gcc leaves a trailing carriage return, which upsets mingw
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'` ;;
+-  *)
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
+-  esac
++    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'`
++#  *)
++#    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
++#  esac
+   case $ac_prog in
+     # Accept absolute paths.
+     [\\/]* | ?:[\\/]*)
+       re_direlt='/[^/][^/]*/\.\./'
+       # Canonicalize the pathname of ld
+diff -U5 -r protobuf.pristine/cmake/abseil-cpp.cmake host-protobuf/protobuf/cmake/abseil-cpp.cmake
+--- protobuf.pristine/cmake/abseil-cpp.cmake	2022-05-25 19:48:55.000000000 -0400
++++ protobuf/cmake/abseil-cpp.cmake	2024-08-26 10:00:54.714461700 -0400
+@@ -23,9 +23,9 @@
+   # Use "CONFIG" as there is no built-in cmake module for absl.
+   find_package(absl REQUIRED CONFIG)
+ endif()
+ set(_protobuf_FIND_ABSL "if(NOT TARGET absl::strings)\n  find_package(absl CONFIG)\nendif()")
+ 
+-set(protobuf_ABSL_USED_TARGETS
+-  absl::strings
+-  absl::strings_internal
+-)
++#set(protobuf_ABSL_USED_TARGETS
++#  absl::strings
++#  absl::strings_internal
++#)

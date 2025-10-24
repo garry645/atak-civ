@@ -1,0 +1,34 @@
+ext.bundleProjects = ['annotation', 'port', 'engine', 'shared']
+
+apply from: configProject.file('gradle/aarbundler.gradle'), to: project
+
+if (isAndroidKernelBuild) {
+    // transitive dependencies to be exposed via POM. MUST be `api` level dependencies for
+    // proper resolution against Android AAR
+    
+    dependencies {
+        api("gov.tak.thirdparty:takthirdparty:${takthirdpartyVersion}@aar")
+        api("gov.tak.thirdparty:libLAS:${libLasVersion}@aar")
+        api("org.greenrobot:eventbus:${eventbusVersion}")
+        api("io.github.missioncommand:mil-sym-android-renderer:${milSymRendererAndroid}")
+        api("io.github.missioncommand:mil-sym-android:${milSymAndroid}") {
+            // exclude transitive dependency that is duplicated in legacy AAR
+            exclude group: 'org.gavaghan', module: 'geodesy'
+            exclude group: 'com.android.support', module: 'support-v4'
+        }
+        api("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+
+        // ATAK has direct dependencies, retain as API for Android for 1.x
+        api("gov.tak.thirdparty:apache-commons-lang-slim:${commonsLang3SlimVersion}")
+
+        // deconflict dependencies required for Instrumented Tests
+        constraints {
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+            }
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+            }
+        }
+    }
+}

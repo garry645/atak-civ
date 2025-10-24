@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="eud_api_general_preferences"
+        android:title="@string/eud_preferences_category_general" />
+
+    <com.atakmap.android.gui.PanPreference
+        pluginIcon="@drawable/ic_link_eud"
+        android:key="eud_api_client_status"
+        android:summary="@string/eud_prefs_desc_status_not_linked"
+        android:title="@string/status" />
+
+    <PreferenceCategory
+        android:key="eud_api_resource_sync_preferences"
+        android:title="@string/eud_preferences_category_resources" />
+
+    <com.atakmap.android.gui.PanCheckBoxPreference
+        android:key="eud_api_sync_mapsources"
+        android:summary="@string/eud_preferences_sync_map_sources_summary"
+        android:title="@string/eud_preferences_sync_map_sources_title"
+        android:defaultValue="true"
+        />
+
+    <com.atakmap.android.gui.PanCheckBoxPreference
+        android:key="eud_api_sync_plugins"
+        android:summary="@string/eud_preferences_sync_plugins_summary"
+        android:title="@string/eud_preferences_sync_plugins_title"
+        android:defaultValue="true"
+        />
+
+</PreferenceScreen>
+

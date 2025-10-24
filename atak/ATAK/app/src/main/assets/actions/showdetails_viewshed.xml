@@ -1,0 +1,17 @@
+<set>
+    <broadcast>
+        <action>com.atakmap.viewshed.VIEWSHED_TOOL</action>
+        <extras>
+            <string key='tab'>viewshed</string>
+        </extras>
+    </broadcast>
+    <broadcast>
+        <action>com.atakmap.android.maps.UNFOCUS</action>
+    </broadcast>
+        <broadcast>
+        <action>com.atakmap.android.maps.HIDE_DETAILS</action>
+    </broadcast>
+    <broadcast>
+        <action>com.atakmap.android.maps.HIDE_MENU</action>
+    </broadcast>
+</set>

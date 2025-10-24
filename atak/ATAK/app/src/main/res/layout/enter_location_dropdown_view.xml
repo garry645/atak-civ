@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/FullDropdownStyle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/lastPoint_ll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:descendantFocusability="blocksDescendants"
+        android:gravity="center_vertical"
+        android:background="@drawable/overlay_title_background"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/lastPointIcon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="@dimen/auto_space_big"
+            android:src="@drawable/cot_icon_sugp"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/lastPointLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/point_dropper_text8"
+                android:textSize="@dimen/draper_font"
+                android:textColor="#FFF"/>
+
+            <TextView
+                android:id="@+id/lastPointTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/title_lower"
+                android:textSize="@dimen/draper_font"
+                android:textColor="#FFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/lastPointSend"
+                style="@style/darkButton"
+                android:padding="@dimen/auto_margin"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/send_square"/>
+
+            <ImageButton
+                android:id="@+id/lastPointRename"
+                style="@style/darkButton"
+                android:padding="@dimen/auto_margin"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_edit"/>
+
+            <ImageButton
+                android:id="@+id/lastPointDelete"
+                style="@style/darkButton"
+                android:padding="@dimen/auto_margin"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_menu_delete"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="0dip"
+        android:paddingBottom="0dip"
+        android:layout_above="@+id/lastPoint_ll">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+               <ImageButton
+                   android:id="@+id/iconManagerSettings"
+                   style="@style/darkButton" android:padding="6dp"
+                   android:layout_alignParentEnd="true"
+                   android:layout_width="45dp"
+                   android:layout_height="@dimen/dropdown_bottom_bar_height"
+                   android:gravity="center"
+                   android:src="@drawable/ic_menu_settings"/>
+
+               <ImageButton
+                   android:id="@+id/iconManagerRecentlyAdded"
+                   style="@style/darkButton" android:padding="6dp"
+                   android:layout_toStartOf="@id/iconManagerSettings"
+                   android:layout_width="45dp"
+                   android:layout_height="@dimen/dropdown_bottom_bar_height"
+                   android:gravity="center"
+                   android:src="@drawable/clock"/>
+
+            <Button
+                android:id="@+id/enterLocationTitle"
+                android:layout_toStartOf="@id/iconManagerRecentlyAdded"
+                style="@style/darkButton" android:padding="6dp"
+                android:textColor="#FFFF"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/dropdown_bottom_bar_height"
+                android:textSize="@dimen/draper_large_font"
+                android:text="@string/point_dropper_text9"
+                android:ellipsize="end"
+                android:gravity="start|center_vertical"
+                android:singleLine="true"/>
+        </RelativeLayout>
+
+        <androidx.viewpager.widget.ViewPager
+                android:id="@+id/enterLocationIconPalletPager"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"/>
+    </LinearLayout>
+
+</RelativeLayout>

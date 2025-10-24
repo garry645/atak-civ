@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal" >
+    <LinearLayout 
+        android:id="@+id/splash"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <LinearLayout 
+        android:id="@+id/map_view"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone" />
+
+    <include layout="@layout/atak_seekbar" />
+
+    <!-- Container for the top-right floating toolbar -->
+    <LinearLayout
+        android:id="@+id/toolbar_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/toolbar_container_half_rounded"
+        android:visibility="visible"/>
+
+    <ImageView
+        android:id="@+id/sidepanehandle_background"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:scaleType="fitXY"
+        android:layout_marginEnd="-8dp"
+        android:src="@drawable/ic_side_menu_trigger_open"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/sidepanehandle_background_portrait"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:scaleType="fitXY"
+        android:paddingTop="-9dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_side_menu_trigger_bottom_open"
+        android:visibility="gone" />
+
+</RelativeLayout>

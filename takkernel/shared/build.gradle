@@ -1,0 +1,54 @@
+dependencies {
+    api project(':engine')
+    api project(':annotation')
+    api project(':port')
+
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+
+    if(isJavaKernelBuild) {
+        // This dependency is found on compile classpath of this component and consumers.
+        api("com.google.guava:guava:${guavaVersion}")
+
+        api "org.jogamp.gluegen:gluegen-rt-main:${joglVersion}"
+        api "org.jogamp.jogl:jogl-all-main:${joglVersion}"
+        api("gov.tak.support:android-port:${androidPortVersion}")
+        implementation("com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}")
+        api("io.github.missioncommand:mil-sym-renderer:${milSymRendererJava}")
+        api("io.github.missioncommand:mil-sym-java:${milSymJava}")
+    } else {
+        api "androidx.fragment:fragment:${androidxFragmentVersion}"
+        // 2525C
+        implementation("io.github.missioncommand:mil-sym-android-renderer:${milSymRendererAndroid}") {
+        }
+        // 2525D+
+        implementation("io.github.missioncommand:mil-sym-android:${milSymAndroid}") {
+            transitive = true
+            // exclude transitive dependency that is duplicated in legacy AAR
+            exclude group: 'org.gavaghan', module: 'geodesy'
+        }
+        testImplementation("com.google.guava:guava:${guavaVersion}")
+        androidTestImplementation("gov.tak.support:android-app-stl:12.1.2977051b@aar")
+
+        // deconflict dependencies for Instrumented Tests
+        constraints {
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+            }
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+            }
+        }
+    }
+}
+
+// default source sets
+
+if(isJavaKernelBuild) {
+    test {
+        // Add dependency on jar task, since it will be main target for testing
+        dependsOn ":engine:runtimePlatformJar"
+
+        // Rearrange test classpath, add compiled JAR instead of main classes
+        classpath += rootProject.findProject(':engine').tasks.findByName('runtimePlatformJar').outputs.files
+    }
+}

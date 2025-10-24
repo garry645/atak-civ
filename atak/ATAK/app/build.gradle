@@ -1,0 +1,626 @@
+buildscript {
+    apply from: '../../gradle/takrepo.gradle', to: project
+    apply from: '../../gradle/versions.gradle', to: project
+    apply from: '../../gradle/functions.gradle', to: project
+
+    ext.ATAK_VERSION = "5.5.1"
+    ext.ATAK_VERSION_SUBMINOR = ".1"
+
+    ext.isDevKitEnabled = { ->
+        return getProperty('takRepoMavenUrl', null) != null &&
+                getProperty('takDevkitEnabled', 'false') == 'true'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "com.android.tools.build:gradle:${gradleVersion}"
+        classpath "org.jacoco:org.jacoco.core:$jacocoVersion"
+        if(isDevKitEnabled()) {
+            classpath "com.atakmap.gradle:atak-gradle-devkit:${takDevkitVersion}"
+        }
+
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'jacoco'
+apply plugin: 'maven-publish'
+if(isDevKitEnabled()) {
+    apply plugin: 'atak-devkit-plugin'
+}
+
+apply from: "../../gradle/typst.gradle"
+
+
+dependencies {
+     implementation fileTree(include: '*.jar', dir: 'libs')
+     implementation fileTree(include: '*.aar', dir: 'libs')
+
+     // Move to the minimal required official google offering for androidx
+     //
+     // As with previous versions, care must be taken not to duplicate the 
+     // inclusion of these libraries in a plugin or utilize libraries with 
+     // different versions.     The attempt is still to keep core as 
+     // lightweight as possible when utilizing any support library to allow 
+     // for greater flexibility for plugin developers.    This is the same 
+     // paradigm that google has moved towards with breaking up the original 
+     // android support libraries.  
+
+     implementation "androidx.fragment:fragment:${fragmentVersion}"
+     implementation "androidx.exifinterface:exifinterface:${exifinterfaceVersion}"
+     implementation "androidx.localbroadcastmanager:localbroadcastmanager:${localbroadcastVersion}"
+     implementation "androidx.lifecycle:lifecycle-process:${lifecycleprocessVersion}"
+
+     // implementation details that have been pulled in as part of the androidx.fragment
+     constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}") {
+           because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+        implementation("androidx.core:core-ktx:${androidxcoreVersion}") {
+            because("sync anroidx.core:core-ktx with androidx.core:core version")
+        }
+        implementation ("androidx.collection:collection:$collectionVersion") { 
+            because("sync anroidx.core:core-ktx with androidx.core:core version")
+        }
+     }
+     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+
+
+
+     androidTestImplementation 'androidx.test:orchestrator:1.5.1'
+     androidTestImplementation 'androidx.test:runner:1.6.2'
+     androidTestImplementation 'androidx.test:rules:1.6.1'
+     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.6.1'
+     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+
+     androidTestImplementation "org.mockito:mockito-core:5.15.2"
+
+    androidTestImplementation 'androidx.appcompat:appcompat:1.7.0'
+
+    if(rootProject.hasProperty('ci')) {
+        androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+        androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.2.1'
+    }
+
+    // This is an easy way to give androidTest and test access to the ATAK main.jar without needing
+    // to copy and paste the standard block that checks each possible location a bunch more times.
+    // This could backfire if there are other things plugins include as compileOnly that shouldn't
+    // be included this way? If so we should switch to a modified block from ATAKVersions.gradle.
+    configurations {
+        testImplementation.extendsFrom androidTestImplementation
+    }
+}
+
+def ndkAbiFiltersAll = ['armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64']
+def ndkAbiFiltersSmall = ['arm64-v8a']
+
+def supportedFlavors =
+[
+        [ name : 'civ',           isDefault: true,  applicationIdSuffix: 'civ',          versionNameSuffix: '',            redeploySuffix: '.CIV',          meshNetworkDefault: 'true',  appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersAll,   minSdkVersion: 21 ],
+        [ name : 'dhsSmall',      isDefault: false, applicationIdSuffix: 'civ.ics.dhs',  versionNameSuffix: '[ice.dhs]',   redeploySuffix: '.CIV.ICE.DHS',  meshNetworkDefault: 'true',  appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'civSmall',      isDefault: false, applicationIdSuffix: 'civ',          versionNameSuffix: '[playstore]', redeploySuffix: '.CIVSMALL',     meshNetworkDefault: 'true',  appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'dmucSmall',     isDefault: false, applicationIdSuffix: 'civ.dmuc',     versionNameSuffix: '[dmuc]',      redeploySuffix: '.CIV.DMUC',     meshNetworkDefault: 'false', appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'fbi',           isDefault: false, applicationIdSuffix: 'civ',          versionNameSuffix: '[fbi]',       redeploySuffix: '.CIV.FBI',      meshNetworkDefault: 'true',  appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'fbium',         isDefault: false, applicationIdSuffix: 'civ',          versionNameSuffix: '[fbium]',       redeploySuffix: '.CIV.FBI',      meshNetworkDefault: 'true',  appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'intune',        isDefault: false, applicationIdSuffix: 'civ.intune',   versionNameSuffix: '[intune]',    redeploySuffix: '.CIV.INTUNE',   meshNetworkDefault: 'true',  appDataStorage: 'true',  ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 21 ],
+        [ name : 'firstnetSmall', isDefault: false, applicationIdSuffix: 'civ.firstnet', versionNameSuffix: '[firstnet]',  redeploySuffix: '.CIV.FIRSTNET', meshNetworkDefault: 'false', appDataStorage: 'false', ndkAbiFilters: ndkAbiFiltersSmall, minSdkVersion: 24 ],
+]
+
+android {
+    compileSdk 35
+    ndkVersion "25.1.8937393"
+
+    useLibrary 'org.apache.http.legacy'
+
+
+    namespace 'com.atakmap.app'
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    defaultConfig {
+
+        // note that even though the targetSdk is defined below, we are still setting the
+        // minSdk to 21.  Ensure methods that are chosen exist in 21 or 
+        // appropriate checks are in place to allow for correct behavior 
+        // on versions 21 and up.
+
+        targetSdkVersion 35
+        minSdkVersion 21
+        multiDexEnabled true
+        applicationId = "com.atakmap.app"
+
+        testInstrumentationRunner "com.atakmap.android.androidtest.ATAKTestRunner"
+    }
+
+    compileOptions {
+         sourceCompatibility JavaVersion.VERSION_1_8
+         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+    testOptions {
+        unitTests.all {
+            if(JavaVersion.current() != JavaVersion.VERSION_1_8){
+                jvmArgs = [ "--illegal-access=warn",
+                         "--add-opens","java.logging/java.util.logging=ALL-UNNAMED",
+                         "--add-opens","java.base/java.time.zone=ALL-UNNAMED",
+                         "--add-opens","java.base/java.lang.reflect=ALL-UNNAMED",
+                         "--add-opens","java.base/java.security.cert=ALL-UNNAMED",
+                         "--add-opens","java.base/java.text=ALL-UNNAMED",
+                         "--add-opens","java.base/java.net=ALL-UNNAMED",
+                         "--add-opens","java.base/java.nio.charset=ALL-UNNAMED",
+                         "--add-opens","java.base/java.nio.file=ALL-UNNAMED",
+                         "--add-opens","java.base/sun.nio.fs=ALL-UNNAMED",
+                         "--add-opens","java.base/sun.security.x509=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util.regex=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util.stream=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util.concurrent=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util.concurrent.locks=ALL-UNNAMED",
+                         "--add-opens","java.base/java.time=ALL-UNNAMED",
+                         "--add-opens","java.base/java.util=ALL-UNNAMED",
+                         "--add-opens","java.base/java.io=ALL-UNNAMED",
+                         "--add-opens","java.base/java.lang=ALL-UNNAMED"]
+            }
+            jacoco {
+                //includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']    
+            }
+        }
+        unitTests.returnDefaultValues = true
+    }
+
+
+    flavorDimensions = ["application"]
+
+    productFlavors {
+        supportedFlavors.each { flav ->
+            "${flav.name}" {
+                getIsDefault().set(flav.isDefault)
+                dimension "application"
+                applicationIdSuffix = ".${flav.applicationIdSuffix}"
+                manifestPlaceholders = [atakApiVersion: "com.atakmap.app@${ATAK_VERSION}.CIV"]
+                buildConfigField 'String', 'REDEPLOY_VERSION', "\"${ATAK_VERSION}${ATAK_VERSION_SUBMINOR}${flav.redeploySuffix}\""
+                buildConfigField 'boolean', 'MESH_NETWORK_DEFAULT',"${flav.meshNetworkDefault}"
+                buildConfigField 'boolean', 'REQUIRE_APP_DATA_STORAGE',"${flav.appDataStorage}"
+                versionNameSuffix "${flav.versionNameSuffix}"
+                minSdkVersion "${flav.minSdkVersion}"
+
+                // when set in local properties will produce an api with only the specified abi filter
+                // ndkAbiFilter=value where value can be one of armeabi-v7a, arm64-v8a, x86_64 or x86
+                def vc = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'ndkAbiFilter')
+                if (vc != null)
+                    ndk { abiFilters "${vc}" }
+                else
+                    ndk {
+                        abiFilters = []
+                        abiFilters.addAll(flav.ndkAbiFilters)
+                    }
+            }
+        }
+    }
+
+    signingConfigs {
+        sdk {
+            storeFile file("../../android_keystore")
+            storePassword "tnttnt"
+            keyAlias "wintec_mapping"
+            keyPassword "tnttnt"
+        }
+
+        debug {
+            def kf = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyFile')
+            def kfp = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyFilePassword')
+            def ka = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyAlias')
+            def kp = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyPassword')
+
+            if (kf == null) {
+                 kf = '../../android_keystore'
+                 kfp = 'tnttnt'
+                 ka = 'wintec_mapping'
+                 kp = 'tnttnt'
+            } else {
+                 println("Using key file from local.properties: " + kf)
+            }
+ 
+            storeFile file(kf)
+            if (kfp != null) storePassword kfp
+            if (ka != null) keyAlias ka
+            if (kp != null) keyPassword kp
+        }
+
+        release {
+            storeFile file("../../android_keystore")
+            storePassword "tnttnt"
+            keyAlias "wintec_mapping"
+            keyPassword "tnttnt"
+        }
+    }
+
+    buildTypes {
+        all { 
+        }
+
+        release {
+            buildConfigField 'String', 'DEV_BANNER', '""'
+            // disabled here so that we make use of the proguard plugin later on
+            minifyEnabled true
+            proguardFiles 'proguard-release-keep.txt', 'proguard-release.txt'
+            signingConfig signingConfigs.release
+        }
+
+        debug {
+            buildConfigField 'String', 'DEV_BANNER', '""'
+            isDefault = true
+            minifyEnabled false
+            testCoverageEnabled (project.hasProperty('coverage'))
+            signingConfig signingConfigs.debug
+            if (project.hasProperty('coverage')) 
+                 android.defaultConfig.minSdkVersion 24
+        }
+
+        sdk {
+            buildConfigField 'String', 'DEV_BANNER', '"DEVELOPER BUILD"'
+            debuggable true
+            minifyEnabled true
+            proguardFiles 'proguard-sdk.txt', 'proguard-release-keep.txt', 'proguard-release.txt'
+            signingConfig signingConfigs.sdk
+            matchingFallbacks = ['debug']
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'lib/**/mod_spatialite.so'
+
+
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    sourceSets {
+        main {
+            setProperty("archivesBaseName", "ATAK-" + ATAK_VERSION + ATAK_VERSION_SUBMINOR + "-" + getVersionName())
+            defaultConfig.versionCode = getVersionCode()
+            defaultConfig.versionName = ATAK_VERSION + ATAK_VERSION_SUBMINOR + " (" + getVersionName() + ")"
+
+        }
+
+        // added android UI tests
+        if (!rootProject.hasProperty('ci') || rootProject.hasProperty('uiTests')) {
+            androidTest.java.srcDirs 'src/androidUITest/java'
+        }
+
+        // for civ
+        civ.java.srcDirs = ['src/civ/java', 'src/common/java']
+        civ.assets.srcDir 'src/civ/assets'
+        civ.res.srcDir 'src/civ/res'
+        civ.assets.srcDir 'src/full/assets'
+
+        // for civSmall
+        civSmall.java.srcDirs = ['src/civ/java', 'src/common/java']
+        civSmall.assets.srcDir 'src/civ/assets'
+        civSmall.res.srcDir 'src/civ/res'
+        civSmall.assets.srcDir 'src/small/assets'
+
+
+        // for dhsSmall
+        dhsSmall.java.srcDirs = ['src/civ/java', 'src/common/java']
+        dhsSmall.assets.srcDir 'src/civ/assets'
+        dhsSmall.res.srcDir 'src/civ/res'
+        dhsSmall.assets.srcDir 'src/small/assets'
+
+        // for dmucSmall
+        dmucSmall.java.srcDirs = ['src/civ/java', 'src/common/java']
+        dmucSmall.assets.srcDir 'src/civ/assets'
+        dmucSmall.res.srcDir 'src/civ/res'
+        dmucSmall.assets.srcDir 'src/small/assets'
+
+        // for firstnetSmall
+        firstnetSmall.java.srcDirs = ['src/civ/java', 'src/common/java']
+        firstnetSmall.assets.srcDir 'src/civ/assets'
+        firstnetSmall.res.srcDir 'src/civ/res'
+        firstnetSmall.assets.srcDir 'src/small/assets'
+
+
+        // for fbi
+        fbi.java.srcDirs = ['src/civ/java', 'src/common/java']
+        fbi.assets.srcDir 'src/civ/assets'
+        fbi.res.srcDir 'src/civ/res'
+        fbi.assets.srcDir 'src/small/assets'
+
+        // for fbium
+        fbium.java.srcDirs = ['src/civ/java', 'src/common/java']
+        fbium.assets.srcDir 'src/civ/assets'
+        fbium.res.srcDir 'src/civ/res'
+        fbium.assets.srcDir 'src/small/assets'
+
+        // for fbi
+        intune.java.srcDirs = ['src/civ/java', 'src/common/java']
+        intune.assets.srcDir 'src/civ/assets'
+        intune.res.srcDir 'src/civ/res'
+        intune.assets.srcDir 'src/small/assets'
+
+
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+        sdk.setRoot('build-types/sdk')
+    }
+
+    lintOptions {
+         checkReleaseBuilds true
+         // Or, if you prefer, you can continue to check for errors in release builds,
+         // but continue the build even when errors are found:
+         abortOnError true
+         disable "AppCompatCustomView", "AppCompatResource", "CoarseFineLocation", "AppLinkUrlError", "PermissionImpliesUnsupportedChromeOsHardware"
+    }
+}
+
+// stub out task to generate empty mapping for `civDebug`
+task minifyCivDebugWithR8 {
+    doLast {
+        def mappingFile = file("${project.buildDir}/outputs/mapping/civDebug/mapping.txt")
+        if (!mappingFile.exists()) {
+            mappingFile.parentFile.mkdirs()
+            mappingFile.createNewFile()
+        }
+    }
+}
+task minifyCivReleaseWithR8Copy {
+    doLast {
+        def mappingFile = file("${project.buildDir}/outputs/mapping/civRelease/mapping.txt")
+        if (!mappingFile.exists()) {
+            mappingFile.parentFile.mkdirs()
+        }
+        copy {
+            from "${project.buildDir}/outputs/mapping/civRelease/mapping.txt"
+            into "${project.buildDir}/outputs/mapping/release"
+            println "deployed mapping.txt for local usage"
+        }
+    }
+}
+
+
+// custom configuration+dependencies for dex2jar
+configurations {
+    sdkArtifactGenerator
+}
+
+
+task combineJarsDebug(type: Jar) {
+    dependsOn 'compileCivDebugJavaWithJavac'
+    archiveFileName = 'main.jar'
+    destinationDirectory = file("${project.projectDir}/build/libs/")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        // derive inputs from the `civDebug` classpath
+        getVariantClasspath(project, 'civDebug').collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+android.applicationVariants.all { variant ->
+    task "jar${variant.name.capitalize()}"(type: Jar) {
+        description 'Generates a JAR file containing the core application classes'
+        dependsOn "compile${variant.name.capitalize()}JavaWithJavac"
+
+        destinationDirectory = file("$buildDir/intermediates/api_jar/${variant.name}")
+        archiveFileName = 'api.jar'
+        // XXX - use task outputs instead of path
+        from fileTree("$buildDir/intermediates/javac/${variant.name}/compile${variant.name.capitalize()}JavaWithJavac/classes")
+    }
+}
+
+// `takkernel` dependencies declared after the `android` block so that all
+// build types are declared
+dependencies {
+
+     if(findProject(':takkernel')) {
+         api project(':takkernel:annotation')
+         api project(':takkernel:port')
+         api project(':takkernel:engine')
+         api project(':takkernel:shared')
+     } else {
+         debugApi("gov.tak.kernel:takkernel-aar:${takKernelVersion}:debug@aar") { transitive = true }
+         sdkApi("gov.tak.kernel:takkernel-aar:${takKernelVersion}:debug@aar") { transitive = true }
+         odkApi("gov.tak.kernel:takkernel-aar:${takKernelVersion}:release@aar") { transitive = true }
+         releaseApi("gov.tak.kernel:takkernel-aar:${takKernelVersion}:release@aar") { transitive = true }
+     }
+}
+
+def getVariantClasspath(Project p, String variantName) {
+    def result = p.files()
+    android.applicationVariants.each { variant ->
+        if(variant.name == variantName) {
+            result.from(variant.getJavaCompileProvider().get().classpath)
+            result.from(variant.getJavaCompileProvider().get().destinationDir)
+        }
+    }
+    return result
+}
+
+afterEvaluate {
+    android.applicationVariants.matching { variant ->
+        variant.buildType.name != 'debug'
+    }.each { variant ->
+        task "copyFiles${variant.name.capitalize()}"(type: Jar) {
+            doLast {
+                copy {
+                    from "${project.buildDir}/outputs/proguard/${variant.name}/mapping/mapping.txt"
+                    into "${project.buildDir}/outputs/mapping/${variant.buildType.name}"
+                }
+                copy {
+                    from "${project.buildDir}/outputs/proguard/${variant.name}/mapping/mapping.txt"
+                    into "${project.buildDir}/libs/"
+                    rename("mapping.txt", "mapping-${variant.flavorName}-${getVersionName()}-${getVersionCode()}.txt")
+                }
+                copy {
+                    from "${project.buildDir}/outputs/proguard/${variant.name}/mapping/mapping.txt"
+                    into "${project.buildDir}/libs/"
+                }
+                copy {
+                    from "${project.buildDir}/outputs/proguard/${variant.name}/mapping/mapping.txt"
+                    into "${project.buildDir}/libs/${ATAK_VERSION}.${variant.flavorName.toUpperCase()}"
+                    println "deployed mapping.txt to: ${project.buildDir}/libs/${ATAK_VERSION}.${variant.flavorName.toUpperCase()}"
+                }
+            }
+        }
+    }
+}
+
+configurations {
+    civilianApiJar {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+    android.applicationVariants.matching { variant ->
+        'civ' == variant.flavorName
+    }.all { variant ->
+        "${variant.name}Mapping" {
+            canBeConsumed = true
+            canBeResolved = false
+        }
+    }
+}
+
+afterEvaluate {
+    artifacts {
+
+        // one API jar to rule them all ...
+        civilianApiJar(file("${buildDir}/libs/main.jar")) {
+            builtBy(project.tasks.findByName('combineJarsDebug'))
+        }
+
+         android.applicationVariants.matching { variant ->
+            // our "core" is represented by the "civ" flavor only
+            'civ' == variant.flavorName
+        }.all { variant ->
+            // buildType specific artifacts ...
+            Task mappingTask = project.tasks.findByName("minifyCiv${variant.buildType.name.capitalize()}WithR8")
+            def mappingFile = file("${project.buildDir}/outputs/mapping/civ${variant.buildType.name.capitalize()}/mapping.txt")
+            if(!mappingFile.exists()) {
+                mappingFile.parentFile.mkdirs()
+                mappingFile.createNewFile()
+            }
+            // the mapping artifact ...
+            "${variant.name}Mapping"(mappingFile) {
+                builtBy(mappingTask)
+            }
+        }
+    }
+
+    // configure task dependencies
+
+    // debug...
+    supportedFlavors.each { flavor ->
+        def installTask =  project.tasks.findByName("install${flavor.name.capitalize()}Debug")
+        def assembleTask =  project.tasks.findByName("assemble${flavor.name.capitalize()}Debug")
+        def combineTask  =  project.tasks.findByName("combineJarsDebug")
+
+        if (installTask != null)
+            installTask.dependsOn(assembleTask)
+
+        if (assembleTask != null)
+            assembleTask.finalizedBy combineTask 
+
+        
+        def minifyR8 = project.tasks.findByName("minifyCivReleaseWithR8")
+        def minifyR8Copy = project.tasks.findByName("minifyCivReleaseWithR8Copy")
+        if (minifyR8 != null)
+            minifyR8.finalizedBy minifyR8Copy
+
+    }
+
+    // for sdk, odk, release...
+    android.applicationVariants.matching { v ->
+        v.buildType.name != 'debug'
+    }.all { flavor ->
+        def installTask =  project.tasks.findByName("install${flavor.name.capitalize()}")
+        def assembleTask =  project.tasks.findByName("assemble${flavor.name.capitalize()}")
+        def copyFilesTask = project.tasks.findByName("copyFiles${flavor.name.capitalize()}")
+
+        if (installTask)
+            installTask.dependsOn(assembleTask)
+        if (assembleTask) {
+            assembleTask.dependsOn(project.tasks.findByName("assemble${flavor.flavorName.capitalize()}Debug"))
+        }
+    }
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Test Harness using jacoco
+// Note:
+//    When compiled in debug mode, jacoco inserts itself into the
+//    the ATAKApplication class even in the case where the test
+//    instrumentation is not run.    This does not seem to be the
+//    case with the release builds.
+//    The source code for jacoco is not under positive control and
+//
+//    can be read more about here: https://www.eclemma.org/jacoco/
+//    Exception observed on startup -
+//    System.err: java.io.FileNotFoundException: /jacoco.exec (Read-only file system)
+//        --- snip ---
+//       at org.jacoco.agent.rt.internal_8ff85ea.Offline.getProbes(Offline.java:51)
+//       at com.atakmap.app.ATAKApplication.$jacocoInit(Unknown Source:13)
+//        --- snip ---
+//
+////////////////////////////////////////////////////////////////////////////////
+
+jacoco {
+    toolVersion = "$jacocoVersion"
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
+android.applicationVariants.all { variant ->
+    task "create${variant.name.capitalize()}JacocoTestReport" (type: JacocoReport, dependsOn: ["test${variant.name.capitalize()}UnitTest", "create${variant.name.capitalize()}CoverageReport"])  {
+
+        reports {
+            xml.required = true
+            html.required = true
+        }
+
+
+
+
+        def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', 'androidx/**/*.*' , 'kotlin/**/*.*' ]
+        def debugTree = fileTree(dir:"${project.projectDir}/build/intermediates/javac/${variant.name}/classes", excludes: fileFilter)
+        def mainSrc = "$project.projectDir/src/main/java"
+
+        sourceDirectories.setFrom(files([mainSrc]))
+        classDirectories.setFrom(files([debugTree]))
+
+        executionData.setFrom(fileTree(dir: project.buildDir, includes: [
+                "outputs/unit_test_code_coverage/${variant.name}UnitTest/test${variant.name.capitalize()}UnitTest.exec",
+                "outputs/code_coverage/${variant.name}AndroidTest/connected/**/*.ec"
+        ]))
+
+        description = "Generates unified code coverage report for " + variant.name + " using Jacoco"
+    }
+}
+

@@ -1,0 +1,60 @@
+{
+    "version":  1,
+    "certificates": [
+        {
+            "name": "DigiCertEVRSACAG2.crt",
+            "isPublic": "true",
+            "description": "Verisign / DigiCert"
+        },
+        {
+            "name": "DigiCertGlobalRootCA.crt",
+            "isPublic": "true",
+            "description": "Verisign / DigiCert"
+        },
+        {
+            "name": "DigiCertGlobalRootG2.crt",
+            "isPublic": "true",
+            "description": "Verisign / DigiCert"
+        },
+        {
+            "name": "DigiCertHighAssuranceEVRootCA.crt",
+            "isPublic": "true",
+            "description": "Verisign / DigiCert"
+        },
+        {
+            "name": "isrgrootx1.crt",
+            "isPublic": "true",
+            "description": "LetsEncrypt"
+        },
+        {
+            "name": "DODIDSWCA-38.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        },
+        {
+            "name": "DoDRootCA3.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        },
+        {
+            "name": "DoDRootCA5.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        },
+        {
+            "name": "DoDRootCA6.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        },
+        {
+            "name": "DODSWCA-54.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        },
+        {
+            "name": "DODSWCA-61.crt",
+            "isPublic": "false",
+            "description": "DoD root CA"
+        }
+    ]
+}

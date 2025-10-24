@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="fire_prefs_category"
+        android:title="@string/civ_fires_prefs">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/civ_spi_update_delay"
+            android:key="spiUpdateDelay"
+            android:inputType="number"
+            android:summary="@string/civ_spi_update_delay_summary"
+            android:defaultValue="5" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/legacy_toolbar_mode"
+            android:summary="@string/summary_legacy_toolbar_mode"
+            android:key="legacyFiresToolbarMode"
+            android:defaultValue="false" />
+        <com.atakmap.android.gui.PanListPreference
+            android:title="@string/civ_fireSpiNumber"
+            android:key="firesNumberOfSpis"
+            android:entryValues="@array/spi_number"
+            android:entries="@array/spi_number"
+            android:summary="@string/civ_fireSpiNumberSummary"
+            android:defaultValue="1" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/civ_spi_redx_fah"
+            android:key="spiFahSize"
+            android:inputType="number"
+            android:summary="@string/civ_spi_redx_fah_summary"
+            android:defaultValue="30" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/expand_danger_close_title"
+            android:summary="@string/expand_danger_close_summary"
+            android:key="expandedDangerClose"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="bullseye_preference_category"
+        android:title="@string/bullseye_preference_category">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/bullseye_radius"
+            android:key="bullseyeDistance"
+            android:inputType="numberDecimal"
+            android:dialogTitle="@string/bullseye_radius_m"
+            android:summary="@string/bullseye_radius_summary"
+            android:defaultValue="2000" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/bullseye_ring_count"
+            android:key="bullseyeNumRings"
+            android:inputType="number"
+            android:summary="@string/bullseye_ring_count_summary"
+            android:defaultValue="4" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/bullseye_ring_radius"
+            android:key="bullseyeRadiusRings"
+            android:inputType="numberDecimal"
+            android:dialogTitle="@string/bullseye_ring_radius_m"
+            android:summary="@string/bullseye_ring_radius_summary"
+            android:defaultValue="500" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/bullseye_rings_visibility_title"
+            android:key="bullseyeRingsVisible"
+            android:summary="@string/bullseye_rings_visibility_summary"
+            android:defaultValue="false" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/bullseye_arrow_direction"
+            android:summary="@string/bullseye_direction_summary"
+            android:key="bullseyeDirection"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="coord_entry_prefs_category"
+        android:title="Coordinate Entry Preferences">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/rapid_mgrs_entry_mode"
+            android:summary="@string/rapid_mgrs_entry_mode_sum"
+            android:key="rapid_mgrs_dialog"
+            android:defaultValue="false" />
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="GoTo Use Last Point"
+            android:summary="When starting up the GoTo tool, populate with last point entered during a session."
+            android:key="goto_tool_use_last_point"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="autosend_prefs_category"
+        android:title="Auto Broadcast Preferences">
+
+        <com.atakmap.android.gui.PanListPreference
+            android:title="@string/hostileUpdatePreferences"
+            android:key="hostileUpdateDelay"
+            android:entryValues="@array/autobroadcast_update"
+            android:entries="@array/autobroadcast_update"
+            android:summary="@string/hostileUpdateSummary"
+            android:defaultValue="60" />
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/autobroadcast_enable_stale_title"
+            android:summary="@string/autobroadcast_enable_stale_summary"
+            android:key="autosendStaleEnabled"
+            android:defaultValue="false" />
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/autobroadcast_stale_time_title"
+            android:key="autosendStaleInterval"
+            android:inputType="number"
+            android:summary="@string/autobroadcast_stale_time_summary"
+            android:defaultValue="30" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="Allow remote deletion of Auto Send items"
+            android:summary="If a marker is deleted when autobroadcast is enabled, attempt to delete the marker by sending a remote deletion command."
+            android:key="preference_broadcast_delete"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

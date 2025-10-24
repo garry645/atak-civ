@@ -1,0 +1,24 @@
+apply from: project.file('gradle/utils.gradle'), to: project
+
+// determine the kernel build type
+ext {
+    configProject = project;
+
+    // Define build target Strings
+    javaBuildTarget = 'java'
+    androidBuildTarget = 'android'
+
+    kernelBuildTarget = getProperty(rootProject, 'kernelBuildTarget', javaBuildTarget)
+
+    isAndroidKernelBuild = kernelBuildTarget == androidBuildTarget
+    isJavaKernelBuild = kernelBuildTarget == javaBuildTarget
+
+    if (!isAndroidKernelBuild && !isJavaKernelBuild) {
+        throw new GradleException('Invalid kernelBuildTarget: ' + kernelBuildTarget)
+    }
+
+    skipPublications = [androidBuildTarget]
+    ndkAbiFilter = getProperty(rootProject, 'ndkAbiFilter', null)
+}
+
+logger.info('takkernel build target: ' + kernelBuildTarget)

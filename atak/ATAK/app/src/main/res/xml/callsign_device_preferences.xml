@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/callsign_and_device_preferences"
+        android:key="callsign_and_device_preferences_category">
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/callsign_prefs"
+            android:key="callSignPrefs"
+            android:summary="@string/preferences_text198"
+            android:icon="@drawable/my_prefs_settings" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/devicePreferences"
+            android:key="devicePrefs"
+            android:summary="@string/preferences_text199"
+            android:icon="@drawable/ic_display_settings" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/bluetooth"
+            android:key="bluetooth"
+            android:icon="@drawable/bluetooth"
+            android:summary="@string/preferences_text269" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/contact_preferences"
+            android:key="contactPrefs"
+            android:icon="@drawable/ic_menu_contact" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/reportingPreferences"
+           android:icon="@drawable/ic_self_pref"
+            android:key="reportingPrefs" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/encryp_pass"
+           android:icon="@drawable/passphrase"
+            android:key="encryptPassword" />
+       <com.atakmap.android.gui.PanPreference
+            android:title="@string/pref_manag"
+            android:key="prefManage" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="@string/videoPreferences"
+        android:key="video_preferences_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="video_disable_audio"
+            android:title="@string/video_audio_disable"
+            android:summary="@string/video_audio_disable_desc"
+            android:defaultValue="false" />
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="video_mute_when_hidden"
+            android:title="@string/mute_video_when_not_visible_title"
+            android:summary="@string/mute_video_when_not_visible_summary"
+            android:defaultValue="true" />
+        <Preference
+            android:title="@string/record_udp_tool_title"
+            android:key="recordUdpTool"
+            android:summary="@string/record_udp_tool_summary"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

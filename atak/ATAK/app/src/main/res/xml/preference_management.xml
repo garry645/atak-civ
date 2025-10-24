@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/preference_management"
+        android:key="preference_management_category">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text121"
+            android:key="savePrefs"
+            android:dialogTitle="@string/preferences_text123"
+            android:summary="@string/preferences_text122"
+            android:icon="@drawable/ic_menu_save_pref" />
+        <com.atakmap.android.gui.PanListPreference
+            android:key="loadPrefs"
+            android:title="@string/preferences_text125"
+            android:entryValues="@array/filename_values"
+            android:entries="@array/filenames"
+            android:summary="@string/preferences_text124"
+            android:icon="@drawable/ic_menu_import_file" />
+
+        <com.atakmap.android.gui.PanListPreference
+            android:title="@string/import_preferences_action_title"
+            android:summary="@string/import_preferences_action_summary"
+            android:icon="@drawable/nav_import"
+            android:key="pref_import_pref_action"
+            android:entries="@array/user_action_names"
+            android:entryValues="@array/user_action_values"
+            android:defaultValue="ALLOW" />
+        
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/preferences_text126"
+           android:key="prepareForClone"
+           android:summary="@string/preferences_text127"
+           android:icon="@drawable/ic_atak_launcher" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordDialogMGRSView"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="2dp"
+    android:weightSum="15">
+
+
+    <EditText
+        android:id="@+id/coordDialogMGRSGridText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="@string/zone"
+        android:inputType="textCapCharacters|textNoSuggestions"
+        android:imeOptions="flagForceAscii|flagNoExtractUi"
+        android:maxLength="3"
+        android:nextFocusDown="@+id/coordDialogMGRSSquareText"/>
+
+    <EditText
+        android:id="@+id/coordDialogMGRSSquareText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.5"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="@string/square"
+        android:inputType="textCapCharacters|textNoSuggestions"
+        android:imeOptions="flagForceAscii|flagNoExtractUi"
+        android:maxLength="2"
+        android:nextFocusDown="@+id/coordDialogMGRSEastingText"/>
+
+    <EditText
+        android:id="@+id/coordDialogMGRSEastingText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4.75"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="@string/easting"
+        android:inputType="number"
+        android:maxLength="5"
+        android:nextFocusDown="@+id/coordDialogMGRSNorthingText"/>
+
+    <EditText
+        android:id="@+id/coordDialogMGRSNorthingText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4.75"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="@string/northing"
+        android:inputType="number"
+        android:maxLength="5"
+        android:nextFocusDown="@+id/coordDialogElevationText"/>
+
+
+    <EditText
+        android:id="@+id/coordDialogMGRSZoneSquareText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="5.5"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="Zone/Square"
+        android:visibility="gone"
+        android:inputType="textCapCharacters|textNoSuggestions"
+        android:imeOptions="flagForceAscii|flagNoExtractUi"
+        android:maxLength="5"
+        android:nextFocusDown="@+id/coordDialogMGRSEastingNorthingText"/>
+
+    <EditText
+        android:id="@+id/coordDialogMGRSEastingNorthingText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="9.5"
+        android:maxLength="10"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="Easting/Northing"
+        android:visibility="gone"
+        android:nextFocusDown="@+id/coordDialogElevationText"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/rawMGRS"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="15"
+        android:maxLength="18"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:hint="@string/mgrs"
+        android:visibility="gone"
+        android:nextFocusDown="@+id/coordDialogElevationText"
+        android:inputType="textNoSuggestions" />
+
+
+
+    <ImageView
+        android:id="@+id/swap"
+        android:gravity="center"
+        android:src="@drawable/swap"
+        android:paddingTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+</LinearLayout>

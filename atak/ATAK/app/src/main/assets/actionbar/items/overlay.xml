@@ -1,0 +1,7 @@
+<PersistedActionMenu baseline="true" hideable="false" iconPath="nav_overlay_manager" title="actionbar_overlays">
+   <ClickData actionType="click">
+      <broadcast>
+         <action>com.atakmap.android.maps.MANAGE_HIERARCHY</action>
+      </broadcast>
+   </ClickData>
+</PersistedActionMenu>

@@ -1,0 +1,30 @@
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/allToolsConfigUndo"
+        android:title="@string/undo"
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/allToolsConfigHideAll"
+        android:title="@string/hide_all"
+        android:showAsAction="ifRoom" />
+    <item
+        android:title="@string/more"
+          android:icon="@drawable/ic_action_overflow_orig"
+        android:showAsAction="ifRoom">
+
+
+        <menu>
+            <item
+                android:id="@+id/allToolsConfigSave"
+                android:icon="@drawable/ic_menu_save2"
+                android:title="@string/save_as"/>
+            <item
+                android:id="@+id/allToolsConfigDelete"
+                android:icon="@drawable/ic_menu_delete"
+                android:title="@string/delete2"/>
+        </menu>
+    </item>
+
+</menu> 

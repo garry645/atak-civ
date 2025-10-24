@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/bluetoothPreferences"
+        android:key="bluetoorh_preferences_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text268"
+            android:summary="@string/preferences_text269"
+            android:defaultValue="false"
+            android:key="atakControlBluetooth"
+            android:icon="@drawable/bluetooth" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text270"
+            android:summary="@string/preferences_text271"
+            android:key="atakBluetoothReconnectSeconds"
+            android:inputType="number"
+            android:icon="@drawable/bluetooth_reconnect"
+            android:defaultValue="180" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,159 @@
+** Release 4.2.4 - 2025-07-14
+BUG Fixes
+* gdal version changed to 2.4.4-tak-1.0.1 - default style for KML lines
+  and polygons matches Google Earth, see ENGINE-1013
+MISCELLANEOUS
+* libkml tak patch changed to no longer modify autoconf generated files to
+  be more resilient to different autotools versions
+* ogdi-pgsc.patch: Enhance support for building android targets on mac hosts
+* sqlcipher, assimp: Update support for building android on Windows/cygwin
+* Windows: Add support for VS 2019 Community Edition (in addition to
+  existing pro and "build tools" support)
+* Explicitly set NDK path to Cmake-based builds using Cygwin-safe path
+
+** Release 4.2.3 - 2025-05-15
+MISCELLANEOUS
+* commoncommo builds for Linux now build the "commotest" console application
+
+** Release 4.2.2 - 2025-04-26
+MISCELLANEOUS
+* Specify libcxx, cppstd per tak convention when publishing to conan
+* Fix windows conan2 compiler specification
+
+** Release 4.2.1 - 2025-04-25
+MISCELLANEOUS
+* Corrects erroneous command in conan2 publication
+
+** Release 4.2.0 - 2025-04-25
+MISCELLANEOUS
+* Conan publication recipe updated to be conan2 compatible
+* CI now publishes both conan1 and conan2 packages
+
+** Release 4.1.4 - 2025-02-21
+BUG FIXES
+* Update pdfium (gdal support for PDFs) to fix a crash in opening multi-page 
+  documents on Linux amd64. Other platforms already contained a build with
+  the fix.
+* Fix commoncommo build on Windows with newer Java versions (lacking javah)
+MISCELLANEOUS
+* Remove obsoleted cng-engine-pgsc.patch from distfiles; changes were
+  previously rolled into internal repository.
+* cng-engine updated for compatibility with VS2022/newer WinSDK versions
+
+** Release 4.1.3 - 2025-01-14
+BUG FIXES
+* Fix mdbtools library missing in Linux package
+
+** Release 4.1.2 - 2025-01-14
+BUG FIXES
+* Fix mdbtools Windows build to include missing headers, library
+
+** Release 4.1.1 - 2025-01-08
+BUG FIXES
+* Fix CI host configuration to install tools needed for compilation of
+  mdbsql library
+
+** Release 4.1.0 - 2024-12-26
+NOTABLE CHANGES
+* CI builds will now fetch source dependencies (gdal, assimp) with a strong
+  version identifier rather than just pulling in master.
+* New library mdbtools added (see TTP-15)
+
+** Release 4.0.1 - 2024-08-26
+BUG FIXES
+* Fix Windows build of protobuf after updates in 4.0.0
+
+** Release 4.0.0 - 2024-08-21
+NOTABLE CHANGES
+* Linux builds are now performed on Oracle Linux 8 (instead of OL7)
+* zlib updated to 1.3.1
+* openssl updated to 3.0.14+quic1
+* curl updated to 8.9.1
+* libxml updated to 2.9.14
+* libmicrohttpd updated to 1.0.1
+* nghttp2 updated to 1.62.1
+* ngtcp2 updated to 1.6.0
+* sqlcipher updated to 4.5.7
+* protobuf updated to cpp-3.21.0
+
+** Release 3.1.1 - 2024-07-03
+NOTABLE CHANGES
+* gdal will now render annotations within PDFs; see ATAK-17915
+MISCELLANEOUS
+* Correct a few issues with pdfium build script when building for desktop
+  Linux. No impacts on runtime behavior of the library
+
+** Release 3.1.0 - 2024-03-30
+MISCELLANEOUS
+* Add support for Linux arm32 hardfp and arm64
+* Add CI to build Linux arm32 hardfp and arm64
+* Update protobuf library to version 3.8.0 for bug fixes related to building
+  on Linux arm
+* Disable tests building on windows builds of openssl to decrease build time
+* Disable protoc when building the target tools on Windows to decrease
+  build time
+* Disable non-cpp language support when building protobuf on non-Windows to
+  decrease build time
+
+** Release 3.0.3 - 2024-02-28
+BUG FIXES
+* Set Android x86_64 ABI value properly so 64 bit binaries are built instead
+  32-bit ones; impacts all cmake-using packages
+
+** Release 3.0.2 - 2024-02-07
+MISCELLANEOUS
+* OpenSSL configuration change to include the legacy provider in support of
+  pkcs12 operations
+
+** Release 3.0.1 - 2024-02-07
+MISCELLANEOUS
+* gdal updated to utilize new provider-based CNG engine (see 3.0.0)
+
+** Release 3.0.0 - 2024-02-06
+NOTABLE CHANGES
+* OpenSSL updated to QuicTLS 3.0.12 (Release 1). Note Windows DLL names have changed to libcrypto-81_3.dll and libssl-81_3.dll
+* CNG Engine is updated to be OpenSSL 3.x compatible.  Note DLL name has changed to provider-ncrypt.dll and is now a provider rather than an engine
+
+** Release 2.13.0 - 2024-01-30
+MISCELLANEOUS
+* CI builder for Windows will now use VS2019
+* CI builder for Windows changed to docker container
+
+** Release 2.12.4 - 2023-11-10
+NOTABLE CHANGES
+* OpenSSL updated to QuicTLS 1.1.1w
+* curl updated to 8.4.0
+
+** Release 2.12.3 - 2023-11-06
+NOTABLE CHANGES
+* ngtcp2 updated to 1.0.1
+
+** Release 2.12.2 - 2023-10-16
+NOTABLE CHANGES
+* Java bindings for assimp (jassimp) are now built on Windows
+
+MISCELLANEOUS
+* CI builder for MacOS is disabled from this release onward until the CI
+  environment is stable again
+
+
+** Release 2.12.1 - 2023-09-21
+BUG FIXES
+* libcurl is now built using --without-ca-path and --without-ca-bundle. 
+  This fixes issues when curl is used on a different distribution (Linux)
+  than the build host used as curl would fail trying to load the
+  (non-existing) default ca bundle.  This change causes curl to defer to
+  openssl's default CA set which will not fail when it does not exist,
+  instead producing an empty set.  Uses of curl should be checked for
+  expectation of system CAs being present.
+
+** Release 2.12.0 - 2023-08-24
+NOTABLE CHANGES
+* Addition of ChangeLog document
+* OpenSSL changed from straight OpenSSL 1.1.1t to QuicTLS 1.1.1v, a fork which
+  exposes additional (otherwise internal) API. A side-effect of this is that
+  library name on platforms using dynamic linking has changed from
+  lib-1.1.1.{so,dll} to lib-81.1.1.1.{so,dll}
+* ngtcp2 library added
+MINOR CHANGES
+* cmake version minimum is now 3.20.0

@@ -1,0 +1,1379 @@
+** Release 1.17.2 - 2025-09-07
+MISCELLANEOUS
+* takthirdparty updated to 4.2.5 for Linux test application build
+* Bundle commotest in linux-dev CI output
+* Streaming connections will now re-resolve hostnames on each connection
+  attempt (see COMMO-45)
+
+** Release 1.17.1 - 2025-02-25
+NEW FEATURES
+* Sockets created by Commo will no longer be inherited by child processes 
+  (see COMMO-20)
+
+MISCELLANEOUS
+* Java: Fix Windows MSVC project file to work with newer versions of Java
+  (don't use javah)
+* Update takthirdparty to 4.1.4 for Windows compilation fixes with newer JDKs
+
+** Release 1.17.0 - 2024-12-13
+NEW FEATURES
+* Commo::sendMissionPackageInit() now supports specification of the security
+  related attributes (access, caveats, releasableTo) on CoT messages sent as
+  part of the file transfer.  Previous versions always defaulted these to
+  "Undefined"/empty/empty, respectively.
+
+API CHANGES
+* New variant of Commo::sendMissionPackageInit() added which allows for
+  specification of the security-related attributes on CoT events (see above)
+* Old variant of Commo::sendMissionPackageInit() remains, implemented as it
+  had been prior (access is "Undefined"), and is now deprecated
+
+** Release 1.16.1 - 2024-12-06
+BUG FIXES
+* Remove extraneous print statement on failed message parse
+
+MISCELLANEOUS
+* Java: Update build target VM compatibility version to 1.8
+* Java: Add debug and method parameter metadata to improve IDE use and
+  debugging experience
+* Add logging for most causes of failed CoT parsing on outbound messages 
+  (COMMO-39)
+
+** Release 1.16.0 - 2024-08-27
+MISCELLANEOUS
+* Linux CI build swapped to Oracle Linux 8 from OL7
+* Update takthirdparty to 4.0.1 to support the above
+* Replace deprecated curl_form* libcurl API calls with modern curl_mime*
+  calls; these calls were deprecated for some time but never marked as such.
+  Newer libcurl versions formally deprecate them with compiler directives;
+  calls are isolated to mission package uploads (COMMO-43)
+
+** Release 1.15.1 - 2024-07-09
+BUG FIXES
+* Recategorize a log message indicating success loading the openssl legacy
+  provider as info instead of error (COMMO-41)
+MISCELLANEOUS
+* Update takthirdparty to 3.1.1
+
+** Release 1.15.0 - 2024-03-30
+MISCELLANEOUS
+* Added Linux arm and aarch64 builds to CI
+* Update takthirdparty to 3.1.0 to pick up support for Linux arm, aarch64
+
+** Release 1.14.2 - 2024-03-09
+API CHANGES
+* Added Commo::SetDestUidInsertionEnabled(bool) to Win32/C++CLI bindings
+  to support this feature added in 1.14.0
+
+** Release 1.14.1 - 2024-03-09
+MISCELLANEOUS
+* TAK Server enrollment client (Commo::enrollment*()) will no longer use the
+  deprecated and legacy "v1" signing endpoint on the server. Enrollment on
+  TAK server versions prior to 1.7.0 will no longer function as of this
+  release. See COMMO-38, ATAK-16220
+
+** Release 1.14.0 - 2024-02-24
+NEW FEATURES
+* Add optional ability to insert contact's UID for direct peer-to-peer
+  messages as a cot detail. See ATAK-18608.
+API CHANGES
+* Added Commo::setDestUidInsertionEnabled(bool) to support above new feature
+BUG FIXES
+* Fix crash that could occur when a network interface goes down or other
+  socket-level error occurs while a quic client connection is being
+  serviced. See ATAK-18653
+* Correct a misleading log message about loading the openssl legacy provider
+MISCELLANEOUS
+* Embedded https server for data package transfer will no longer support
+  connections using TLS prior to 1.2. See COMMO-35
+
+** Release 1.13.0 - 2024-02-10
+MISCELLANEOUS
+* Windows CI builds now use docker container; as a side effect, CI builds
+  now use VS2019 (instead of VS2015)
+* takthirdparty updated to 3.0.2 to support use of VS2019 and to pick up
+  openssl update to 3.x.
+* Internal uses of openssl APIs deprecated in openssl 3.x have been replace
+  with non-deprecated alternatives; no client-facing impact is expected.
+
+** Release 1.12.2 - 2023-11-13
+MISCELLANEOUS
+* Disable verbose debug logging for QUIC based traffic for performance
+  reasons
+
+** Release 1.12.1 - 2023-11-10
+MISCELLANEOUS
+* takthirdparty updated to 2.12.4.  This updates openssl and curl to address
+  a few security vulnerabilities. See ATAK-18331 and ATAK-18181.
+* README-DISTRIBUTION.txt updated to include distribution notices on newer
+  libraries now used in commo
+
+** Release 1.12.0 - 2023-11-06
+NEW FEATURES
+* QUIC protocol (RFC 9000) is now available as an option for connecting to
+  streaming CoT (TAK) servers which support it.
+  This is intended for use on networks where TCP support is disabled or
+  crippled. Currently this is supported for the streaming CoT connection
+  only and any server API calls made over http (enrollment, data package
+  transfers, etc.) still rely on TCP support.
+API CHANGES
+* A new overload of Commo::addStreamingInterface() has been added which
+  adds an explicit specification of the underlying network transport to use
+  for the connection.  This discards the semantics of the existing call of
+  the same name that infers TCP versus SSL transport based on supplying
+  certificates or not.
+* Existing Commo::addStreamingInterface() has been deprecated in favor of
+  above.  Existing users should be able to easily transition to new form
+  simply by passing the new transport specifier.
+* StreamingTransport enumeration has been added in support of above.
+MISCELLANEOUS
+* Refactor internals of streaming server connection management
+* Refactor quic internals, pulling out core of quic connection to reusable
+  class
+* takthirdparty updated to 2.12.3
+
+**  Release 1.11.3 - 2023-10-14
+BUG FIXES
+* Java/Win64: Fix bundling of native libraries to pick up newer dependencies
+MISCELLANEOUS
+* Mac OS auto-builds are disabled going forward due to CI infrastructure
+  instability.  Mac builds will resume once stability is restored.
+
+** Release 1.11.2 - 2023-09-22
+BUG FIXES
+* Fix errors uploading/downloading data packages to/from TAK server on some
+  Linux distributions due to non-portable cURL library behavior.
+  takthirdparty updated to 2.12.1 to pick up relevant update to cURL (see
+  COMMO-28)
+
+** Release 1.11.1 - 2023-08-28
+BUG FIXES
+* Fix off by one error in implementation of IOProviderTester::seek()
+  when testing with FileIOProvider's seek relative to SEEK_END
+
+** Release 1.11.0 - 2023-08-25
+NEW FEATURES
+* QUIC protocol (RFC 9000) is now an option for direct messaging.
+  This support is intended for use on networks where TCP support is
+  disabled or crippled.  When a QUIC interface is added, use of QUIC
+  endpoints on discovered contacts is enabled and preferred over TCP
+  endpoints.  TCP will still be used for contacts that have a TCP endpoint
+  and do not advertise a QUIC endpoint. Similar treatment/prioritization is
+  used for bare UDP endpoints.
+* Data package transfers to/from a remote QUIC enabled endpoints will now
+  be tunneled over QUIC when the local device has enabled a QUIC interface.
+* Contact discovery now supports multiple endpoints of different types
+  via a new altendpoints attribute of contacts.
+API CHANGES
+* Commo::addInboundQuicInterface(), Commo::removeInboundQuicInterface(), and
+  class QuicInboundNetInterface have been added. These parallel
+  TcpInboundNetInterface class and functions for new QUIC support (see new
+  features above)
+- Java bindings: CommoException constructor marked public. See COMMO-23
+BUG FIXES
+* Fix minor memory leak when Commo::addTcpInboundInterface() is invoked
+  with invalid arguments
+* Fix minor memory leak in Commo::generateSelfSignedCert()
+* Fix potential crash in low memory situations in
+  Commo::generateSelfSignedCert()
+* Fix minor memory leak in Commo class if it is shutdown/destroyed
+* Java: Fix unclear exception throw in some failure cases of
+  Commo.sendMissionPackageInit()
+MISCELLANEOUS
+* Internal cleanup and refactoring for TCP interface handling to better
+  enable the addition of QUIC support
+* Internal cleanup and refactoring of contactmanager to simplify the
+  multiple endpoint advertisement support
+* Contact endpoint selection for outbound traffic is now prioritized based
+  on protocol type with reporting time delta timeout (previously this was
+  stictly "newest" advertised endpoint)
+* tak protocol "contact" message adds a new "altendpoints" property
+* takthirdparty updated to 2.12.0 (openssl updated to 1.1.1v+quic)
+* Change artifact packaging to account for new openssl library names
+* Increase logging verbosity for failure cases of 
+  Commo::sendMissionPackageInit()
+
+** Release 1.10.3 - 2023-06-08
+BUG FIXES
+* Fix case of "clientUid" parameter supplied to TAK server certificate signing
+  endpoint during enrollments. The old value (clientUID) matched original
+  documentation for the enrollment process which was erroneous. The old
+  erroneous parameter did not impact the ultimate outcome of the enrollment
+  but did cause functional gaps in TAK server administrative UIs. See COMMO-22
+
+** Release 1.10.2 - 2023-05-12
+BUG FIXES
+* Fix typo in CoT xml processing for new MIL-STD-6090 "releasableTo" element 
+
+** Release 1.10.1 - 2023-04-18
+MISCELLANEOUS
+* Portability changes to workaround compiler errors with newer versions of Xcode
+
+** Release 1.10.0 - 2023-04-18
+NEW FEATURES
+* TAK protocol encoding of CoT messages now supports new <event> attributes
+  added in final version of MIL-STD-6090 (specifically: "caveats" and
+  "releasableTo").  Additionally, previously optional "access" attribute is
+  now populated on decode always; if missing in source TAK proto message,
+  value is assigned the value "Undefined".
+MISCELLANEOUS
+* takthirdparty updated to 2.11.0
+
+** Release 1.9.0 - 2023-03-08
+NEW FEATURES
+* An extension mechanism for binary TAK Protocol's encoding of
+  CoT details has been implemented to enable pluggable extensions to encode
+  voluminous CoT detail elements into more compact forms. See CoT detail
+  protocol extension background document on the Commo wiki and the TAK protocol
+  document for additional background.
+API CHANGES
+* Commo::registerCoTDetailExtender and Commo::deregisterCoTDetailExtender
+  have been added to enable the detail extension feature described above.
+* New public interface (CoTDetailExtender) for client apps to implement
+  when using the above new extension feature.
+
+** Release 1.8.0 - 2023-03-01
+MISCELLANEOUS
+* takthirdparty updated to 2.9.2 - this marks first Android release with NDK
+  25b toolchain
+
+** Release 1.7.5 - 2023-03-01
+MISCELLANEOUS
+* Thirdparty dependencies (takthirdparty) version is now version controlled
+  when building from CI.
+  See support/takthirdparty-version.  Initial version: 2.8.6
+
+** Release 1.7.4 - 2023-02-14
+MISCELLANEOUS
+* Update OpenSSL dependency to 1.1.1t to address some potential security
+  concerns
+
+** Release 1.7.3 - 2023-01-09
+BUG FIXES
+* Java: Ignore IO errors when extracting native libraries. See ENGINE-629
+
+** Release 1.7.2 - 2022-12-06
+BUG FIXES
+* Add arbitrary values for "friendly name"/alias to trust chains received
+  as a result of TAK Server certificate enrollment with the "version 2"
+  certificate signing endpoint of TAK Server before bundling in PKCS12.
+  The aliases are not functionally important to client use, but they are
+  necessary for some Java Keystore provider implementations to process
+  them.  See ATAK-16961
+
+MISCELLANEOUS
+* Java: Add support for building on jdk 10 and higher. Support for older
+  jdks remains unchanged
+
+** Release 1.7.1 - 2022-08-23
+MISCELLANEOUS
+* Add more documentation on core (native C++ level) interface
+* Example added on using native API to connect to a streaming CoT (TAK) server
+* Java: Fixed several documentation typos and clarified some confusing points
+
+** Release 1.7.0 - 2022-07-14
+NEW FEATURES
+* TAK Server certificate enrollment has been implemented.  This new feature
+  enables acquiring client certificates from TAK Servers that have been
+  configured to provide such functionality.  This enrollment feature
+  obsoletes known uses of the Commo::*CryptoString functions; these
+  will be deprecated in a future release.
+
+BUG FIXES
+* Self-signed certificates provided by Commo::generateSelfSignedCertificate() 
+  now use SHA256 as the hash algorithm when signing the self-signing the cert
+  (see WTK-8913)
+* OpenSSL, libcurl, and libxml dependencies updated to address CVEs. See
+  WTK-8925
+
+API CHANGES
+* Commo::generateSelfSignedCertificate() now provides certificates using
+  more modern security parameters to address external security concerns
+  (SHA256 signing hash algorithm instead of SHA1)
+* Commo::setMissionPackageLocalHttpsParams() will now reject certificates
+  signed with SHA1 hashes due to security concerns (COMMO_ILLEGAL_ARGUMENT
+  will be returned). Applications that locally store certificates generated
+  by calls to Commo::generateSelfSignedCertificate() with previous versions
+  of Commo should force regenerate a certificate on first failure.
+* New functions in Commo: enableEnrollment(), enrollmentInit(), and
+  enrollmentStart() to expose client access to above described new enrollment
+  feature.
+* New interface (EnrollmentIO) and status object (EnrollmentIOUpdate) for
+  enrollment feature have been added (see enrollment.h for native API). 
+  These mimic the same style and general function of existing interfaces
+  and status firings for features such as mission/data package and simple
+  file interactions.
+* Java: Added interfaces (EnrollmentIO), status object (EnrollmentIOUpdate)
+  and new functions in Commo (see above) for enrollment feature.
+* Win32: Added C++/CLI interfaces and functions paralleling
+  above-described native additions for enrollment feature. See
+  commo_cli.h and enrollment_cli.h
+
+
+** Release 1.6.4 - 2022-05-13
+MISCELLANEOUS
+* Windows only: Update nuget package to hide native resources in projects
+  utilizing the nuget package. See COMMO-14
+
+** Release 1.6.3 - 2022-04-11
+MISCELLANEOUS
+* Add pdb files to Windows nuget package
+* OpenSSL dependency updated to 1.1.1n to address CVE-2022-0778
+
+** Release 1.6.2 - 2022-02-17
+BUG FIXES
+* A very infrequently seen but permanent error condition caused by
+  extremely high surges in I/O is now guarded against. This only impacts
+  non-Windows platforms. (COMMO-12)
+
+MISCELLANEOUS
+* The commo core library version string is now emitted to the provided
+  logger during Commo instance creation to better identify version in use
+  when logs are provided with bug/issue reports.
+* Nuget packages are now published for Windows with C# bindings
+
+** Release 1.6.1 - 2022-01-19
+MISCELLANEOUS
+* Linux x86-64 build targets CentOS/RHEL 7 using gcc 4.8.x
+
+** Release 1.6.0 - 2022-01-03
+API CHANGES
+* Commo::setMissionPackageLocalPort() (and equivalent in various language 
+  bindings) is now deprecated and will be removed in an upcoming release.
+  The embedded http server will be removed at the same time.
+  Applications should migrate now to using
+  Commo::setMissionPackageLocalHttpsParams() to configure the embedded
+  https web server. Additionally, prior to this version, the https server
+  depended on the http server being active/configured.  This restriction has
+  been removed and the https server now functions standalone.
+  See COMMO-10
+
+MISCELLANEOUS
+* Peer-to-peer file transfers will now inheritly use https URLs when the
+  local https server is enabled, rather than passing ancillary https-enabling
+  information alongside a legacy http URL. Receipt of a file transfer
+  request with ancillary https-enabling information will continue to be
+  processed as it has been to enabled interoperability with legacy senders
+  for the time being.  This support will be removed in an upcoming
+  release.  See COMMO-10.
+* Minor changes to internal implementation to remove c++11 constructs
+  not supported by earlier versions of gcc - enables building using 
+  gcc 4.8.x, most notably on CentOS/RHEL 7
+
+** Release 1.5.3 - 2021-11-23
+BUG FIXES
+* Any CoT message from a streaming server (TAK server) connection with a
+  <contact> detail element containing a callsign attribute was erroneously
+  being considered a reachable "contact". This could trigger off messages
+  for things like points and routes, resulting in false "contact" entries
+  being tracked and contactAdded messages being fired.  Following this fix,
+  only contact announcements with legitimate endpoint attributes under the
+  <contact> element will be considered "contacts". See COMMO-6.
+* For SSL-based streaming server (TAK server) connections and https data
+  package serving, fix some situations where a low-level SSL error triggered
+  by handling of one connection could cause errors in the handling of both
+  that connection and other connections.  See COMMO-7.
+
+MISCELLANEOUS
+* Win32 only: Add support to VS project files for VS 2022 
+* Logging for reception timeouts of multicast messages and subsequent
+  socket rebuild and rejoin issuing moved from debug to verbose level
+* Debug logging added to report the cot message reception queue size when
+  the backlog shrinks or grows by a threshold number of messages. This
+  is intended as a diagnostic aid for applications to determine if
+  app-side processing is keeping up with message reception.
+
+** Release 1.5.2 - 2021-11-12
+BUG FIXES
+* Fix a race condition that could result in memory corruption and crash of
+  the program utilizing commo.  This is only likely to occur when sending
+  multiple CoT messages directly to a remote contact in very rapid succession.
+
+** Release 1.5.1 - 2021-11-03
+MISCELLANEOUS
+* A new global symbol has been added to the core library that encompasses
+  a unique version string that can be reliably extracted using standard binary
+  utilities. Note that this is not meant for programmatic use;  an existing
+  public function (Commo::getVersionString()) already exists to obtain 
+  version information programmatically.
+
+** Release 1.5.0 - 2021-11-01
+NEW FEATURES
+* Interface name-based addressing is now supported on Linux (and Android)
+  platforms.  This is driven by the removal of MAC address access by
+  unpriviledged apps in Android 11.  See COMMO-4
+* Interface name-based addressing is now usable via the Java API
+
+API CHANGES - JAVA ONLY
+* New variant of Commo::Commo() allowing specification of addressing mode.
+  The existing variant remains and reverts to MAC/Physical addressing
+  for backwards compatibility.
+* New variants of the various address-specifying interface creation
+  functions have been added which take String interface names as arguments.
+  These are only usable in name-based addressing mode.
+  The old variants remain but are only usable in MAC/Physical addressing mode.
+* Interface name parameter added to PhysicalNetInterface, populated when
+  name-based addressing is used.
+
+BUG FIXES
+* Passing a previously removed StreamingNetInterface to 
+  Commo::removeStreamingInterface() will no longer cause invalid
+  memory accesses and possibly a crash. See COMMO-5
+
+** Release 1.4.0 - 2021-09-09
+NEW FEATURES
+* Runtime native libraries for Java desktop distributions are included
+  with jcommoncommo-rt.jar. Use of jcommoncommo-native.zip is deprecated
+  and the artifact will be removed from the distribution in the next
+  major version. Transparent native library loading is augmented to
+  unpack runtime libraries to the system temp directory (using a
+  well-formed name) and load using absolute path; failure to deploy/load
+  will result in an attempt to load `commoncommojni` by name.
+
+** Release 1.3.1 - 2021-08-05
+MISCELLANEOUS
+* libmicrohttpd >= 0.9.73 is supported.  Internal changes have been made
+  to adjust to the new libmicrohttpd API
+
+** Release 1.3.0 - 2021-07-14
+NEW FEATURES
+* Java only: Native library loading can optionally be done transparently 
+  during Java class loading.  This is controlled via optional property
+  (defaults to disabled to enact old manual loading by calling application
+   behavior) given to the Java build.
+
+API CHANGES
+* Java only: Commo::initThirdpartyNativeLibraries()'s behavior has been 
+  changed in relation to above-described new native library loading
+  functionality when built for transparent loading
+
+BUG FIXES
+* File transfers (data packages, cloud, simple) traditionally kept
+  connections to a host open for some time to optimize future file
+  transfers to/from the same host. Due to lower than anticipated
+  client limits on some servers (notably embedded http server on Windows
+  builds of commo) causing inability to accept new connections, this
+  optimization has been removed.
+  See issue report COMMO-3
+* Disabling, enabling, or changing the port or https certificates for
+  the https server proxy will no longer incur significant delays.
+  See issue report ATAK-14519
+
+
+** Release 1.2.1 - 2021-06-08
+NEW FEATURES
+* The pgscthread library has been removed as a necessary dependency.
+  Functionality it previously provided has been rolled into commoncommo
+  itself. This change should see zero impact at runtime to users of
+  commoncommo as its use was restricted to internal implementation, however
+  this is noted here for the benefit of those building commoncommo
+  to clarify that pgscthread is no longer needed at build/link time.
+
+
+** Release 1.2.0 - 2021-05-10
+NEW FEATURES
+* Additional detail has been added for some types of logging events, most
+  notably for incoming message parsing problems.
+* Semantic versioning has been adopted from this release forward;
+  a version comprised of major.minor.patch will now be used.
+  Non-api impacting changes come with patch versions, API augmenting
+  and larger changes come with minor versions, and API breaking
+  changes come with major versions. A "build id" is also appended,
+  computed from the git commit hash in use.
+  The initial version number is 1.2.0 to make it higher than an
+  arbitrary 1.1.1 version previously having been assigned to some builds
+  prior to this feature being added.
+
+API CHANGES
+* CommoLogger's log() method signature has changed to include additional
+  information (see NEW FEATURES).  Existing implementations can adapt to the
+  change by simply ignoring the new "type" and "detail" arguments;  the 
+  other arguments are populated as they have been in the past. The new
+  arguments add specific details about log events for more sophisicated
+  logging display without need to parse the opaque log message string.
+* Major, minor, and patch level numeric values are now available in a new
+  public api header, commoversion.h
+* Commo::getVersionString() has been added as a static call to obtain
+  a string describing the version of the built library being used at
+  runtime.
+
+BUG FIXES
+* Update implementation to build against openssl version 7.62.0 and later
+  by handling a change in their internal definition of error codes.
+* Prevent a potential crash (at worst) or misbehavior (at best) of mission
+  package uploads to a TAK server on architectures where a long is not
+  64-bits due to a mismatch in data type passing through variadic function
+  arguments. The most common instance of this is 32-bit Linux and Windows
+  systems.  This bug will *not* impact 64-bit systems. This bug was
+  introduced in Release 2020-09-29.
+* Java only: Fix a resource leak issue in the JNI layer of the relatively
+  new file-based I/O abstraction layer.  This bug will only surface if
+  a Java-based "file i/o provider" is installed. All native i/o providers
+  (including the default) are not impacted by this bug.  This bug was
+  introduced in Release 2020-09-29.
+
+
+** Release 2020-09-29
+NEW FEATURES
+* File-based I/O is now performed through a layer of abstraction allowing
+  the client application to supply an alternate file open/read/close
+  mechanism. If no alternate I/O implementation is registered,
+  the default implementation uses the underlying OS/libc's simple file IO 
+  to mimic behavior of previous Commo releases.
+* TCP port used for http interactions with TAK server (primarily mission
+  package transfers via a TAK server) is now configurable (similar to how
+  the same port setting for https interactions was in prior versions).  The
+  default for this new setting is port 8080, which emulates the behavior of
+  prior Commo versions.
+
+API CHANGES
+* Java only: Addition of Commo::registerFileIOProvider() and
+  Commo::deregisterFileIOProvider() plus supporting interfaces to implement
+  the new file-based I/O abstraction feature detailed above.  Support
+  for other languages is not planned and will default to the legacy file
+  I/O behavior.
+* Added Commo::setMissionPackageHttpPort() to provide the TAK server http 
+  port use described in the new feature, above.
+
+
+** Release 2020-06-09
+NEW FEATURES
+* The "CloudClient" API now includes a method by which to request
+  that a remote resource (file or collection) be deleted.
+
+BUG FIXES
+* Fix a logging message associated with the https server to report
+  the correct old port when the port is changed. It was reporting
+  the old port as the current http server port.
+* Fix default connection timeout used by https proxy.  Was 20 seconds, now
+  90 seconds for consistency with prior (pre-https) mission package api
+
+API CHANGES
+* Addition of CloudClient::deleteResourceInit() and
+  CloudIOOperation::CLOUDIO_OP_DELETE. These are related to the new remote
+  resource delete feature
+* Win32 C++/CLI Only: Added Commo::SetMissionPackageLocalHttpsParams()
+  and Commo::GenerateSelfSignedCertificate() to C++/CLI bindings. See
+  2020-05-27 notes for more on this new API.
+
+
+** Release 2020-05-27
+NEW FEATURES
+* Data package transfers directly from device to device (no TAK server
+  involved) now prefer to use https when enabled on the sending device
+  and the receiving device supports it.  This behavior is invoked on
+  receipt if a few new tags in the CoT message initiating the file transfer
+  are present. For the next few releases, commo will support interop with
+  older versions by continuing to host sent files on both http and https
+  and setting these new tags to signal current version receivers that https
+  is available.  In some future release, the send path will set only one of
+  these new tags (which signals the transfer is peer to peer to help
+  receiver determine correct trust parameters versus those that are hosted
+  on a TAK server), will begin sending https URLs directly, and will
+  terminate the availability of the http server hosting files to send.
+
+API CHANGES
+* Added Commo::setMissionPackageLocalHttpsParams() to configure the
+  https server. Applications need to invoke this to enable the https
+  functionality.
+* Added Commo::generateSelfSignedCertifate() as a convenience to generate
+  a certificate for the device to use.
+
+
+** Release 2020-04-07
+BUG FIXES
+* Data package uploads to a TAK server would cause commo to not clean
+  up properly during shutdown likely resulting in a crash. This problem
+  first appeared in release 2018-05-08
+
+
+** Release 2020-02-13
+BUG FIXES
+* When translating from TAK Protocol (protobuf) back to XML,
+  the "opex" attribute of the <event> element was erroneously
+  being represented as the "access" attribute. (ATAK-12302)
+
+
+** Release 2020-02-12
+API CHANGES
+* Win32 only: CloudIOProtocol enumeration updated to add FTP(S)
+
+BUG FIXES
+* Win32 only: Querying local file size (done as part of mission package
+  transfers, simple file uploads, and cloud interface uploads) would leak
+  open files.  This could also cause files to remain "locked" for reading.
+
+
+** Release 2019-12-10
+NEW FEATURES
+* Cloud file service client has been augmented with FTP and FTPS transfer
+  capabilities
+
+API CHANGES
+* CloudIOProtocol enumeration has been extended to add FTP and FTPS
+  protocols.  See above new feature.
+
+BUG FIXES
+* Long directory listings using an owncloud client could report incomplete
+  results or nonsensical errors.
+
+
+** Release 2019-11-18
+BUG FIXES
+* Time values encoded in TAK Protocol and subsequently converted back to
+  strings now include the full value down to millisecond.  Previously
+  it only converted whole seconds back to strings. (ATAK-11847)
+
+
+** Release 2019-10-31
+NEW FEATURES
+* Cloud file service client has been added with ability to send files,
+  get files, make folders, list folders, and rename files/folders.
+  Owncloud is the only supported service at the moment.
+
+API CHANGES
+* Numerous classes added to support new cloud feature: CloudClient and
+  CloudIO are the main ones, with CloudCollectionEntry and several enums
+  to support.  See cloudio.h.  Currently only available for Java/JNI outside
+  core.
+
+BUG FIXES
+* (Java/JNI only) Fix small memory leak in mission package transfer support
+* Explicitly initialize simple file transfer id's to start at 0
+
+MISC CHANGES
+* Type safety changes to support windows 64 bit compile
+* Add windows 64 bit compile configuration to MSVC project files
+
+
+** Release 2019-07-15
+API CHANGES
+* Commo::generateKeyCryptoString() now takes a key length argument.
+  Existing callers can use 2048 as keyLength to get behavior equivalent
+  to prior versions.
+
+
+** Release 2019-05-24
+BUG FIXES
+* Fix interface scanning to correctly locate interfaces named "tun1"
+
+
+** Release 2019-05-15
+BUG FIXES
+* Fix <precisionlocation> tag not being restored properly on receipt
+  of v1 protobuf optimized version.
+
+
+** Release 2018-12-19
+API CHANGES
+* Commo::broadcastCoT, Commo::sendCoT, Commo::sendCoTTcpDirect,
+  Commo::sendCoTToServerMissionDest, and Commo::sendCoTServerControl
+  not return COMMO_ILLEGAL_ARGUMENT if the XML message is greater
+  than the maximum allowed CoT message size (currently 64k)
+
+
+** Release 2018-12-14
+BUG FIXES
+* Reduce logging that occurs when streaming connection message
+  parsing buffer capacity will be exceeded and/or TAK protocol magic
+  byte is not found where expected.
+   
+
+*** Release 2018-12-10
+NEW FEATURES
+* (Linux/Android only: Add "fake" addressing for interfaces ppp0-ppp9
+
+
+*** Release 2018-11-12
+BUG FIXES
+* Streaming TAK server connection timeouts were ignoring the amount of time
+  that the initial SSL handshake would take. In very infrequent circumstances,
+  the connection attempt could get stuck if the remote end accepted the TCP
+  connection but stalls completing the SSL handshake. The connection timeout
+  now monitors the handshake process and the time to complete it is
+  limited by the connection timeout as well.
+* Fix a memory leak in the translation to/from protobuf (TAK Protocol)
+
+
+*** Release 2018-09-27
+NEW FEATURES
+* Ability to set preference on what type of endpoint should be used for
+  contacts known by both mesh (local/direct) means and streaming TAK server.
+  By default, mesh (local) endpoints are preferred to be compatible with
+  prior behavior.
+
+API CHANGES
+* Commo::setPreferStreamEndpoint(bool) was added to support the above new
+  feature.
+
+MISC CHANGES
+* OpenSSL and libcurl dependencies updated - core internal implementation
+  updated to match new OpenSSL API.
+* Additional logging added around intentional SSL connection disconnects
+* Win32 Only: OpenSSL library names have changed. libeay32.dll is now
+  libcrypto-1_1.dll and ssleay32.dll is now libssl32-1_1.dll
+  
+
+*** Release 2018-09-12
+BUG FIXES
+* Java/JNI only: Fix crash that would occur if setCryptoKeys() is
+  called with NULL arguments
+
+
+*** Release 2018-09-10
+NEW FEATURES
+* Added ability to create datagram sockets that listen for generic data
+  and post it to a new generic data listener interface. 
+* Added ability to encrypt and decrypt non-TAK server CoT traffic.  This is
+  done using a symmetric cipher using pre-shared keys.  If enabled, it is
+  used for both receive and send on all CoT inbound and outbound interfaces
+  that are not TAK server based (TAK server encryption has been supported for
+  a long time). See Commo::setCryptoKeys()
+
+API Changes
+* Commo::addInboundInterface() now receives an additional argument to indicate
+  if the interface should be used for receiving CoT messages or generic data
+* New interface: GenericDataListener
+* Added Commo::addGenericDataListener() and Commo::removeGenericDataListener()
+* CoTMessageListener::cotMessageReceived() will now populate rxIfaceEndpointId
+  for udp and tcp messages received (previously always NULL for these, and
+  non-null for streams).  The format is "*:portnumber:udp" for UDP and 
+  "*:portnumber:tcp" for TCP, where portnumber is the integral port number
+  of the port on which the data was received.
+* Commo::setCryptoKeys() has been added to support the above-described new
+  encryption feature.
+
+BUG FIXES
+* Win32/C++CLI Bindings: Translate System::String's to native strings
+  using UTF-8 encoding where appropriate.  Fixes relevant parts of WTK-3729.
+
+
+*** Release 2018-08-02
+BUG FIXES
+* Fix a bug that was causing data elements carried as double's in TAK protocol
+  to contain only 3, 4, or 5 digits of precision after the decimal point.
+  This fix forces 8 digits of precision after the point.  This most notably
+  is a concern for latitude/longitude data elements, but also impacts 
+  hae, ce, le, speed, and course.
+
+
+*** Release 2018-07-20
+NEW FEATURES
+* Ability to force advertisement of local mesh network endpoint to a UDP
+  endpoint instead of the TCP default.  Use of this functionality is intended
+  for very restricted and specific audiences only, thus should not be used
+  widely.
+
+API Changes
+* Add Commo::setAdvertiseEndpointAsUdp() to implement the above new feature.
+  Presently only available in JNI bindings and native core.
+
+
+*** Release 2018-07-18
+MISC. CHANGES
+* TAK Protocol v1 changed to make contact endpoint optional to
+  conserve additional bandwidth
+  - THIS CHANGE MUST BE APPLIED TO ALL PRODUCTS PRIOR TO RELEASE
+    Do not use 2018-06-25 or 2018-07-17 in release products!
+* Remove debugging output for TAK protocol negotiation
+
+
+*** Release 2018-07-17
+NEW FEATURES
+* Internally created threads are now named
+
+BUG FIXES
+* Use SSL configuration of the server from which a mission package transfer
+  request is received if the sending device's UID specified in the transfer
+  request message does not have an associated stream endpoint. This is
+  primarily intended to allow transfer requests from "fake" contacts
+  (TAK server in particular) to succeed (ATAK-8229)
+
+
+*** Release 2018-06-25
+NEW FEATURES
+* TAK Protocol Support:
+    - Entirely new device-to-device protocol support added that uses
+      Google's protocol buffers as an encoding for common cot event elements
+    - On mesh networks:
+        - System starts out using new TAK protocol for sending outgoing
+          messages
+        - Each system that supports this protocol advertises this support
+          periodically on the network
+        - If a system sees another device that does not support the new
+          protocol, it will fall back to the legacy XML-based communication.
+          Once the legacy device disappears from the network for a modest
+          time, new protocol use will resume.
+        - Receipt of XML works always, so any legacy devices will always be
+          seen immediately
+        - On networks with old and new devices, there may be a latency of a
+          few minutes with this negotiation takes place until new devices
+          fall back to sending out XML and are seen by old devices
+    - When connecting to TAK servers:
+        - The initial connection is always legacy XML based
+        - TAK servers supporting the new protocol send a special message
+          to indicate such; this message is consumed by Commo
+        - Commo swaps the session over to the new protocol once this message
+          is seen.
+        - If connected to a server not supporting the protocol, the session
+          will simply continue to use legacy XML
+    - New protocol collapses the sizes of typical SA messages by about 50%
+* Win32 only: Visual Studio projects updated to VS2015 format and tools
+
+API Changes
+* Java/JNI only:  Added cotXmlToTakproto() and takprotoToCotXml() to Commo.
+  These are utility functions to convert XML to TAK protocol binary blobs and
+  vice-versa.
+* Added Commo::getBroadcastProto() - this returns the version of the
+  TAK protocol currently in use by the mesh network broadcast system as
+  derived from the negotiation process.
+  
+
+
+*** Release 2018-05-08
+NEW FEATURES
+* Add ability to set UDP socket receive timeout.  This controls the period
+  after which no data has received on the socket where the system
+  both rebuilds that socket and issues any necessary multicast joins.
+  Prior to this feature, this timeout was fixed at 30 seconds (which is the
+  new default)
+* Significant rework of mission package send/receive features to provided
+  some new functionality (see API Changes):
+  - Easier to use and more complete progress tracking for sends and receives
+  - More detailed error reporting
+  - Ability to disable or change port number of local web server
+  - Ability to enable or disable sending files via TAK servers
+  - Ability to set https port used when contacting a TAK server's web 
+    interface during mission package transfers
+
+
+API Changes
+* Added setUdpNoDataTimeout() to Commo class to provide above mentioned
+  UDP timeout feature.
+* Commo::enableMissionPackageIO() is now Commo::setupMissionPackageIO() and
+  only serves to provide client-side interface for MP IO. The "enable/disable"
+  functionality is now separate (read on).  The function of the 
+  MissionPackageIO interface is largely the same as before.  This function
+  no longer receives the local web server port number. The default state
+  of the local web server (and point to point sends of mission packages)
+  is now *disabled* - see below for how to enable.
+* New function: Commo::setMissionPackageLocalPort(int) - sets the local
+  web server's port number. Unlike the prior interface, this also allows
+  the local web server to be disabled or enabled at runtime, as well as
+  change the port number.
+* New function: Commo::setMissionPackageViaServerEnable(bool) enables
+  or disables sending of MPs via TAK servers when appropriate.
+* New function: Commo::setMissionPackageHttpsPort(int) to set port number
+  used to contact https interface of TAK servers
+* Sending mission package function call changes: the process for sending
+  MPs has gone from a single function call (Commo::sendMissionPackage()) to 2
+  function calls, one which initializes the transfer and provides the
+  ID used for progress tracking (Commo::sendMissionPackageInit()), and one
+  which starts the transfer (Commo::sendMissionPackageStart())
+* The MissionPackageTransferStatus enumeration has all values redefined.
+  Several new values have been added and the old values have had some
+  redefined usage in the API (see below).
+* MissionPackageTransferStatusUpdate has been renamed to 
+  MissionPackageSendStatusUpdate and several changes have been made to
+  its members and meanings.
+* New class - MissionPackageReceiveStatusUpdate - used in callbacks
+  for MP receiving progress events.
+* MissionPackageIO interface changes:
+  a. All functions reflect the changes to MissionPackageTransferStatus
+  b. missionPackageReceiveComplete() removed; receive completion is now
+     part of the new receive progress callback
+  c. missionPackageReceiveStatusUpdate() added; indicates receive progress
+     and completion
+  d. missionPackageSendStatus() updated to use newly redefined
+     MissionPackageSendStatusUpdate class. Now provides additional progress
+     information and details
+* Obj-C only: Add bindings for CSR generation functions that were previously
+  added to other platforms but missing from Obj-C.
+* Java only: JNI Library loading changed to remove internal loading. 
+  Applications must now load library manually. Convenience call to do
+  initialization of third party libraries no longer loads native libraries;
+  function name is changed to reflect this.  Load checking is no longer
+  done in Commo constructor; load check is on application now.
+
+BUG FIXES
+* Remove ability for Commo::enableSimpleFileIO() to accidentally throw
+  invalid_argument; instead, catch and return appropriate code.
+* Java/JNI Bindings: Fix a small memory leak when sending mission packages
+* Java Bindings: Fix documentation errors for enableSimpleFileIO()
+* C++ CLI bindings: add simple file IO interface
+* C++ CLI bindings: Fix bug where Commo::SetStreamMonitorEnabled() was not
+  actually doing anything
+
+
+*** Release 2018-03-11
+API Changes
+* generateKeystoreCryptoString now takes an array/list of CA certificates
+  to allow for intermediate CA certs in the trust chain.
+
+
+*** Release 2018-03-09
+NEW FEATURES
+* Add new functions to Commo class to enable generation of
+  certificate signing requests (CSRs) to TAK server and processing
+  of said certificates when they return from the server.
+  This is a port of the ATAK function provided by "crypto-utils".
+
+API Changes
+* Add generateKeyCryptoString, generateCSRCryptoString, 
+  generateKeystoreCryptoString, and freeCryptoString. These implement
+  the above described new features.
+  (not yet available for Obj-C, coming soon)
+  
+
+*** Release 2018-02-27
+API Changes
+* iOS/Obj-C only:  Change this platform to use named interface mode
+  instead of MAC address interface identification.  Update
+  Obj-c bindings to match this change.
+
+
+*** Release 2018-02-12
+API Changes
+* Internal implementation now uses a different library for thread 
+  implementation (pgscthread instead of PGSC_Utils's Thread lib).
+  Clients should notice no change, however builds will need to be modified
+  as follows:
+    - All platforms: pgscthreads is now needed as a sibling to commoncommo
+      Clone pgscthread from
+      https://git.pargovernment.com/PAR-Government/pgscthread.git
+      as a sibling to the commoncommo module.
+    - Win32 only: Common commo DLL now will have a dependency on
+      pgscthread.dll instead of Thread.dll.  pthreads DLL is no
+      longer used by commo!
+  "takthirdparty" will also now build pgscthread as a dependency for
+  commoncommo instead of PGSC_Utils.
+  This is a substantial change to the internals of the library. Upgrades
+  should be performed only at the start of a development cycle where
+  sufficient testing will be observed. If you need a version prior to this,
+  use a previously tagged release or the tag pre-pgscthreads.
+
+BUG FIXES
+* Obj-C only: Fix a typo in the obj-c bindings
+
+
+*** Release 2018-01-24
+NEW FEATURES
+* Linux/Android only:  Support tun0 and tun1 devices
+                  via "fake" mac/hw addresses since these typically do not
+                  have mac addresses of their own
+BUG FIXES
+* Win32/CLI only: Fix an issue with Commo::RemoveContactPresenceListener
+                  Make some changes to how things are torn down to try
+                  to resolve spurious crashes
+
+
+*** Release 2018-01-12
+BUG FIXES
+* Android/Linux only: Fix a problem related to scanning of network
+  interfaces that could result in an interface not ever being able to be
+  used for outbound datagram sockets.  The nature of the problem is such that
+  it is dependent on memory layout and does not appear to affect ARM
+  architectures, only x86, and even then only seen rarely outside of
+  emulators.  x86 emulators seem most impacted.  Affected installations will
+  display a log message like the following every 15 seconds or so: "Unable to
+  build outbound datagram socket (address 111.111.111.111); will retry later"
+
+
+*** Release 2018-01-02
+BUG FIXES
+* Fix a regression introduced with 2017-11-28 release that caused potentional
+  crashing when connecting to TAK servers with SSL enabled.
+
+
+*** Release 2017-11-28
+API Changes
+* Win32/CLI only: Commo instances created by CLI bindings will
+  always use "name" address mode. Physical interfaces must now
+  be created with interface (Network Adapter) names instead of
+  MAC/ethernet/physical addresses, since these are non-unique.
+  AddBroadcastInterface() and AddInboundInterface() have had their
+  method signatures changed to accept the name as a String rather than
+  the MAC/Phys address as a byte array.
+  PhysicalNetInterface has been updated to have its internal identifier
+  changed from a byte array MAC/Phys address to a String name/id.
+  See WTK-2427 for more background and detail.
+* New: Commo::enableSimpleFileIO(), Commo::simpleFileTransferInit(), 
+  Commo::simpleFileTransferStart() and the
+  SimpleFileIO interface in support of the new SimpleFileIO feature (see below)
+
+NEW FEATURES
+* Core only: Commo constructor has a new argument to determine the types of 
+  addresses used for physical interfaces. In the past, addresses
+  for physical interfaces were always the MAC/Ethernet address of
+  the interface. This argument now supports setting the Commo
+  instance up to work with interface names as the identifying
+  "address" instead.  Name mode is presently only implemented for
+  Win32.
+* SimpleFileIO: means by which to do a simple file transfer easily.
+  A simple file transfer, for the purposes of Commo, is an upload to
+  or download from a remote server application of a file using a
+  commonly available network protocol.  Currently supported protocols
+  are FTP and FTPS only. More protocols may be added in the future.
+  See Commo class's enableSimpleFileIO(), simpleFileTransferInit(),
+  and simpleFileTransferStart() calls,
+  as well as the SimpleFileIO interface and associated status enumeration.
+
+BUG FIXES
+* Fix a potential program crash due to an
+  uncaught exception that could occur when building the auth document
+  for authenticated connection to a TAK server.  Very unlikely to occur
+  except in drastically low memory conditions.
+
+  
+
+
+*** Released 2017-09-26
+
+API CHANGES
+* Win32/CLI only:  Added rxEndpointId argument to binding for
+  cotMessageReceived(). See 2017-07-10 for more.
+* Add streaming endpoint id argument to sendCoTToServerMissionDest() to
+  optionally indicate which servers to send the mission data too.
+* Add streaming endpoint id argument to sendCoTServerControl() to
+  optionally indicate which servers to send the mission data too.
+* Obj-C only:  Change name of sendCoTToServerMissionDest and
+               sendCoTToServerControlMessage to better reflect new parameters
+  
+
+*** Released 2017-08-04
+
+BUG FIXES
+* Correct undefined behavior if addBroadcastInterface is given an invalid
+  destination multicast address.
+
+
+*** Released 2017-07-27
+
+API CHANGES
+* MissionPackageTransferStatusUpdate objects referred to in callbacks to
+  MissionPackageIO::missionPackageSendStatus() may now have a NULL recipient,
+  but only if the transfer whose status is being reported was initiated via
+  the new sendMissionPackage() variant that sends to a TAK server rather than
+  one or more contacts.  See NEW FEATURES.
+  
+
+NEW FEATURES
+* It is now possible to direct a mission package send at a specific TAK server.
+  Much like sending to one or more contacts known via a TAK server,
+  the server will be queried to see if the MP exists and uploaded if not.
+  In either event, the client application is notified as to the completion.
+
+
+BUG FIXES
+* Obj-C and Win32 only: Corrected documentation on "recipient" member of 
+  MissionPackageTransferStatusUpdate. It erroneously stated that this
+  was the callsign of the recipient to which the update pertains 
+  (it is actually the UID).
+* Avoid a very-hard-to-trigger memory leak in Commo::sendMissionPackage()
+  This can only be triggered by very odd combinations of send destinations
+  and lucky network conditions.
+* iOS only: Fix a compilation error introduced in or near 2016-11-18 release
+
+
+*** Released 2017-07-24
+
+BUG FIXES
+* File transfer (n)acks will no longer include a <contact> element.
+  In addition, <contact> elements in received file transfer
+  (n)acks will be ignored. Versions prior to this, and old
+  versions of ATAK that did not use commo, would set the callsign
+  attribute of the file transfer (n)ack to contain the UID of the
+  (n)acking device, rather than the callsign itself.  This confused
+  contact callsign tracking (which is vital for TAK server
+  communications). ATAK no longer adds a <contact> to (n)acks,
+  thus commo is removing to match.  We are ignoring the <contact>
+  on these messages to better improve interop with old versions of
+  commo and ATAK (since we know their callsigns are likely wrong).
+  See WTK-2132 for more info.
+* Callsigns included in file sharing URLs are now URL escaped before
+  the file transfer request URL is sent out.  Previously this
+  was only done for TAK server-based URLs, but it is now done
+  for local URLs as well. See ATAK-6593.
+
+
+*** Released 2017-07-10
+
+API CHANGES
+* CoTMessageListener::cotMessageReceived() now receives 2 arguments 
+  instead of 1. See NEW FEATURES
+
+NEW FEATURES
+* CoTMessageListener::cotMessageReceived() will now receive both
+  the message and an identifier of the NetworkInterface upon which
+  it was received.  Currently this is implemented only for
+  StreamingNetworkInterface's and exposed beyond core
+  only for the Java language bindings.
+* Clean up compilation on very old versions of CentOS
+
+
+*** Released 2017-06-08
+
+NEW FEATURES
+* A mechanism to "workaround quirks" of various runtime platforms that
+  is not automatically detectable was added to the core system.
+  Quirks are exposed only on platforms to which they are relevant.
+  Currently only one quirk workaround is available, for the Magtab
+  device's multicast sending oddities.  It is exposed in the JNI
+  bindings only as it is only run on Android.
+
+BUG FIXES
+* Fix resource exhaustion check for inbound message parsing on
+  tcp interfaces.  This bug, prior to being fixed, effectively
+  rendered the resource exhaustion check useless.
+  Inbound messages are now capped at 500kB
+
+
+
+*** Released 2017-01-31
+
+NEW FEATURES
+* An overloaded version of addBroadcastInterface() was added that allows
+  one to add a broadcast destination that is a unicast address.  Because
+  there is no need to tie unicast sends to a specific outbound physical
+  address, this variant of addBroadcastInterface() also does not require
+  a physical (hardware) address to identify such.
+  Note that passing a multicast address to this variant will result
+  in an error return.
+* In support of the above feature and in attempt to make endpoint
+  derivation on the receiving end be as reliable as possible,
+  a new "use the source address of this message" endpoint specification
+  has been added.  This will appear in a cot contact element as
+  endpoint="unusedstring:port:srctcp". The "protocol" of srctcp
+  specifies to the remote commo implementation that the source address
+  of the cot message should be used as the endpoint host portion,
+  coupled with the specified TCP port.
+
+
+NEW FEATURES - Linux/Android only
+* Add yet another way to get the physical/MAC address of a network interface;
+  we now query netlink for this information when we query IP address info.
+  If this fails, we fall back to the other two already existing methods
+  (SIOCGIFHWADDR and reading out of /sys, in that order).
+
+
+BUG FIXES
+* Commo::addBroadcastInterface() would erroneously accept a unicast
+  address in the mcastAddress parameter.  While this would sometimes
+  function to broadcast to a unicast address on a given port, 
+  this functionality was not guaranteed to work.  Furthermore it was
+  inconsistent with the API documentation and didn't make a lot of sense
+  overall.  Beginning with this release, passing a unicast address
+  to the existing multicast variant of this function with result in
+  an error return.
+* Fix a very unlikely but nonetheless possible invalid memory access
+  that could cause a crash when enumerating network interfaces (Android only)
+
+
+*** Released 2016-12-08
+
+NEW FEATURES
+* Increased logging level of TCP listening socket creation and failures
+  to bind to desired ports.
+
+BUG FIXES
+* Scanning of interface IPs will now detect and properly react to
+  an interface whose IP changes suddenly without any substantial
+  unconfigured/downtime in between.  Symptoms of this problem may
+  have been lack of SA reception after IP change accompanied by
+  many log messages indicating failure to join multicast groups
+  on the old IP of the interface.  This event is also logged akin
+  to hardware up/down events.
+* Fix possible crash if an inbound tcp interface was requested to be
+  added (addTcpInboundInterface()), the port was already in use, and then
+  subsequently some other TCP traffic occurred.
+* Fix return value of addTcpInboundInterface() to return success if the
+  port is not immediately open on the local system, and initiate continued
+  retries to get the port.  Previously it would leave the interface in a
+  partly initialized state and never retry, possibly leading to the
+  bug mentioned immediately above this one.
+  
+
+
+
+*** Released 2016-11-30
+
+NEW FEATURES
+* Added function setMulticastLoopbackEnabled() to allow controlling if
+  outbound multicasts are looped back to the local system or not.
+
+BUG FIXES
+* None
+
+
+*** Released 2016-11-18
+
+NEW FEATURES
+* Commo will now add the "creatorUid" parameter to the missionupload URL when
+  sending files to a TAK server for mission package transfers.  This results
+  in the sender's callsign being displayed in the Enterprise Sync web view
+  of the TAK server.
+* An option to allow "address reuse" on UDP sockets was added.
+  This allows other applications to bind to the same UDP port that inbound
+  interfaces in Commo are listening on.  NOTE: This will cause unreliable
+  delivery of any unicasted packets to the commo interface.  This option
+  should only be used when inbound udp interfaces are solely expecting
+  multicast traffic.
+  This option is currently only implemented/supported on Windows and Linux;
+  because of this has been intentionally omitted from the Obj-C
+  bindings.
+
+
+
+BUG FIXES
+* A device with a space or other non-URL-legal character in their callsign
+  would fail to receive mission packages in many situations due to the
+  callsign being placed in the URL without escaping.  The Callsign is now
+  URL escaped when used in a URL.
+* Attempting to send a mission package to a TAK-server-known recipient with
+  a space or other non-URL-legal character in the file name would fail to
+  upload to the TAK server.  Filename is now URL escaped when used in
+  a URL.
+* Adding an input interface with an array of multicast addresses 
+  that contained 2 or more of the same address would previously succeed;
+  this was unintentional and should've triggered an error. It now does so.
+* Win32 CLI bindings only:  Marshal file name and transfer name string as UTF-8
+  to produce compliant cot message for file send. See WTK-1249
+* Commo will now strip any <_flow-tags_> element found under the 
+  <detail> element.
+  This is to ensure transit through TAK servers.
+  See https://jira.pargovernment.net/browse/WTK-1434 for more detail.
+
+
+*** Released 2016-08-24
+
+>>> IMPORTANT NOTES FOR THIS RELEASE <<<
+* TCP Endpoints are now the advertised endpoint in broadcast/multicast
+  messages!  Prior versions of Commo advertised an endpoint of
+  "ipaddr:6969:udp". This version advertises as "ipaddr:4242:tcp".
+  To interoperate correctly you MUST add an inbound TCP interface on port
+  4242!
+* To interoperate with older versions (and of course to get the widely used
+  multicasts for the TAK family) you will want to continue using a UDP inbound
+  interface on port 6969.
+* Several API calls have changed and are detailed below.
+
+BUG FIXES
+* Connecting to an authenticated TAK server with a username or password
+  containing characters regarded as "special" by XML would fail.
+  Particularly, this is the '&' character. Quoting is now performed
+  on the authentication message sent to TAK server.
+* Documentation added for methods of InterfaceStatusListener
+* Several optimizations to UDP datagram reception
+* (Windows only): Multicast sending to an address that is also one
+  for which we subscribe to receive on will no longer result in
+  receiving a copy of the sent data locally.
+
+
+NEW FUNCTIONALITY
+* Ability to set TCP connection timeout. This is used when making any TCP
+  connection to a remote host (for streaming/TAK server, including SSL, or
+  remote contact's TCP endpoint **except for** connections associated
+  with mission package file transfer; use the mission package timeout
+  setting for this.
+* Stream monitoring: Streaming (TAK Server) interfaces are monitored
+  continuously. If no data is received on a given interface
+  after an implementation-defined period of time, a special "ping"
+  CoT message is sent to the remote server. Servers will reply to this
+  with a "pong" message and the timeout is reset. If no response (or no
+  new data) arrives after another implementation defined period of time,
+  the connection is torn down and we attempt to reconnect under the
+  assumption the connection is somehow no longer functional.  This function
+  defaults to on, but can be disabled via a new API call.
+* TCP Support: Commo now supports listening on TCP ports and sending
+  to other remote devices via TCP connection. 
+  - New methods {add,remove}TcpInboundInterface allow creation and
+    removal of local TCP listening interfaces. These work just like the
+    existing {add,remove}InboundInterface methods for UDP, but are instead
+    for TCP. Unlike the UDP counterparts, they DO NOT require any
+    specific physical interface specification with MAC addresses; they merely
+    require a local port number. Of course they do not support receiving
+    multicasts either.  These interfaces are intended for the
+    "connect-send-quit" style of message passing.
+  - Registered CoTMessageListeners will receive messages sent to TCP inbound
+    interfaces just like traditional (UDP) inbound interfaces.
+  - sendCoT(ContactUID) supports contacts whose endpoints are TCP-based now
+* Notification of failure to send a CoT message:  a new listener interface, 
+  CotSendFailureListener, can be registered via new API calls.
+  These listeners will be notified of any detectable failure to
+  asynchronously send a directed (non-broadcast) CoT message.  This is
+  of course only possible with TCP-based remote destinations. The callback
+  of this interface is expected to be advisory in nature and not an
+  absolutely reliable and traceable means by which to track message send
+  success or failure. ATAK uses this to present simply "heads up"
+  notifications to the user.  The registered Logger is still used in 
+  these types of situations - this is just a means to get user-friendly
+  advisory messages about a specific subset of failure notifications.
+* Ability to send via specific methods: The existing 
+  sendCoT() and broadcastCoT() methods have had optional parameters/second
+  forms now that allow the send/broadcast to be restricted to a specific
+  method of transmission, namely: streaming/tak server, 
+  point-to-point/mesh network, or both. The existing behavior (and default
+  method of) these functions remains the same - we try to send via
+  the most appropriate of all known methods to reach the recipient.  This
+  function was added for some very particular corner cases in ATAK and you
+  likely will not need to use it.
+* A new API call to send directly to a remote TCP host/IP and port.  THIS
+  CALL IS DEPRECATED AND SHOULD NOT BE USED, as marked in the API
+  docs.  Use sendCoT(ContactUID) instead. It was added to address
+  some legacy function in ATAK until it they can be reworked.
+* A new API call to send a CoT message to all connected streaming interfaces
+  (TAK servers) with special addressing such that the TAK server processes
+  it as a control message.  What uses this, how it is used in practice, and
+  what the TAK server is not something I am aware of; you likely will not
+  need this until whatever that feature is matures more.
+* "Contacts" configured via configKnownEndpointContact can now have a
+  multicast endpoint that will function properly (goes out all interfaces
+  not just whatever interface is default route for multicast traffic on
+  the host system)
+* A new API call to send a CoT message to all connected streaming interfaces
+  (TAK servers) addressed not to specific contacts, but to a specific
+  mission identifier was added. This is also something that I am not
+  entirely sure of how it is used in practice.
+* Contacts known solely via TAK server endpoints will now be passed
+  as an argument to any registered ContactPresenceListener's
+  contactRemoved() if the connection to the server is lost or if the
+  streaming interface to that server is removed; the contact
+  will be considered as "gone" for future sendCoT() and similar function
+  invocations until they are rediscovered on the network.
+* A new callback method has been added to the InterfaceStatusListener
+  interface.  This method is called when an attempt to bring up an interface
+  unexpectedly fails for some reason (host unreachable, etc.) or if an
+  established interface is unexpectedly brought down forcibly by some error
+  (timeout, I/O error, etc).  You can safely no-op this callback if you
+  are not interested in the error information.  Currently this is only
+  actually implemented for streaming (TAK server) connections.
+* addStreamingInterface() now returns more detail on what failed.  The
+  exact mechanism by which this is returned depends on the language binding
+  (Java uses exception details, obj-c uses CommoResult error code, CLI tbd).
+  Most notable here, this allows you to detect cert password mismatches or
+  invalid certificate structure/format.
+* CommoResult has a few new constants added to the enum to support the
+  additional error detail from addStreamingInterface(). Only addStreaming
+  presently uses these new constants; all existing APIs have remained the
+  same. Depending on language binding compiler settings, it may be necessary
+  to add additional case/default settings to switch()-like statements,
+  however, if the toolchain checks that all enum cases are covered.
+
+
+Obj-C only changes:
+  - Clarification on a number of existing methods
+  - Set correct default state of properties in the Commo interface
+  - Add ability to set number of attempts to try downloading
+    a mission package from a remote host on receipt of a request to download
+  - Add ability to set timeout for connections to remote hosts to download
+    mission package files
+  - Add ability to set data transfer timeout (elapsed time of no data
+    transfer progresss  after which connection is aborted and transfer
+    is retried)
+  - Add ability to add "known endpoint contacts" - this lets you add
+    a contact with an endpoint that you have some pre-knowledge of and
+    will not discover on the network, enabling you to send to them
+    via any normal method which uses a ContactUID. Note that this only
+    functions for UDP endpoints at this time as noted in the API doc.
+    Currently only WinTAK uses this function - Rob can probably 
+    explain how it is used there if needed.

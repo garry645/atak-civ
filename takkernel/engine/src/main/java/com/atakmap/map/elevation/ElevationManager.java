@@ -1,0 +1,560 @@
+package com.atakmap.map.elevation;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import com.atakmap.coremap.filesystem.FileSystemUtils;
+import com.atakmap.coremap.maps.coords.GeoBounds;
+import com.atakmap.coremap.maps.coords.GeoPoint;
+import com.atakmap.interop.Pointer;
+import com.atakmap.coremap.maps.coords.GeoPointMetaData;
+import com.atakmap.map.layer.feature.geometry.Envelope;
+import com.atakmap.map.layer.feature.geometry.Geometry;
+import com.atakmap.map.layer.feature.geometry.Point;
+import com.atakmap.map.layer.raster.DatasetDescriptor;
+import com.atakmap.map.layer.raster.ImageInfo;
+import com.atakmap.map.layer.raster.mosaic.MosaicDatabase2;
+import com.atakmap.map.layer.raster.mosaic.MosaicDatabase2.Cursor;
+import com.atakmap.spi.PriorityServiceProviderRegistry2;
+import com.atakmap.util.Filter;
+import gov.tak.api.annotation.DontObfuscate;
+
+public final class ElevationManager
+{
+
+    private final static Map<MosaicDatabase2, ElevationSource> dbs = new IdentityHashMap<MosaicDatabase2, ElevationSource>();
+    private final static PriorityServiceProviderRegistry2<ElevationData, ImageInfo, ElevationDataSpi> dataSpiRegistry = new PriorityServiceProviderRegistry2<ElevationData, ImageInfo, ElevationDataSpi>();
+
+    private ElevationManager()
+    {
+    }
+
+    // XXX - single image registration? 
+
+    /**
+     * Registers a catalog of elevation data. The supplied interface only
+     * needs to implement the {@link MosaicDatabase2#query(MosaicDatabase2.QueryParameters)}
+     * method.
+     *
+     * @param mosaic
+     */
+    public static synchronized void registerElevationSource(MosaicDatabase2 mosaic)
+    {
+        if (dbs.containsKey(mosaic))
+            return;
+        ElevationSource src = Adapter.adapt("MosaicDatabase2@" + mosaic.hashCode(), mosaic, false);
+        dbs.put(mosaic, src);
+        ElevationSourceManager.attach(src);
+    }
+
+    public static synchronized void unregisterElevationSource(MosaicDatabase2 mosaic)
+    {
+        ElevationSource src = dbs.remove(mosaic);
+        if (src == null)
+            return;
+        ElevationSourceManager.detach(src);
+    }
+
+    public static ElevationSource.Cursor queryElevationSources(ElevationSource.QueryParameters params)
+    {
+        Pointer cparams = null;
+        try
+        {
+            if (params != null)
+            {
+                cparams = NativeElevationSource.QueryParameters_create();
+                NativeElevationSource.QueryParameters_adapt(params, cparams.raw);
+            }
+
+            Pointer retval = queryElevationSources((cparams != null) ? cparams.raw : 0L);
+            if (retval == null)
+                throw new IllegalStateException();
+            return new NativeElevationSourceCursor(retval, null);
+        } finally
+        {
+            if (cparams != null)
+                NativeElevationSource.QueryParameters_destruct(cparams);
+        }
+    }
+
+    public static int queryElevationSourcesCount(ElevationSource.QueryParameters params)
+    {
+        Pointer cparams = null;
+        try
+        {
+            if (params != null)
+            {
+                cparams = NativeElevationSource.QueryParameters_create();
+                NativeElevationSource.QueryParameters_adapt(params, cparams.raw);
+            }
+
+            return queryElevationSourcesCount((cparams != null) ? cparams.raw : 0L);
+        } finally
+        {
+            if (cparams != null)
+                NativeElevationSource.QueryParameters_destruct(cparams);
+        }
+    }
+
+    /**************************************************************************/
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location. A value
+     * of <code>Double.NaN</code> is returned if no elevation is available.
+     *
+     * @param point  Geo point containing the latitude and longitude to query
+     * @param filter The filter
+     * @return The elevation value at the specified location, in meters HAE, or
+     * <code>Double.NaN</code> if not available.
+     */
+    public static double getElevation(GeoPoint point, QueryParameters filter)
+    {
+        return getElevation(point, filter, null);
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location. A value
+     * of <code>Double.NaN</code> is returned if no elevation is available.
+     *
+     * @param point  Geo point containing the latitude and longitude to query
+     * @param filter The filter
+     * @param result A geopoint metadata container to store the result data
+     *               <code>null</code> if no additional metadata is desired.
+     * @return The elevation value at the specified location, in meters HAE, or
+     * <code>Double.NaN</code> if not available.
+     */
+    public static double getElevation(GeoPoint point, QueryParameters filter, GeoPointMetaData result)
+    {
+        return getElevation(point.getLatitude(), point.getLongitude(), filter, result);
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location. A value
+     * of <code>Double.NaN</code> is returned if no elevation is available.
+     *
+     * @param latitude  The latitude
+     * @param longitude The longitude
+     * @return The elevation value at the specified location, in meters HAE, or
+     * <code>Double.NaN</code> if not available.
+     */
+    public static double getElevation(double latitude, double longitude, QueryParameters filter)
+    {
+        return getElevation(latitude, longitude, filter, null);
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location. A value
+     * of <code>Double.NaN</code> is returned if no elevation is available.
+     *
+     * @param latitude  The latitude
+     * @param longitude The longitude
+     * @param filter    The filter
+     * @param result    A geopoint metadata container to store the result data
+     *                  <code>null</code> if no additional metadata is desired.
+     * @return The elevation value at the specified location, in meters HAE, or
+     * <code>Double.NaN</code> if not available.
+     */
+    public static double getElevation(double latitude, double longitude, QueryParameters filter, GeoPointMetaData result)
+    {
+        if (filter == null)
+            filter = new QueryParameters();
+        filter.spatialFilter = new Point(longitude, latitude);
+        ElevationSource.QueryParameters params = Adapter.adapt(filter, null);
+
+        Pointer cparams = null;
+        try
+        {
+            if (params != null)
+            {
+                cparams = NativeElevationSource.QueryParameters_create();
+                NativeElevationSource.QueryParameters_adapt(params, cparams.raw);
+            }
+
+            String[] resultType = (result != null) ? new String[1] : null;
+
+            final double hae;
+            if (cparams != null)
+                hae = getElevation(latitude, longitude, cparams.raw, resultType);
+            else
+                hae = Double.NaN;
+
+            if (!Double.isNaN(hae) && result != null)
+            {
+                result.set(new GeoPoint(latitude, longitude, hae));
+
+                // perform a check just in case the result type returned from the provider is empty
+                if (!FileSystemUtils.isEmpty(resultType))
+                    result.setAltitudeSource(resultType[0]);
+                else
+                    result.setAltitudeSource(GeoPointMetaData.UNKNOWN);
+
+            } else if (result != null)
+            {
+                result.set(new GeoPoint(latitude, longitude)).setAltitudeSource(GeoPointMetaData.UNKNOWN);
+            }
+            return hae;
+        } finally
+        {
+            if (cparams != null)
+                NativeElevationSource.QueryParameters_destruct(cparams);
+        }
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location within a
+     * {@link GeoPointMetaData} container.
+     *
+     * @param latitude  The latitude to query
+     * @param longitude The longitude to query
+     * @param filter    The filter
+     * @return A {@link GeoPointMetaData} containing the elevation.
+     */
+    public static GeoPointMetaData getElevationMetadata(double latitude, double longitude, QueryParameters filter)
+    {
+        GeoPointMetaData ret = new GeoPointMetaData();
+        getElevation(latitude, longitude, filter, ret);
+        return ret;
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location within a
+     * {@link GeoPointMetaData} container.
+     *
+     * @param point  Geo point containing the latitude and longitude to query
+     * @param filter The filter
+     * @return A {@link GeoPointMetaData} containing the elevation.
+     */
+    public static GeoPointMetaData getElevationMetadata(GeoPoint point, QueryParameters filter)
+    {
+        return getElevationMetadata(point.getLatitude(), point.getLongitude(), filter);
+    }
+
+    /**
+     * Returns the elevation, as meters HAE, at the specified location within a
+     * {@link GeoPointMetaData} container.
+     *
+     * @param point Geo point containing the latitude and longitude to query
+     * @return A {@link GeoPointMetaData} containing the elevation.
+     */
+    public static GeoPointMetaData getElevationMetadata(GeoPoint point)
+    {
+        return getElevationMetadata(point, null);
+    }
+
+    /**
+     * Returns elevation values for a set of points.
+     *
+     * @param points      The points
+     * @param elevations  Returns the elevation values for the specified
+     *                    points
+     * @param legacyHints If non-<code>null</code> specifies a minimum
+     *                    bounding box containing all points. The
+     *                    implementation may use this information to prefetch
+     *                    all data that will be required up front, possibly
+     *                    reducing IO.
+     * @throws IllegalArgumentException if the points or elevations parameters are incorrect.
+     */
+    public static boolean getElevation(Iterator<GeoPoint> points, double[] elevations, QueryParameters filter, ElevationData.Hints legacyHints)
+    {
+
+        if (points == null)
+            throw new IllegalArgumentException("points iterator cannot be null");
+
+        if (!points.hasNext())
+            return true;
+
+        if (elevations == null)
+            throw new IllegalArgumentException("elevations cannot be null");
+
+        double[] src = new double[elevations.length * 3];
+        int idx = 0;
+        GeoPoint point;
+        double north = -90;
+        double south = 90;
+        double east = -180;
+        double west = 180;
+        while (points.hasNext())
+        {
+            point = points.next();
+            src[idx * 3] = point.getLongitude();
+            src[idx * 3 + 1] = point.getLatitude();
+            src[idx * 3 + 2] = Double.NaN;
+
+            if (idx == elevations.length)
+                throw new IllegalArgumentException();
+            elevations[idx++] = Double.NaN;
+
+            final double lat = point.getLatitude();
+            if (lat > north)
+                north = lat;
+            if (lat < south)
+                south = lat;
+            final double lng = point.getLongitude();
+            if (lng > east)
+                east = lng;
+            if (lng < west)
+                west = lng;
+        }
+        if (north < south || east < west) {
+            // the input set is malformed, nothing else to do as all output values have been NaN`d
+            return false;
+        }
+
+        final GeoBounds hint = new GeoBounds(north, west, south, east);
+
+        ElevationData.Hints h = legacyHints;
+        if (legacyHints == null)
+        {
+            h = new ElevationData.Hints();
+            h.bounds = new GeoBounds(north, west, south, east);
+        } else if (legacyHints.bounds == null)
+        {
+            h = new ElevationData.Hints(legacyHints);
+            h.bounds = new GeoBounds(north, west, south, east);
+        }
+
+        // set up filter
+        if (filter != null)
+            filter = new QueryParameters(filter);
+        else
+            filter = new QueryParameters();
+
+        if(src.length == 3 && Double.isNaN(src[0]) && Double.isNaN(src[1])) {
+            System.out.println("ENGINE-937: ElevationManager.getElevation({NAN, NAN}, double[], ...) bounds=" + north + "," + west + " " + south + "," + east);
+        }
+
+        filter.spatialFilter = DatasetDescriptor.createSimpleCoverage(
+                new GeoPoint(hint.getNorth(), hint.getWest()),
+                new GeoPoint(hint.getNorth(), hint.getEast()),
+                new GeoPoint(hint.getSouth(), hint.getEast()),
+                new GeoPoint(hint.getSouth(), hint.getWest()));
+
+        final ElevationSource.QueryParameters params = Adapter.adapt(filter, legacyHints);
+        Pointer cparams = null;
+        try
+        {
+            if (params != null)
+            {
+                cparams = NativeElevationSource.QueryParameters_create();
+                NativeElevationSource.QueryParameters_adapt(params, cparams.raw);
+            }
+
+            final boolean done = getElevation(src, idx, (cparams != null) ? cparams.raw : 0L);
+            for (int i = 0; i < idx; i++)
+                elevations[i] = src[(i * 3) + 2];
+            return done;
+        } finally
+        {
+            if (cparams != null)
+                NativeElevationSource.QueryParameters_destruct(cparams);
+        }
+    }
+
+    /**
+     * Returns elevation values for a set of points.
+     *
+     * @param points     The points
+     * @param elevations Returns the elevation values for the specified
+     *                   points
+     * @param params
+     * @throws IllegalArgumentException if the points or elevations parameters are incorrect.
+     */
+    public static boolean getElevation(Iterator<GeoPoint> points, double[] elevations, ElevationSource.QueryParameters params)
+    {
+
+        if (points == null)
+            throw new IllegalArgumentException("points iterator cannot be null");
+
+        if (!points.hasNext())
+            return true;
+
+        if (elevations == null)
+            throw new IllegalArgumentException("elevations cannot be null");
+
+        double[] pts = new double[elevations.length * 3];
+        int pointCount = 0;
+        while (points.hasNext())
+        {
+            final GeoPoint g = points.next();
+            pts[pointCount++] = g.getLongitude();
+            pts[pointCount++] = g.getLatitude();
+            pts[pointCount++] = Double.NaN;
+        }
+        if (pointCount == 0)
+            return true;
+        pointCount /= 3;
+
+        Pointer cparams = null;
+        try
+        {
+            if (params != null)
+            {
+                cparams = NativeElevationSource.QueryParameters_create();
+                NativeElevationSource.QueryParameters_adapt(params, cparams.raw);
+            }
+
+            final boolean done = getElevation(pts, pointCount, (cparams != null) ? cparams.raw : 0L);
+            for (int i = 0; i < pointCount; i++)
+                elevations[i] = pts[(i * 3) + 2];
+            return done;
+        } finally
+        {
+            if (cparams != null)
+                NativeElevationSource.QueryParameters_destruct(cparams);
+        }
+    }
+
+    /**
+     * Returns a heightmap for an {@link ElevationSource}.
+     * @param value     an array to hold the results
+     * @param source    the elevation source providing the heightmap samples
+     * @param gsd       the resolution used to bound the queries per `strategy`
+     * @param params    the heightmap configuration
+     * @param strategy  the strategy used for heightmap construction
+     * @return true on success, false if one or more posts are not resolved
+     */
+    public static boolean createHeightmap(double[] value, ElevationSource source, double gsd, HeightmapParams params, ElevationManager.HeightmapStrategy strategy)
+    {
+        return createHeightmapNative(value, source, gsd, params, strategy);
+    }
+
+    /**************************************************************************/
+
+    public static void registerDataSpi(ElevationDataSpi spi)
+    {
+        dataSpiRegistry.register(spi, spi.getPriority());
+    }
+
+    public static void unregisterDataSpi(ElevationDataSpi spi)
+    {
+        dataSpiRegistry.unregister(spi);
+    }
+
+    public static ElevationData createData(ImageInfo info)
+    {
+        return dataSpiRegistry.create(info);
+    }
+
+    /**************************************************************************/
+
+    /**
+     * Returns the geoid height at the specified location. Geoid height is the
+     * offset between MSL and the ellipsoid surface.
+     *
+     * <P>Conversions are performed as follows:
+     * <UL>
+     * <LI><code>hae = msl + geoidHeight</code></LI>
+     * <LI><code>msl = hae - geoidHeight</code></LI>
+     * </UL>
+     *
+     * @param latitude
+     * @param longitude
+     * @return
+     */
+    public static native double getGeoidHeight(double latitude, double longitude);
+
+    /**************************************************************************/
+
+    public final static class QueryParameters
+    {
+        public double minResolution;
+        public double maxResolution;
+        public Geometry spatialFilter;
+        public Set<String> types;
+        public int elevationModel;
+        public boolean preferSpeed;
+        public boolean interpolate;
+
+        public QueryParameters()
+        {
+            this.minResolution = Double.NaN;
+            this.maxResolution = Double.NaN;
+            this.spatialFilter = null;
+            this.types = null;
+            this.elevationModel = ElevationData.MODEL_SURFACE | ElevationData.MODEL_TERRAIN;
+        }
+
+        public QueryParameters(QueryParameters other)
+        {
+            this.minResolution = other.minResolution;
+            this.maxResolution = other.maxResolution;
+            this.spatialFilter = other.spatialFilter;
+            this.types = (other.types != null) ? new HashSet<String>(other.types) : null;
+            this.elevationModel = other.elevationModel;
+        }
+    }
+
+    /**************************************************************************/
+
+    private final static class ElevationModelFilter implements Filter<MosaicDatabase2.Cursor>
+    {
+        public final static Filter<MosaicDatabase2.Cursor> SURFACE = new ElevationModelFilter(ElevationData.MODEL_SURFACE);
+        public final static Filter<MosaicDatabase2.Cursor> TERRAIN = new ElevationModelFilter(ElevationData.MODEL_TERRAIN);
+
+        private final int model;
+
+        public ElevationModelFilter(int model)
+        {
+            this.model = model;
+        }
+
+        @Override
+        public boolean accept(Cursor arg)
+        {
+            final ElevationData data = createData(arg.asFrame());
+            if (data == null)
+                return false;
+            return ((data.getElevationModel() & this.model) != 0);
+        }
+
+    }
+
+    /*************************************************************************/
+
+    static native Pointer queryElevationSources(long cparams);
+
+    static native int queryElevationSourcesCount(long cparams);
+
+    static native double getElevation(double latitude, double longitude, long cfilter, String[] resultSource);
+
+    static native boolean getElevation(double[] lla, int count, long cparams);
+
+    static native boolean createHeightmapNative(double[] value, ElevationSource source, double gsd, HeightmapParams params, HeightmapStrategy strategy);
+
+    @DontObfuscate
+    public enum HeightmapStrategy
+    {
+        /** constructs heightmap from highest resolution data available */
+        HighestResolution,
+        /** fills with resolution equal to or lower than target (DESC). Holes may be present if no equal or lower resolution coverage is available */
+        Low,
+        /** fills with resolution equal to or lower than target (DESC). If any holes are present, fills with resolution higher than (ASC). */
+        LowFillHoles,
+    }
+
+    @DontObfuscate
+    public static class HeightmapParams {
+        /**
+         * The bounds (inclusive) of the heightmap.
+         */
+        public Envelope bounds;
+        /**
+         * The number of latitude samples/rows in the heightmap.
+         */
+        public int numPostsLat;
+        /**
+         * The number of longitude samples/columns in the heightmap.
+         */
+        public int numPostsLng;
+        /**
+         * if `false`, first row is max lat, last row is min lat; if `true` first row is
+         * min lat, last row is max lat.
+         */
+        public boolean invertYAxis = false;
+        public int  srid = 4326;
+    }
+}

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fadeScrollbars="false">
+
+    <LinearLayout
+        android:id="@+id/top_level_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Steal focus from the start address input so the keyboard doesn't
+             immediately pop open -->
+        <LinearLayout
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_width="0px"
+            android:layout_height="0px">
+            <requestFocus/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF"
+            android:textSize="16sp"
+            android:text="@string/route_plan_enter_addresses"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/nav_sp_icon" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/route_start_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:nextFocusDown="@+id/route_dest_address" 
+                    android:hint="@string/start_address_hint"
+                    android:textSize="16sp"
+                    android:inputType="textNoSuggestions" />
+                <TextView
+                    android:id="@+id/route_start_coord"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/route_start_menu"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="@dimen/auto_space_big"
+                    android:src="@drawable/ic_menu"
+                    style="@style/darkButton"/>
+
+
+                <LinearLayout
+                    android:id="@+id/route_start_options"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <ImageButton
+                        android:id="@+id/route_start_coordinate_entry"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="4dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_mgrs_goto"
+                        style="@style/darkButton"/>
+                    <ImageButton
+                        android:id="@+id/route_start_map_select"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_crosshair"
+                        style="@style/darkButton"/>
+                    <ImageButton
+                        android:id="@+id/route_start_address_clear"
+                        style="@style/darkButton"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="4dp"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_clear_results"/>
+                    <ImageButton
+                        android:id="@+id/route_start_address_history"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="4dp"
+                        android:padding="6dp"
+                        android:src="@drawable/clock"
+                        style="@style/darkButton"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+       <LinearLayout
+           android:orientation="vertical"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+
+           <LinearLayout
+               android:id="@+id/waypointsLinearLayout"
+               android:orientation="vertical"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"/>
+
+           <ImageView
+               android:id="@+id/requiredWaypointImageView"
+               android:layout_width="32dp"
+               android:layout_height="32dp"
+               android:layout_gravity="center_horizontal|center_vertical"
+               android:src="@drawable/ic_navstack_add" />
+
+       </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/nav_vdo_icon" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/route_dest_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:hint="@string/destination_address_hint"
+                    android:textSize="16sp"
+                    android:inputType="textNoSuggestions" />
+                <TextView
+                    android:id="@+id/route_dest_coord"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:orientation="horizontal">
+                <ImageButton
+                    android:id="@+id/route_dest_menu"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="@dimen/auto_space_big"
+                    android:src="@drawable/ic_menu"
+                    style="@style/darkButton"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:id="@+id/route_end_options"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="horizontal">
+                    <ImageButton
+                        android:id="@+id/route_dest_coordinate_entry"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="4dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_mgrs_goto"
+                        style="@style/darkButton"/>
+                    <ImageButton
+                        android:id="@+id/route_dest_map_select"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:padding="4dp"
+                        android:src="@drawable/ic_crosshair"
+                        style="@style/darkButton"/>
+                    <ImageButton
+                        android:id="@+id/route_dest_address_clear"
+                        style="@style/darkButton"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="4dp"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_clear_results"/>
+                    <ImageButton
+                        android:id="@+id/route_dest_address_history"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="4dp"
+                        android:padding="6dp"
+                        android:src="@drawable/clock"
+                        style="@style/darkButton"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

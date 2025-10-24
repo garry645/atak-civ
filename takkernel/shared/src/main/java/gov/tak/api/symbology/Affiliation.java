@@ -1,0 +1,25 @@
+package gov.tak.api.symbology;
+
+public enum Affiliation {
+    Pending,
+    Unknown,
+    Friend,
+    Neutral,
+    Hostile,
+    AssumedFriend,
+    Suspect,
+    ExercisePending,
+    ExerciseUnknown,
+    ExerciseAssumedFriend,
+    ExerciseFriend,
+    ExerciseNeutral,
+    Joker,
+    Faker,
+    SimulatedPending,
+    SimulatedUnknown,
+    SimulatedFriend,
+    SimulatedNeutral,
+    SimulatedHostile,
+    SimulatedAssumedFriend,
+    SimulatedSuspect,
+}

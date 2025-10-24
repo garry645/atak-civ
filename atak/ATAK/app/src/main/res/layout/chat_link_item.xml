@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    android:padding="6dp"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/item_name"
+        android:layout_width="0dp"
+        android:layout_weight=".85"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:text="Name" />
+
+    <ImageButton
+        android:id="@+id/item_attachment"
+        android:layout_width="32dp"
+        android:layout_weight=".05"
+        android:layout_height="32dp"
+        style="@style/darkButton"
+        android:padding="6dp"
+        android:src="@drawable/attachment" />
+
+    <ImageButton
+        style="@style/darkButton"
+        android:id="@+id/item_radial"
+        android:src="@drawable/radial"
+        android:layout_weight=".05"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:padding="6dp"
+        android:scaleType="centerInside" />
+
+    <ImageButton
+        android:id="@+id/item_panto"
+        android:layout_weight=".05"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:scaleType="fitCenter"
+        android:padding="6dp"
+        android:src="@drawable/panto_button"
+        style="@style/darkButton"/>
+
+</LinearLayout>

@@ -1,0 +1,61 @@
+--- geos.pristine/nmake.opt	2016-10-27 11:01:53.000000000 -0400
++++ geos/nmake.opt	2019-04-17 22:19:22.656800100 -0400
+@@ -125,20 +125,32 @@
+ GEOS_MSC = 1800
+ !ELSEIF "$(_NMAKE_VER)" == "14.00.22816.0"
+ GEOS_MSVC = 14.0
+ GEOS_MSC = 1900
+ !ELSEIF "$(_NMAKE_VER)" == "14.00.23026.0"
+ GEOS_MSVC = 14.0
+ GEOS_MSC = 1900
+ !ELSEIF "$(_NMAKE_VER)" == "14.00.24210.0"
+ GEOS_MSVC = 14.0
+ GEOS_MSC = 1900
++!ELSEIF "$(_NMAKE_VER)" == "14.00.24245.0"
++GEOS_MSVC = 14.0
++GEOS_MSC = 1900
++!ELSEIF "$(_NMAKE_VER)" == "14.28.29914.0"
++GEOS_MSVC = 14.0
++GEOS_MSC = 1900
++!ELSEIF "$(_NMAKE_VER)" == "14.29.30040.0"
++GEOS_MSVC = 14.0
++GEOS_MSC = 1900
++!ELSEIF "$(_NMAKE_VER)" == "14.29.30133.0"
++GEOS_MSVC = 14.0
++GEOS_MSC = 1900
+ !ELSE
+ GEOS_MSVC = 0.0
+ GEOS_MSC = 0
+ !ENDIF
+ 
+ !IF "$(GEOS_MSVC)" == "0.0" && "$(GEOS_MSC)" == "0"
+ !MESSAGE *** Cannot determine Visual C++ version
+ !ERROR *** Aborting make job
+ !ELSE
+ !MESSAGE *** Using Microsoft NMAKE version $(_NMAKE_VER)
+--- geos.pristine/ltmain.sh	2016-10-27 11:21:59.000000000 -0400
++++ geos/ltmain.sh	2020-06-15 23:06:35.308000000 -0400
+@@ -5088,6 +5088,13 @@
+ 
+     f_ex_an_ar_dir=$1; shift
+     f_ex_an_ar_oldlib=$1
++
++    case `uname` in
++      CYGWIN*)
++        f_ex_an_ar_oldlib=`cygpath -m $f_ex_an_ar_oldlib`
++        ;;
++    esac
++
+     if test yes = "$lock_old_archive_extraction"; then
+       lockfile=$f_ex_an_ar_oldlib.lock
+       until $opt_dry_run || ln "$progpath" "$lockfile" 2>/dev/null; do
+--- geos.pristine/config.sub	2023-02-17 15:01:17.609298795 -0500
++++ geos/config.sub	2023-02-17 15:02:05.759125854 -0500
+@@ -254,6 +254,7 @@
+ 	| alpha64 | alpha64ev[4-8] | alpha64ev56 | alpha64ev6[78] | alpha64pca5[67] \
+ 	| am33_2.0 \
+ 	| arc | arm | arm[bl]e | arme[lb] | armv[2345] | armv[345][lb] | avr | avr32 \
++	| armv7a \
+         | be32 | be64 \
+ 	| bfin \
+ 	| c4x | clipper \

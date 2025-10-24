@@ -1,0 +1,33 @@
+<menu
+    buttonBg='bgs/button.xml' buttonRadius='65' buttonSpan='72' buttonWidth='90' >
+
+    <button
+        angle='-90'
+        icon='icons/delete.png'
+        onClick='actions/remove.xml'
+        disabled='!{${removable}}'  />
+
+    <button
+        icon='icons/breadcrumbs.xml'
+        submenu='menus/trackhistory_submenu.xml'
+        disableSwap='true'
+        disableIconSwap='true'
+        onClick='actions/toggle_crumb.xml'
+        selectable='true'
+        selected='${tracks_on}' />
+
+    <button
+        icon='icons/camlock.xml'
+        onClick='actions/lockcam.xml'
+        selectable='true'
+        selected='${camLocked}' />
+
+    <button
+        icon='icons/pairing_line.png'
+        onClick='actions/pairingline.xml'/>
+
+    <button icon='icons/polar_coord.png'
+            onClick='actions/polarCoords.xml'/>
+
+
+</menu>

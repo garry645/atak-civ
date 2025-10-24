@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/wms_preferences"
+        android:key="wms_preferences_category">
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/redeploy_wms_sources"
+            android:key="redeploywms"/>
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/wms_connect_tmeout"
+            android:key="wmsconnecttimeout"/>
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text58"
+            android:summary="@string/preferences_text59"
+            android:defaultValue="true"
+            android:key="volumemapswitcher" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/civ_enable_grg_interact"
+            android:key="prefs_layer_grg_map_interaction"
+            android:summary="@string/civ_enable_grg_interact_summ"
+            android:defaultValue="true"/>
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/image_overlay_mass_visibility_toggle"
+            android:summary="@string/image_overlay_mass_visibility_toggle_summary"
+            android:key="grgRootVisibilityToggle"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="smart_cache_preference_category"
+        android:title="@string/smart_cache_preference_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/enable_smart_cache"
+            android:key="prefs_enable_smart_cache"
+            android:summary="@string/enable_smart_cache_summ"
+            android:defaultValue="false"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:dialogTitle="@string/smart_cache_download_limit"
+            android:inputType="number"
+            android:key="prefs_smart_cache_download_limit"
+            android:summary="@string/smart_cache_download_limit_summ"
+            android:title="@string/smart_cache_download_limit"
+            android:defaultValue="5000000"/>
+    </PreferenceCategory>
+</PreferenceScreen>

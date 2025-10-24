@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Device Preferences"
+        android:key="device_preferences_category">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/my_callsign"
+            android:inputType="textUri"
+            android:summary="@string/callsign_pref_summary"
+            android:key="locationCallsign" />
+        <com.atakmap.android.gui.PanListPreference
+            android:entryValues="@array/squad_values"
+            android:entries="@array/squad_names"
+            android:summary="@string/preferences_text78"
+            android:key="locationTeam"
+            android:title="@string/preferences_text79"
+            android:defaultValue="Cyan" />
+        <com.atakmap.android.gui.PanPreference
+            android:summary="@string/preferences_text80"
+            android:key="atakRoleTypeAction"
+            android:title="@string/preferences_text81"
+            android:defaultValue="@string/preferences_text82" />
+        <com.atakmap.android.gui.PanPreference
+            android:summary="@string/preferences_text83"
+            android:key="locationUnitTypeAction"
+            android:title="@string/preferences_text84" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/remarks"
+            android:inputType="textUri"
+            android:summary="@string/self_remarks_summary"
+            android:key="userRemarks" />
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/networkGpsPreferences"
+            android:key="gpsSettings"
+            android:summary="@string/preferences_text267"
+            android:icon="@drawable/ic_menu_compass" />
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/laser_range_finder_preferences"
+            android:key="lrfSettings"
+            android:summary="@string/laser_range_finder_preferences_summary"
+            android:icon="@drawable/lrf_slide" />
+        <com.atakmap.android.gui.PanPreference
+            android:summary="@string/choose_symbology"
+            android:key="symbologyProvider"
+            android:title="@string/symbology_provider"
+            android:defaultValue="2525C" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/wave_relay_callsign"
+            android:key="locationUseWRCallsign"
+            android:defaultValue="false"
+            android:summary="@string/wave_relay_callsign_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>

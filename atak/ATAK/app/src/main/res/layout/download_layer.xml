@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:weightSum="1"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/new_layer_name"
+            android:textSize="@dimen/draper_font"
+            android:layout_weight=".2" />
+
+        <EditText
+            android:id="@+id/newLayerName"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:layout_weight=".8"
+            android:inputType="textNoSuggestions">
+            <requestFocus />
+        </EditText>
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/suggestNewLayerImportStrategy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_layer_as_potential_overlay"
+        android:textSize="12sp"/>
+
+</LinearLayout>
+
+

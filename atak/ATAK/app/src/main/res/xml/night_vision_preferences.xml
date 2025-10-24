@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.atakmap.android.gui.PanCheckBoxPreference
+        android:defaultValue="false"
+        android:key="night_vision_widget"
+        android:summary="If enabled, a Night Vision Activation Method will be available within ATAK"
+        android:title="Enable Night Vision control inside ATAK" />
+    <PreferenceCategory
+        android:title="Location Options"
+        android:key="location_options_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="night_vision_widget"
+            android:key="loc_map_widget"
+            android:title="@string/nv_extract_from_left" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="night_vision_widget"
+            android:key="loc_notification"
+            android:title="@string/nv_activate_from_notification" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="night_vision_widget"
+            android:key="loc_self_overlay_box"
+            android:title="@string/nv_activate_from_location_widget" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/external_apps"
+        android:key="external_applications_category">
+       <com.atakmap.android.gui.PanPreference
+            android:summary="@string/nv_adjust_night_vision"
+            android:key="external_night_vision_launch"
+            android:title="@string/nv_external_settings" />
+    </PreferenceCategory>
+</PreferenceScreen>

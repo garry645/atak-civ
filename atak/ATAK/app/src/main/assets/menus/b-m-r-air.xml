@@ -1,0 +1,33 @@
+<menu buttonRadius='65' buttonSpan='51.4285' buttonWidth='90' buttonBg='bgs/button.xml'>
+
+    <button angle='-90'
+            icon='icons/delete.png'
+            onClick='actions/remove.xml'
+            disabled='!{${removable}}' />
+
+    <button icon='icons/details.png'
+            submenu='menus/send_submenu.xml'
+            disableSwap='true'
+            disableIconSwap='true'
+            onClick='actions/show_route.xml' />
+
+    <button icon='icons/edit2.png'
+            disabled='!{${editable}}'
+            onClick='actions/edit_route.xml' />
+            
+    <button icon='icons/green_flag_radial.png'
+            onClick='actions/startnav.xml' />
+
+    <button icon='icons/label.png'
+            onClick='actions/label_toggle.xml'
+            selected='${labels_on}'/>
+
+    <button icon='icons/clamp.png'
+            onClick='actions/clamp_toggle.xml'
+            selected='${clampedToGround}'/>
+
+    <button icon='icons/doghouse.png'
+            onClick='actions/doghouse_toggle.xml'
+            selected='${showDoghouses}'/>
+
+</menu>

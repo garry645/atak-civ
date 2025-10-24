@@ -1,0 +1,60 @@
+--- curl.pristine/configure	2024-07-31 02:51:53.000000000 -0400
++++ curl/configure	2024-08-16 17:03:17.098275573 -0400
+@@ -8854,27 +8854,27 @@
+   withval=$with_gnu_ld; test no = "$withval" || with_gnu_ld=yes
+ else $as_nop
+   with_gnu_ld=no
+ fi
+ 
+ ac_prog=ld
+ if test yes = "$GCC"; then
+   # Check if gcc -print-prog-name=ld gives a path.
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for ld used by $CC" >&5
+ printf %s "checking for ld used by $CC... " >&6; }
+-  case $host in
+-  *-*-mingw*)
+-    # gcc leaves a trailing carriage return, which upsets mingw
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'` ;;
+-  *)
+-    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
+-  esac
++#  case $host in
++#  *-*-mingw*)
++#    # gcc leaves a trailing carriage return, which upsets mingw
++    ac_prog=`($CC -print-prog-name=ld) 2>&5 | tr -d '\015'`
++#  *)
++#    ac_prog=`($CC -print-prog-name=ld) 2>&5` ;;
++#  esac
+   case $ac_prog in
+     # Accept absolute paths.
+     [\\/]* | ?:[\\/]*)
+       re_direlt='/[^/][^/]*/\.\./'
+       # Canonicalize the pathname of ld
+       ac_prog=`$ECHO "$ac_prog"| $SED 's%\\\\%/%g'`
+       while $ECHO "$ac_prog" | $GREP "$re_direlt" > /dev/null 2>&1; do
+ 	ac_prog=`$ECHO $ac_prog| $SED "s%$re_direlt%/%"`
+       done
+       test -z "$LD" && LD=$ac_prog
+@@ -17980,21 +17980,21 @@
+       CPPFLAGS=$OLDCPPFLAGS
+ 
+   if test "$curl_cv_have_def___GNUC__" = "yes" &&
+     test "$compiler_id" = "unknown"; then
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ printf "%s\n" "yes" >&6; }
+     compiler_id="GNU_C"
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking compiler version" >&5
+ printf %s "checking compiler version... " >&6; }
+     # strip '-suffix' parts, e.g. Ubuntu Windows cross-gcc returns '10-win32'
+-    gccver=`$CC -dumpversion | sed -E 's/-.+$//'`
++    gccver=`$CC -dumpversion | sed -E 's/-.+$//' | sed 's/\r//g'`
+     gccvhi=`echo $gccver | cut -d . -f1`
+     if echo $gccver | grep -F '.' >/dev/null; then
+       gccvlo=`echo $gccver | cut -d . -f2`
+     else
+       gccvlo="0"
+     fi
+     compiler_num=`(expr $gccvhi "*" 100 + $gccvlo) 2>/dev/null`
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: gcc '$compiler_num' (raw: '$gccver')" >&5
+ printf "%s\n" "gcc '$compiler_num' (raw: '$gccver')" >&6; }
+     flags_dbg_yes="-g"

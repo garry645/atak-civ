@@ -1,0 +1,314 @@
+import java.nio.ByteBuffer
+import java.security.DigestInputStream
+import java.security.MessageDigest
+
+/**
+ * Facade for CMake build plugins. Successful configuration will result in the injection of three tasks that clients may
+ * use to manage task dependencies around the native build.
+ * <UL>
+ *     <LI><code>preExternalNativeBuild</code> Executed before the native build starts.
+ *     <LI><code>postExternalNativeBuild</code> Executed immediately after the native build completes.
+ *     <LI><code>externalNativeBuildClean</code> Executes any custom clean tasks associated with the native build.
+ * </UL>
+ */
+abstract class ExternalNativeBuild {
+    final Project project
+    /** `true` if the custom tasks have been registered, `false` otherwise */
+    private boolean tasksRegistered
+    /** `true` if the underlying build plugin has been initialized, `false` otherwise */
+    private boolean pluginInitialized
+
+    ExternalNativeBuild(Project p) {
+        project = p;
+        tasksRegistered = false
+        pluginInitialized = false
+    }
+    /**
+     * Requests initailization be performed. Initialization will include plugin initialization as well as custom task
+     * registration (if requested). Either activity shall only be executed once at most. If the respective activity
+     * has already been executed, it will be skipped on subsequent invocations.
+     * @param registerTasks If <code>true</code> {@link #registerExternalNativeBuildTasks()} is invoked. Registration
+     *                      should only occur once all strictly required configuration inputs have been defined.
+     */
+    protected void init(boolean registerTasks) {
+        if(!pluginInitialized) {
+            initializePlugin()
+            pluginInitialized = true
+        }
+        if(registerTasks && !tasksRegistered) {
+            registerExternalNativeBuildTasks()
+            tasksRegistered = true
+        }
+    }
+    /** Registers the several custom tasks provided by the extension. */
+    protected void registerExternalNativeBuildTasks() {
+        ['preExternalNativeBuild',
+         'postExternalNativeBuild',
+         'generateJniHeaders',
+         'externalNativeBuildClean'].each { taskName ->
+            project.tasks.register(taskName)
+        }
+        project.afterEvaluate {
+            def generateJniHeadersTask = project.tasks.getByName('generateJniHeaders')
+            // configure JNI header generation when invoking `javac`
+            project.tasks.withType(JavaCompile) {
+                if (!it.name.toLowerCase().contains('test')) {
+                    options.compilerArgs += ['-h', "${project.buildDir}/generated/jni/"]
+                    boolean isPrereq = !activeBuildVariants.isPresent() ||
+                            activeBuildVariants.get().any { buildVariant ->
+                                it.name.contains(buildVariant.capitalize())
+                            }
+                    if(isPrereq) {
+                        generateJniHeadersTask.dependsOn(it)
+                    }
+                }
+            }
+            generateJniHeadersTask.doLast { ->
+                var jniHeaders = project.file("${project.buildDir}/generated/jni/").listFiles(new FilenameFilter() {
+                    @Override
+                    boolean accept(File file, String s) {
+                        return s.endsWith('.h')
+                    }
+                })
+                // fix header file timestamps based on cached content hash
+                for(File jniHeader : jniHeaders) {
+                    // get the hash of the file content
+                    var jniHeaderHash = hash(jniHeader)
+                    var hashFile = new File("${jniHeader.absolutePath}.md5")
+                    do {
+                        // if the hash file exists, compare the existing hash against the newly computed cache
+                        if (hashFile.exists()) {
+                            byte[] cachedHash = new byte[(int) hashFile.length()]
+                            try(FileInputStream s = new FileInputStream(hashFile)) {
+                                s.read(cachedHash)
+                            }
+                            // if the caches are equal, no change
+                            if(Arrays.equals(cachedHash, jniHeaderHash))
+                                break;
+                        }
+                        // content has changed or cached hash does not exist; update
+                        try (FileOutputStream s = new FileOutputStream(hashFile)) {
+                            s.write(jniHeaderHash)
+                        }
+                    } while(false)
+                    // header file assumes timestamp of cached hash
+                    jniHeader.setLastModified(hashFile.lastModified())
+                }
+            }
+            project.tasks.getByName('preExternalNativeBuild').dependsOn(project.tasks.getByName('generateJniHeaders'))
+            if(preDependsTask.isPresent()) {
+                preDependsTask.get().each {project.tasks.getByName(it).dependsOn('preExternalNativeBuild')}
+            }
+            if(postDependsTask.isPresent()) {
+                postDependsTask.get().each { project.tasks.getByName('postExternalNativeBuild').dependsOn(it) }
+            }
+            if(cleanDependsTask.isPresent()) {
+                cleanDependsTask.get().each { project.tasks.getByName('externalNativeBuildClean').dependsOn(it) }
+            }
+
+            project.tasks.getByName('clean').dependsOn('externalNativeBuildClean')
+        }
+    }
+    /** Initializes the build plugin */
+    protected abstract void initializePlugin();
+    /** @return If non-null, defines the task invoked by the plugin that represents the entry into the native build. */
+    protected abstract ListProperty<String> getPreDependsTask()
+    /** @return If non-null, defines the task invoked by the plugin that represents the exit from the native build. */
+    protected abstract ListProperty<String> getPostDependsTask()
+    /** @return If non-null, defines the task invoked by the plugin to perform any cleanup of the native build. */
+    protected abstract ListProperty<String> getCleanDependsTask()
+    /** @return If non-null, defines the task invoked by the plugin to perform any cleanup of the native build. */
+    protected abstract ListProperty<String> getActiveBuildVariants()
+
+    void cFlags(String ...args) {}
+    void cppFlags(String ...args) {}
+    void arguments(String ...args) {}
+    void buildTarget(String arg) {}
+    void workingFolder(File arg) {}
+    void path(String arg) {}
+    void installPrefix(String arg) {}
+
+    static byte[] hash(File f) {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        try (InputStream is = new FileInputStream(f);
+             DigestInputStream dis = new DigestInputStream(is, md))
+        {
+            /* Read decorated stream (dis) to EOF as normal... */
+            byte[] block = new byte[4096];
+            while(dis.read(block) >= 0) {}
+        }
+        return md.digest()
+    }
+}
+
+/** Implementation forwarding native build configuration to the Android plugin */
+abstract class AndroidPluginExternalNativeBuild extends ExternalNativeBuild {
+    String requestedBuildTarget
+
+    AndroidPluginExternalNativeBuild(Project p) {
+        super(p)
+        def activeBuildVariantsProvider = project.provider {
+            def variants = project.android.libraryVariants.matching { v ->
+                project.gradle.startParameter.taskNames.any { tn ->
+                    tn.contains(v.name.capitalize())
+                }
+            }.collect { v -> v.name }
+            return variants.isEmpty() ?
+                project.android.libraryVariants.collect { v -> v.name } : variants
+        }
+        def preDependsTaskProvider = project.provider {
+            def variants = activeBuildVariantsProvider.get()
+            return project.tasks.matching { t ->
+                t.name.startsWith("configureCMake") || variants.any { v -> t.name.startsWith("externalNativeBuild${v.capitalize()}") }
+            }.collect { t -> t.name }
+        }
+        def postDependsTaskProvider = project.provider {
+            def variants = activeBuildVariantsProvider.get()
+            return project.tasks.matching { t ->
+                variants.any { v -> t.name.startsWith("externalNativeBuild${v.capitalize()}") }
+            }.collect { t -> t.name }
+        }
+        preDependsTask.set(preDependsTaskProvider)
+        postDependsTask.set(postDependsTaskProvider)
+        activeBuildVariants.set(activeBuildVariantsProvider)
+
+        requestedBuildTarget = null
+    }
+    @Override
+    protected void initializePlugin() {
+        // declare the android.defaultConfig.externalNativeBuild.cmake DSL
+        project.android {
+            defaultConfig {
+                externalNativeBuild {
+                    cmake {
+                        // init arguments with the NDK location and toolchain
+                        arguments =
+                        [
+                            "-DCMAKE_ANDROID_NDK=${project.android.ndkDirectory.toString().replaceAll('\\\\', '/')}".toString(),
+                            "-DCMAKE_TOOLCHAIN_FILE=${project.android.ndkDirectory}/build/cmake/android.toolchain.cmake".toString(),
+                        ]
+                    }
+                }
+            }
+        }
+    }
+    @Override
+    protected void registerExternalNativeBuildTasks() {
+        super.registerExternalNativeBuildTasks()
+
+        project.afterEvaluate {
+            // The Android CMake does not allow the client to execute specific targets (e.g. 'install'). We'll create
+            // our own hook to do this after the build completes
+            if(requestedBuildTarget && postDependsTask.getOrNull()) {
+                postDependsTask.get().each {
+                    def externalNativeBuildTask = project.tasks.findByName(it)
+                    externalNativeBuildTask.doLast {
+                        def cmakeDir = ''
+                        if (project.getProperty(project, 'cmake.dir', null)) {
+                            cmakeDir = "${project.getProperty(project, 'cmake.dir', null)}${File.separator}bin${File.separator}"
+                        }
+
+                        def buildVariant = project.getTaskAndroidBuildVariant(project, externalNativeBuildTask).name
+                        if(buildVariant == 'release')
+                            buildVariant = 'relWithDebInfo'
+                        // XXX - can hash be computed or obtained from a property?
+                        // select hash based on working dir with most recent changes
+                        def workingDirs = project.file("${project.buildDir}/intermediates/cxx/${buildVariant.capitalize()}").listFiles()
+                        def hash = workingDirs[0].name
+                        if(workingDirs.length > 1) {
+                            def lm = workingDirs[0].lastModified()
+                            workingDirs.each { dir ->
+                                project.fileTree(dir).files.each { f ->
+                                    if(f.lastModified() > lm) {
+                                        hash = dir.name
+                                        lm = f.lastModified()
+                                    }
+                                }
+                            }
+                        }
+                        project.android.defaultConfig.ndk.abiFilters.each { arch ->
+                            project.exec {
+                                workingDir "${project.projectDir}/.cxx/${buildVariant.capitalize()}/${hash}/${arch}/"
+                                commandLine "${cmakeDir}cmake", '--build', '.', '--target', requestedBuildTarget
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    @Override
+    void cFlags(String... args) {
+        init(false)
+        project.android.defaultConfig.externalNativeBuild.cmake.cFlags = args
+    }
+    @Override
+    void cppFlags(String... args) {
+        init(false)
+        project.android.defaultConfig.externalNativeBuild.cmake.cppFlags = args
+    }
+    @Override
+    void arguments(String... args) {
+        init(false)
+        if(args) {
+            args.each { arg -> project.android.defaultConfig.externalNativeBuild.cmake.arguments += arg }
+        }
+    }
+    @Override
+    void path(String arg) {
+        init(true) // specifying input path triggers registration of the custom tasks as it is strictly required
+        project.android.externalNativeBuild.cmake.path = arg
+    }
+    @Override
+    void buildTarget(String arg) {
+        init(false)
+        requestedBuildTarget = arg
+    }
+}
+
+/** Implementation forwarding native build configuration to the CMake gradle plugin */
+abstract class CMakePluginExternalNativeBuild extends ExternalNativeBuild {
+    CMakePluginExternalNativeBuild(Project p) {
+        super(p)
+        preDependsTask.set(['cmakeConfigure'])
+        postDependsTask.set(['cmakeBuild'])
+        cleanDependsTask.set(['cmakeClean'])
+        activeBuildVariants.set(p.provider { null })
+    }
+    @Override
+    protected void initializePlugin() {
+        // apply CMake plugin
+        project.apply plugin: 'gov.tak.gradle.cmake.gradle-cmake-plugin'
+        project.cmake.workingFolder = project.file("${project.buildDir}/intermediates/externalNativeBuild")
+        // XXX - retain as implementation detail for now
+        if(project.getProperty(project, 'cmake.config', null))
+            project.cmake.buildConfig = project.getProperty(project, 'cmake.config', null)
+    }
+    @Override
+    void buildTarget(String arg) {
+        init(false)
+        project.cmake.buildTarget = arg
+    }
+    @Override
+    void workingFolder(File arg) {
+        init(false)
+        project.cmake.workingFolder = arg
+    }
+    @Override
+    void path(String arg) {
+        init(true) // specifying input path triggers registration of the custom tasks as it is strictly required
+        project.cmake.sourceFile = arg ? project.file(arg) : null
+    }
+    @Override
+    void installPrefix(String arg) {
+        init(false)
+        project.cmake.installPrefix = arg ? project.file(arg).absolutePath : null
+    }
+}
+
+if(isJavaKernelBuild)
+    project.extensions.create('externalNativeBuild', CMakePluginExternalNativeBuild, project)
+else if(isAndroidKernelBuild)
+    project.extensions.create('externalNativeBuild', AndroidPluginExternalNativeBuild, project)
+else
+    throw new GradleException("externalNativeBuild not supported for kernel build target: ${kernelBuildTarget}")

@@ -1,0 +1,19 @@
+###########################################################
+#
+# Used to produce the final obfuscated release build for 
+# ATAK.   This should be periodically examined to see if 
+# we can reduce the number of exemptions.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+###########################################################
+
+-printusage unused.txt
+
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-dontshrink
+-repackageclasses atak.core
+-dontoptimize
+-verbose
+

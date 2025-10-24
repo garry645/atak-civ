@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.atakmap.android.gui.PanSwitchPreference
+        android:title="@string/pref_nav_orientation_title"
+        android:summary="@string/pref_nav_orientation_summary"
+        android:defaultValue="true"
+        android:switchTextOn="@string/right_caps"
+        android:switchTextOff="@string/left_caps"
+        android:key="nav_orientation_right"/>
+    <com.atakmap.android.gui.PanPreference
+        android:title="@string/preferences_text72"
+        android:summary="@string/preferences_text73"
+        android:key="@string/selected_actionbar_icon_color"/>
+    <com.atakmap.android.gui.PanPreference
+        android:title="@string/preferences_text74"
+        android:summary="@string/preferences_text75"
+        android:key="@string/selected_actionbar_background_color"/>
+    <com.atakmap.android.gui.PanPreference
+        android:title="@string/preferences_text76"
+        android:summary="@string/preferences_text77"
+        android:key="@string/default_actionbar_colors"/>
+    <com.atakmap.android.gui.PanCheckBoxPreference
+        android:title="@string/force_extra_icons_landscape"
+        android:defaultValue="false"
+        android:summary="@string/force_extra_icons_landscape_summary"
+        android:key="landscape_extended_buttons"/>
+</PreferenceScreen>

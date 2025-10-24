@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/general_file_sharing_settings"
+        android:key="datapackage_general settings">
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text213"
+            android:summary="@string/preferences_text214"
+            android:key="filesharingEnabled"
+            android:defaultValue="true"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text215"
+            android:summary="@string/preferences_text216"
+            android:key="filesharingSizeThresholdNoGo"
+            android:inputType="number"
+            android:defaultValue="20" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/user_experience_settings"
+        android:key="datapackage_overlay_manager_settings">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/datapackage_om_mass_vis_toggle"
+            android:summary="@string/datapackage_om_mass_vis_toggle_summary"
+            android:key="dpgkRootVisibilityToggle"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/preferences_text217"
+        android:key="advanced_network_settings">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text218"
+            android:summary="@string/preferences_text219"
+            android:key="fileshareDownloadAttempts"
+            android:inputType="number"
+            android:defaultValue="10"/>
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/pref_missionpkg_legacy_http_title"
+            android:summary="@string/pref_missionpkg_legacy_http_en"
+            android:key="filesharingWebServerLegacyHttpEnabled"
+            android:defaultValue="false"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text220"
+            android:summary="@string/preferences_text221"
+            android:key="filesharingWebServerPort"
+            android:inputType="number"
+            android:defaultValue="8080"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text220a"
+            android:summary="@string/preferences_text221a"
+            android:key="filesharingSecureWebServerPort"
+            android:inputType="number"
+            android:defaultValue="8443"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text222"
+            android:summary="@string/preferences_text223"
+            android:key="filesharingConnectionTimeoutSecs"
+            android:inputType="number"
+            android:defaultValue="10" />
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/preferences_text224"
+            android:summary="@string/preferences_text225"
+            android:key="filesharingTransferTimeoutSecs"
+            android:inputType="number"
+            android:defaultValue="10" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/pref_mp_all_servers"
+            android:summary="@string/pref_mp_all_servers_desc"
+            android:key="filesharingAllServers"
+            android:defaultValue="false"/>
+    </PreferenceCategory>
+</PreferenceScreen>

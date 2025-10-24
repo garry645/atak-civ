@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dip"
+    android:layout_height="wrap_content"
+    android:layout_row="9"
+    android:layout_rowSpan="1"
+    android:layout_column="2"
+    android:layout_columnSpan="2"
+    android:layout_gravity="fill_horizontal"
+    android:layout_marginEnd="@dimen/auto_margin">
+
+    <TextView
+        android:id="@+id/strokeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/thin"
+        android:textColor="#FFF"
+        android:textSize="@dimen/draper_font" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:text="@string/thick"
+        android:textColor="#FFF"
+        android:textSize="@dimen/draper_font" />
+
+    <SeekBar
+        android:id="@+id/strokeSeek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/strokeText"
+        android:layout_gravity="fill_horizontal"
+        android:max="50"
+        android:progress="25" />
+</RelativeLayout>

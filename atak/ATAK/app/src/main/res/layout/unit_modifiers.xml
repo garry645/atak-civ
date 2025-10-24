@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/modifierToggle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/showModifiersCB"/>
+        <TextView
+            android:id="@+id/showModifierLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Modifiers"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/modifierList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+    </LinearLayout>
+</LinearLayout>

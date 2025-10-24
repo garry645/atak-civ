@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addyToLatLongTab"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="2dp">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/addressET"
+            android:imeOptions="flagNoExtractUi"
+            android:minLines="3"
+            android:lines="3"
+            android:maxLines="3"
+            android:layout_weight="8"
+            android:hint="@string/type_in_the_address"
+            android:inputType="textNoSuggestions"
+            android:completionThreshold="1" />
+
+        <Button
+            android:id="@+id/button_convert_address"
+            style="@style/darkButton"
+            android:layout_width="0dip"
+            android:layout_height="32dp"
+            android:layout_weight="2"
+            android:padding="6dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textSize="@dimen/draper_font"
+            android:lines="1"
+            android:text="@string/find" />
+        <ImageButton
+            android:id="@+id/button_change_addresslookup"
+            style="@style/darkButton"
+            android:layout_width="32dip"
+            android:layout_height="32dp"
+            android:layout_weight="2"
+            android:padding="6dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:src="@drawable/ic_settings"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:weightSum="1"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <CheckBox
+            android:id="@+id/coordDialogAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:textSize="13sp"
+            android:text="@string/set_the_address_as_the_title" />
+        <TextView
+            android:id="@+id/license"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:padding="@dimen/auto_space"
+            android:gravity="right"
+            android:textSize="@dimen/draper_font"
+            android:lines="1"
+            android:text="@string/c_geocoder"/>
+
+    </LinearLayout>
+</LinearLayout>

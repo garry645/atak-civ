@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/legacy_preferences"
+        android:key="legacy_preferences_category">
+       <com.atakmap.android.gui.PanPreference
+            android:key="pointDroppingBehavior"
+            android:title="@string/pointDroppingBehavior" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="disableLeyGuard"
+            android:summary="@string/preferences_text61"
+            android:title="@string/disable_keyguard" />
+        <com.atakmap.android.gui.PanListPreference
+            android:title="@string/preferences_text62"
+            android:entryValues="@array/airplane_values"
+            android:entries="@array/airplane_names"
+            android:summary="@string/preferences_text63"
+            android:key="atakForceAirplaneRadioList"
+            android:defaultValue="none" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="atakContinuousRender"
+            android:title="@string/continuous_rendering"
+            android:summary="@string/continuous_rendering_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="atakDeveloperTools"
+            android:summary="@string/developer_tools_summary"
+            android:title="@string/developer_tools" />
+    </PreferenceCategory>
+</PreferenceScreen>

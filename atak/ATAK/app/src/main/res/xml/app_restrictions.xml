@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<restrictions xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <restriction
+        android:key="enterpriseConfigurationDataPackage"
+        android:title="@string/enterprise_configuration_data_package"
+        android:restrictionType="string"
+        android:description="@string/enterprise_conifguration_data_package_desc"
+        android:defaultValue="" />
+
+    <restriction
+        android:key="enterpriseConfigurationDataPackage2"
+        android:title="@string/enterprise_configuration_data_package_slot2"
+        android:restrictionType="string"
+        android:description="@string/enterprise_conifguration_data_package_desc"
+        android:defaultValue="" />
+
+    <restriction
+        android:key="enterpriseConfigurationDataPackage3"
+        android:title="@string/enterprise_configuration_data_package_slot3"
+        android:restrictionType="string"
+        android:description="@string/enterprise_conifguration_data_package_desc"
+        android:defaultValue="" />
+
+    <restriction
+        android:key="enterpriseConfigurationDataPackage4"
+        android:title="@string/enterprise_configuration_data_package_slot4"
+        android:restrictionType="string"
+        android:description="@string/enterprise_conifguration_data_package_desc"
+        android:defaultValue="" />
+
+    <restriction
+        android:key="enterpriseConfigurationDataPackage5"
+        android:title="@string/enterprise_configuration_data_package_slot5"
+        android:restrictionType="string"
+        android:description="@string/enterprise_conifguration_data_package_desc"
+        android:defaultValue="" />
+
+
+    <restriction
+        android:key="enterpriseConfigurationPreferences"
+        android:title="@string/enterprise_configuration_preferences"
+        android:restrictionType="string"
+        android:description="@string/enterprise_configuration_preferences_desc"
+        android:defaultValue="" />
+
+</restrictions>

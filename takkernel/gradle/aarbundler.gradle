@@ -1,0 +1,74 @@
+// publications are only for Android
+ext.skipPublications = [javaBuildTarget]
+
+// default source sets
+
+
+if (isAndroidKernelBuild) {
+
+    dependencies {
+        releaseImplementation fileTree(include: '*-release.jar', dir: "libs")
+        debugImplementation fileTree(include: '*-debug.jar', dir: "libs")
+    }
+
+    // bundle assets/resources
+    bundleProjects.forEach { subProj ->
+        android.sourceSets.main.res.srcDir project(":${subProj}").file('src/main/res')
+        android.sourceSets.main.assets.srcDir project(":${subProj}").file('src/main/assets')
+    }
+
+    android.buildTypes.all { buildType ->
+        bundleProjects.forEach { subProj ->
+            def capBuildType = buildType.name.capitalize()
+            def taskName = "copy${capBuildType}${subProj.capitalize()}Lib"
+            def dependency = ":${subProj}:assemble${capBuildType}"
+            def dep = "copy${capBuildType}${subProj.capitalize()}LibJars"
+
+            logger.info "Create $taskName --> $dependency"
+            afterEvaluate {  
+                try {
+                    Task t = project.tasks.getByName("desugar${capBuildType}AndroidTestFileDependencies")
+                    t.dependsOn(dep)
+                } catch (UnknownTaskException e) {}
+            }
+
+            tasks.register("${taskName}Jars") {
+                dependsOn "$dependency"
+                doLast {
+                    copy {
+                        from "${project(":$subProj").buildDir}/intermediates/aar_main_jar/${buildType.name}/sync${capBuildType}LibJars/"
+                        include 'classes.jar'
+                        rename('classes.jar', "takkernel-${subProj}-${buildType.name}.jar")
+                        into 'libs'
+
+                        duplicatesStrategy 'include' // always overwrite
+                    }
+                }
+            }
+
+            task "${taskName}JniLibs"(type: Copy) {
+                dependsOn "$dependency"
+                // the AAR will contain the stripped libs to reduce size; developers who are engaged in debugging are assumed to be using the monorepo configuration
+                from "${project(":$subProj").buildDir}/intermediates/stripped_native_libs/${buildType.name}/strip${capBuildType}DebugSymbols/out/lib"
+                include '**/*.so'
+                into "src/${buildType.name}/jniLibs"
+                
+                duplicatesStrategy 'include' // always overwrite
+            }
+
+            project.afterEvaluate {
+                tasks.getByName("pre${capBuildType}Build").dependsOn( ["${taskName}Jars", "${taskName}JniLibs"] )
+            }
+        }
+    }
+
+    sourcesJar {
+        bundleProjects.forEach { subProj ->
+            from project(":${subProj}").android.sourceSets.main.java.srcDirs
+        }
+    }
+
+    clean {
+        delete 'libs'
+    }
+}

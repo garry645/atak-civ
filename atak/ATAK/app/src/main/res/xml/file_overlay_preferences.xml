@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="File Overlays"
+        android:key="file_overlay_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/display_shape_labels_title"
+            android:key="prefs_file_label"
+            android:summary="@string/display_shape_labels_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

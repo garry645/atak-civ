@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<menu
+    buttonBg='bgs/button.xml'
+    buttonRadius='65'
+    buttonSpan='72'
+    buttonWidth='90' >
+
+    <button angle='-90'
+            icon='icons/delete.png'
+            onClick='actions/grg_delete.xml'
+            disabled='!{${removable}}' />
+
+    <button icon='icons/eye.png'
+            onClick='actions/grg_toggle_visibility.xml'/>
+    
+    <button icon='icons/transparency.png'
+            onClick='actions/grg_transparency.xml'/>
+
+    <button icon='icons/brightness.png'
+            onClick='actions/grg_brightness.xml'/>
+
+    <button icon='icons/color_wheel.png'
+            onClick='actions/grg_color.xml'/>
+
+</menu>

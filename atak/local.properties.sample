@@ -1,0 +1,31 @@
+# Sample local.properties for ATAK
+#
+# Edit this file to suit your local setup (see README.md)
+# then copy it to the name local.properties and place in the top level
+# directory of the ATAK source tree as well as in the ATAK/ and FlavorPlugin/
+# directories.
+#
+# This file should not be checked into Version Control Systems,
+# as it contains information specific to your local configuration.
+#
+
+# path to the android sdk
+sdk.dir=/opt/android-sdk-linux
+# path to the android ndk 25b
+ndk.dir=/opt/android-ndk-r25b
+# example path to the correct cmake (required at this time)
+cmake.dir=/opt/android-sdk-linux/cmake/3.18.1
+# Path to Android NDK directory
+ndk.dir=/path/to/android-ndk
+# Path to Android SDK directory
+sdk.dir=/path/to/android-sdk
+# Path to conan directory, if not in system PATH
+# conan.dir=/path/to/conan/directory
+# TAK Artifactory/maven/conan repository configuration
+takRepoUsername=youruser@your.domain
+takRepoPassword=passwordOrTokenForTAKArtifactory
+takRepoMavenUrl=https://artifacts.tak.gov/artifactory/maven
+# Conan URL is only needed when building takkernel with ATAK. See README.md
+# takRepoConanUrl=https://artifacts.tak.gov/artifactory/api/conan/conan
+# Force use of prebuilt binary takkernel, even if local takkernel sources exist
+# takkernel.dependency.forceRemote=true

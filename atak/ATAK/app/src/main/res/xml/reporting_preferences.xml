@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/preferences_text98"
+        android:key="publishCategory">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/send_contact_title"
+            android:key="dispatchLocationCotExternal"
+            android:defaultValue="true"
+            android:summary="@string/send_contact_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/hide_my_position"
+            android:key="dispatchLocationHidden"
+            android:defaultValue="false"
+            android:summary="@string/hide_my_position_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/restore_location_restart_title"
+            android:key="restoreRecordedLocation"
+            android:defaultValue="false"
+            android:summary="@string/restore_location_restart_summary" />
+        <com.atakmap.android.gui.PanListPreference
+            android:entryValues="@array/reporting_strategy_values"
+            android:entries="@array/reporting_strategy_names"
+            android:summary="@string/reporting_strategy_summary"
+            android:key="locationReportingStrategy"
+            android:title="@string/preferences_text101"
+            android:defaultValue="@string/preferences_text102"
+            android:dependency="dispatchLocationCotExternal"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateStationaryUnreliable"
+            android:title="@string/preferences_text103"
+            android:summary="@string/preferences_text104"
+            android:defaultValue="30"
+            android:inputType = "number"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateMinUnreliable"
+            android:title="@string/preferences_text105"
+            android:summary="@string/preferences_text106"
+            android:defaultValue="20"
+            android:inputType="number"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateMaxUnreliable"
+            android:title="@string/preferences_text107"
+            android:summary="@string/preferences_text108"
+            android:defaultValue="2"
+            android:inputType="number"/>
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateStationaryReliable"
+            android:title="@string/preferences_text109"
+            android:summary="@string/preferences_text110"
+            android:defaultValue="180"
+            android:inputType = "number"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateMinReliable"
+            android:title="@string/preferences_text111"
+            android:summary="@string/preferences_text112"
+            android:defaultValue="20"
+            android:inputType="number"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="dynamicReportingRateMaxReliable"
+            android:title="@string/preferences_text113"
+            android:summary="@string/preferences_text114"
+            android:defaultValue="2"
+            android:inputType="number"/>
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="constantReportingRateUnreliable"
+            android:title="@string/preferences_text115"
+            android:summary="@string/preferences_text116"
+            android:defaultValue="3"
+            android:inputType="number"/>
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:key="constantReportingRateReliable"
+            android:title="@string/preferences_text117"
+            android:summary="@string/preferences_text118"
+            android:defaultValue="15"
+            android:inputType="number"/>
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text119"
+            android:key="dispatchLocationCotExternalAtStart"
+            android:defaultValue="true"
+            android:summary="@string/preferences_text120"
+            android:dependency="dispatchLocationCotExternal"/>
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/report_takv_title"
+            android:key="dispatchTAKVersionNumber"
+            android:defaultValue="true"
+            android:summary="@string/report_takv_summary"
+            android:dependency="dispatchLocationCotExternal"/>
+    </PreferenceCategory>
+</PreferenceScreen>

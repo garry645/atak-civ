@@ -1,0 +1,12 @@
+<PersistedActionMenu baseline="true" hideable="true" iconPath="nav_redx" title="actionbar_redxtool">
+   <ClickData actionType="click" dismissMenu="false">
+      <broadcast>
+         <action>com.atakmap.android.user.REDX_CLICK</action>
+      </broadcast>
+   </ClickData>
+   <ClickData actionType="longClick" dismissMenu="false">
+      <broadcast>
+         <action>com.atakmap.android.user.REDX_LONG_CLICK</action>
+      </broadcast>
+   </ClickData>
+</PersistedActionMenu>

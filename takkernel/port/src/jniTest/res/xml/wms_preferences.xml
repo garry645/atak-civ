@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/wms_preferences">
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/redeploy_wms_sources"
+           android:key="redeploywms"/>
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/wms_connect_tmeout"
+           android:key="wmsconnecttimeout"/>
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/preferences_text58"
+            android:summary="@string/preferences_text59"
+            android:defaultValue="true"
+            android:key="volumemapswitcher" />
+       <com.atakmap.android.gui.PanCheckBoxPreference
+           android:title="@string/civ_enable_grg_interact"
+           android:key="prefs_layer_grg_map_interaction"
+           android:summary="@string/civ_enable_grg_interact_summ"
+           android:defaultValue="true"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

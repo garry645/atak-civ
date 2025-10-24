@@ -1,0 +1,94 @@
+apply from: 'gradle/versions.gradle'
+
+class RuntimeLibraries {
+    String platform
+    String srcLibDir
+    String[] libraries
+}
+
+task runtimeLibsList {
+    group = 'Build'
+    description = 'Generates runtime library listing.'
+
+    def runtimeLibraries = []
+    runtimeLibraries += new RuntimeLibraries([
+        platform: 'linuxarm64',
+        srcLibDir: '../native/linux-arm64v8',
+        libraries: ['libcrypto.so.81.3', 'libssl.so.81.3', 'libcommoncommojni.so']
+    ])
+    runtimeLibraries += new RuntimeLibraries([
+        platform: 'linuxarm32',
+        srcLibDir: '../native/linux-arm32v7',
+        libraries: ['libcrypto.so.81.3', 'libssl.so.81.3', 'libcommoncommojni.so']
+    ])
+    runtimeLibraries += new RuntimeLibraries([
+        platform: 'linux64',
+        srcLibDir: '../native/linux/amd64',
+        libraries: ['libcrypto.so.81.3', 'libssl.so.81.3', 'libcommoncommojni.so']
+    ])
+    runtimeLibraries += new RuntimeLibraries(
+    [
+        platform: 'macos64',
+        srcLibDir: '../native/macosx',
+        libraries: ['libcommoncommojni.dylib']
+    ])
+    runtimeLibraries += new RuntimeLibraries(
+    [
+        platform: 'win64',
+        srcLibDir: '../native/windows/amd64',
+        libraries: ['libmicrohttpd-dll.dll', 'libprotobuf-lite.dll', 'libxml2.dll', 'libcrypto-81_3.dll', 'libssl-81_3.dll', 'ngtcp2.dll', 'ngtcp2_crypto_quictls.dll', 'nghttp2.dll', 'libcurl.dll', 'commoncommo.dll', 'commoncommojni.dll']
+    ])
+
+    runtimeLibraries.each { rt -> outputs.file("${buildDir}/jcommoncommo/libs/${rt.platform}/jcommoncommo.libs") }
+
+    doLast {
+        runtimeLibraries.each { rt ->
+            def libsDstDir = file("${buildDir}/jcommoncommo/libs/${rt.platform}")
+            def libsFile = file("${libsDstDir.absolutePath}/jcommoncommo.libs")
+            libsFile.withWriter { writer ->
+                // version
+                writer.write("${commoncommoVersion}\n")
+                rt.libraries.each {
+                    writer.write("${it}\n")
+                }
+            }
+            copy {
+                from "${rt.srcLibDir}"
+                into "${libsDstDir.absolutePath}"
+                include "*.dll"
+                include "*.so"
+                include "*.so.*"
+                include "*.dylib"
+            }
+        }
+    }
+}
+
+task runtimeJar(type: Jar) {
+    group = 'Build'
+    description = 'Assembles a zip file containing the native JCommonCommo libraries.'
+
+    dependsOn 'runtimeLibsList'
+
+    archiveFileName = 'jcommoncommo-rt.jar'
+    destinationDirectory = file("$buildDir")
+
+    from(project.file("${buildDir}")) {
+        include 'jcommoncommo/'
+    }
+}
+
+task zipLibs(type: Zip) {
+    group = 'Build'
+    description = 'Assembles a zip file containing the native JCommonCommo libraries.'
+
+    dependsOn 'runtimeJar'
+
+    archiveFileName = 'jcommoncommo-native.zip'
+    destinationDirectory = file("$buildDir")
+
+    from(project.file('..')) {
+        include 'native/'
+    }
+}
+

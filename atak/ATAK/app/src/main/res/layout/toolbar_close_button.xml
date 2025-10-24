@@ -1,0 +1,8 @@
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/close"
+    android:layout_width="@dimen/dropdown_bottom_bar_height"
+    android:layout_height="@dimen/dropdown_bottom_bar_height"
+    android:background="@android:color/transparent"
+    android:padding="@dimen/auto_margin"
+    android:src="@drawable/ic_close" />
+

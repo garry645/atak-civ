@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/tadilj_settings"
+        android:key="tadilj_settings_category">
+       <com.atakmap.android.gui.PanPreference
+            android:key="tadiljPersistedIds"
+            android:title="@string/preferences_text340" />
+    </PreferenceCategory>
+</PreferenceScreen>

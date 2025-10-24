@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/documentation"
+        android:key="documentation_category">
+    <com.atakmap.android.gui.PanPreference
+            android:title="@string/changeLog"
+            android:key="atakChangeLog"
+            android:icon="@drawable/document" />
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/userManual"
+           android:key="atakDocumentation"
+           android:icon="@drawable/document" />
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/atak_user_manual_translated"
+            android:key="atakDocumentationTranslated"
+            android:icon="@drawable/document" />
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/atak_icon_glossary"
+            android:key="atakIconGlossary"
+            android:icon="@drawable/document" />
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/addendum"
+           android:key="atakFlavorAddendum"
+           android:icon="@drawable/document" />
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/atakDatasets"
+           android:key="atakDatasets"
+           android:icon="@drawable/document" />
+    </PreferenceCategory>
+</PreferenceScreen>

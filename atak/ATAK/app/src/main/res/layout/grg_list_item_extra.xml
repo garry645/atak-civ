@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/grg_menu_open"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:padding="@dimen/auto_space_big"
+        android:src="@drawable/ic_menu"
+        style="@style/darkButton"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/grg_menu"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/grg_panto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/auto_space_big"
+            android:src="@drawable/panto_button"
+            style="@style/darkButton"/>
+    
+        <ImageButton
+            android:id="@+id/grg_send"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/auto_space_big"
+            android:src="@drawable/send_square"
+            style="@style/darkButton"/>
+    
+        <ImageButton
+            android:id="@+id/grg_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="@dimen/auto_margin"
+            android:src="@drawable/ic_menu_delete"
+            style="@style/darkButton"/>
+
+     </LinearLayout>
+
+</LinearLayout>

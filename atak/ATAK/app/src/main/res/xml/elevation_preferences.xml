@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/coordEntryPreference"
+        android:key="coordEntryPreferences">
+        <com.atakmap.android.gui.PanPreference
+            android:key="pull_elevation_mode"
+            android:title="@string/pull_elevation_pref_title"
+            android:summary="@string/pull_elevation_pref_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Data Usage Preferences"
+        android:key="dataUsagePreferences">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:key="force_dted_elevation_only"
+            android:title="@string/force_dted_elevation_title"
+            android:summary="@string/force_dted_elevation_summary" />
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="Elevation Data"
+        android:key="elevation_data_category">
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:title="@string/elevation_server_title"
+            android:key="prefs_dted_stream_server"
+            android:summary="@string/elevation_server_summary"
+            android:defaultValue="tak.gov"
+            android:inputType="textUri" />
+        <com.atakmap.android.gui.PanPreference
+            android:title="@string/elevation_downloader"
+            android:key="prefs_dted_download"
+            android:summary="@string/elevation_downloader_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/stream_elevation_title"
+            android:key="prefs_dted_stream"
+            android:summary="@string/stream_elevation_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

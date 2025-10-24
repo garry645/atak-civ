@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/support"
+        android:key="support_category">
+       <com.atakmap.android.gui.PanPreference
+           android:title="@string/tak_suppor_info"
+           android:key="takSupportInfo"
+           android:icon="@drawable/ic_menu_support_info"/>
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/reset_hints"
+           android:key="resetHints"
+           android:icon="@drawable/hints" />
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/tak_init_devic_conf"
+           android:key="takInitDeviceConfig"
+           android:icon="@drawable/ic_atak_launcher"/>
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/loggingPreferences"
+           android:key="loggingPrefs"
+           android:icon="@drawable/send_logs"/>
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/device_details"
+           android:key="deviceDetails"
+           android:icon="@drawable/ic_debugging"/>
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/atak_docs"
+           android:key="atakdocs"
+           android:icon="@drawable/document"/>
+        <com.atakmap.android.gui.PanPreference
+           android:title="@string/user_feedback"
+           android:key="userFeedback"
+           android:icon="@drawable/feedback" />
+    </PreferenceCategory>
+</PreferenceScreen>

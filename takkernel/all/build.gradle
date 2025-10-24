@@ -1,0 +1,22 @@
+// default source sets
+
+dependencies {
+    api project(':annotation')
+    api project(':port')
+    api project(':engine')
+    api project(':shared')
+}
+
+if(isAndroidKernelBuild) {
+    dependencies {
+        // deconflict dependencies required for Instrumented Tests
+        constraints {
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+            }
+            androidTestImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}") {
+                because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+            }
+        }
+    }
+}

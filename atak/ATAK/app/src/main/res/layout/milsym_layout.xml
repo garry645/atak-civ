@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="3dp"
+    android:layout_marginRight="3dp"
+    android:weightSum="100"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#000000"
+        android:paddingStart="5dp" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+
+        <EditText
+            android:id="@+id/hierarchy_search"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_toStartOf="@id/hierarchy_actions_layout"
+            android:hint="Search"
+            android:imeOptions="flagNoExtractUi|actionSearch"
+            android:singleLine="true"
+            android:lines="1"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:inputType="textNoSuggestions"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+
+        <TextView
+            android:id="@+id/typePathTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@+id/hierarchy_actions_layout"
+            android:ellipsize="end"
+            android:gravity="center|start"
+            android:maxLines="2"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textColor="#FFFFFFFF"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/searchText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="20dp"
+            android:layout_toStartOf="@id/hierarchy_actions_layout"
+            android:hint="Search"
+            android:imeOptions="flagNoExtractUi|actionSearch"
+            android:singleLine="true"
+            android:lines="1"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:inputType="textNoSuggestions"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+
+        <LinearLayout
+            android:id="@+id/hierarchy_actions_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal" >
+
+            <!-- List-based custom header view container -->
+            <LinearLayout
+                android:id="@+id/hierarchy_list_header"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:visibility="visible"></LinearLayout>
+
+            <ImageButton
+                android:id="@+id/searchButton"
+                style="@style/darkButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:paddingStart="2dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="5dp"
+                android:src="@android:drawable/ic_menu_search"
+                tools:visibility="visible" />
+
+            <!-- The Filter Button is currently not being shown as it was deemed too
+                 confusing in its initial state. Instead, filtering is being conditionally
+                 enabled automatically when in Edit mode and disabled for Create mode. -->
+            <ImageButton
+                android:id="@+id/filterButton"
+                style="@style/darkButton"
+                android:layout_height="40dp"
+                android:layout_width="40dp"
+                android:paddingStart="2dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="2dp"
+                android:paddingBottom="5dp"
+                android:src="@drawable/ic_filter"
+                android:visibility="gone" />
+
+        </LinearLayout>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/selectorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="98"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            style="@style/darkButton"
+            android:padding="12dp"
+            android:layout_height="match_parent"
+            android:text="Back" />
+
+        <ListView
+            android:id="@+id/typeSelectListView"
+            android:fadeScrollbars="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <Button
+            android:id="@+id/clearButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="6dp"
+            android:layout_weight="1"
+            style="@style/darkButton"
+            android:text="Clear" />
+
+
+</LinearLayout>

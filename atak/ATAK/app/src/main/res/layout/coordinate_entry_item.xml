@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <View
+        android:id="@+id/landscape_line"
+        android:layout_marginTop="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:background="@color/lighter_gray" >
+    </View>
+
+    <FrameLayout
+        android:id="@+id/portrait_handle_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/landscape_handle_container"
+            android:layout_weight="0"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+
+        <View
+            android:id="@+id/coordinate_entry_item_handle"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:background="@color/lighter_gray"/>
+
+        </FrameLayout>
+
+        <View
+            android:id="@+id/portrait_line"
+            android:layout_weight="0"
+            android:layout_marginTop="3dp"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:background="@color/lighter_gray" >
+        </View>
+
+        <TextView
+            android:layout_weight="1"
+            android:id="@+id/coordinate_entry_item_name"
+            android:layout_width="0dp"
+            android:paddingStart="5dp"
+            android:gravity="center"
+            android:textSize="@dimen/draper_large_font"
+            android:layout_height="wrap_content"/>
+
+
+        <View
+            android:id="@+id/landscape_selected"
+            android:layout_marginTop="3dp"
+            android:layout_width="6dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="3dp"
+            android:visibility="invisible"
+            android:background="@color/light_blue" >
+        </View>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/portrait_selected"
+        android:layout_marginTop="3dp"
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginEnd="3dp"
+        android:visibility="invisible"
+        android:background="@color/light_blue" >
+    </View>
+
+</LinearLayout>

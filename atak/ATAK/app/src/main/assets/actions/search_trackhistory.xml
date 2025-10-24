@@ -1,0 +1,8 @@
+<set>
+    <broadcast>
+        <action>com.atakmap.android.track.TRACK_SEARCH</action>
+        <extras>
+            <string key='uid'>${uid}</string>
+        </extras>
+    </broadcast>
+</set>

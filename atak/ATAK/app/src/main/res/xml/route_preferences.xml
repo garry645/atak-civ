@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+ <PreferenceCategory
+     android:title="@string/routePreferences"
+     android:key="route_preferences_category"/>
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="CP"
+     android:dialogTitle="@string/preferences_text298"
+     android:key="waypointPrefix"
+     android:title="@string/preferences_text296" />
+
+ <com.atakmap.android.gui.PanPreference
+     android:key="defaultRouteColor"
+     android:title="@string/preferences_text301" />
+
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="route_track_up_locked_on"
+     android:title="@string/tradition_nav_mode" />
+
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="useRouteVoiceCues"
+     android:title="@string/preference_use_voice_cues" />
+
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="false"
+     android:key="route_vibrate_at_checkpoint"
+     android:title="@string/vibrate_arrival" />
+
+ <!-- Walking Preferences -->
+ <PreferenceCategory
+     android:title="@string/preferences_route_walking"
+     android:key="walking_category"/>
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="10"
+     android:dialogTitle="@string/preferences_text305"
+     android:inputType="number"
+     android:key="waypointBubble.Walking"
+     android:title="@string/preferences_text303" />
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="10"
+     android:dialogTitle="@string/preferences_text305"
+     android:inputType="number"
+     android:key="waypointOffRouteBubble.Walking"
+     android:title="@string/preferences_route_walking_off_route_bubble_title" />
+
+ <!-- Driving Preferences -->
+ <PreferenceCategory
+     android:title="@string/preferences_route_driving"
+     android:key="driving_category"/>
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="20"
+     android:dialogTitle="@string/preferences_text308"
+     android:inputType="number"
+     android:key="waypointBubble.Driving"
+     android:title="@string/preferences_text306" />
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="20"
+     android:dialogTitle="@string/preferences_text308"
+     android:inputType="number"
+     android:key="waypointOffRouteBubble.Driving"
+     android:title="@string/preferences_route_driving_off_route_bubble_title" />
+
+ <!-- Flying Preferences -->
+ <PreferenceCategory
+     android:title="@string/preferences_route_flying"
+     android:key="flying_category"/>
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="1000"
+     android:dialogTitle="@string/preferences_text311"
+     android:inputType="number"
+     android:key="waypointBubble.Flying"
+     android:title="@string/preferences_text309" />
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="1000"
+     android:dialogTitle="@string/preferences_text311"
+     android:inputType="number"
+     android:key="waypointOffRouteBubble.Flying"
+     android:title="@string/preferences_route_flying_off_route_bubble_title" />
+
+ <!-- Swimming Preferences -->
+ <PreferenceCategory
+     android:title="@string/preferences_route_swimming"
+     android:key="swimming_category"/>
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="10"
+     android:dialogTitle="@string/preferences_text314"
+     android:inputType="number"
+     android:key="waypointBubble.Swimming"
+     android:title="@string/preferences_text312" />
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="10"
+     android:dialogTitle="@string/preferences_text314"
+     android:inputType="number"
+     android:key="waypointOffRouteBubble.Swimming"
+     android:title="@string/preferences_route_swimming_off_route_bubble_title" />
+
+ <!-- Watercraft Preferences -->
+ <PreferenceCategory
+     android:title="@string/preferences_route_watercraft"
+     android:key="watercraft_category"/>
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="100"
+     android:dialogTitle="@string/preferences_text317"
+     android:inputType="number"
+     android:key="waypointBubble.Watercraft"
+     android:title="@string/preferences_text315" />
+
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="100"
+     android:dialogTitle="@string/preferences_text317"
+     android:inputType="number"
+     android:key="waypointOffRouteBubble.Watercraft"
+     android:title="@string/preferences_route_watercraft_off_route_bubble_title" />
+
+ <PreferenceCategory
+     android:title="@string/pref_billboard_category"
+     android:key="attachment_billboards_category"/>
+
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="route_billboard_enabled"
+     android:title="@string/pref_billboard_enabled_title" />
+ <com.atakmap.android.gui.PanEditTextPreference
+     android:defaultValue="500"
+     android:dialogTitle="@string/preferences_text317"
+     android:inputType="number"
+     android:key="route_billboard_distance_m"
+     android:title="@string/pref_billboard_distance_title" />
+
+ <PreferenceCategory android:title="Other"
+     android:key="other_category"/>
+
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="elevProfileInterpolateAlt"
+     android:title="@string/preferences_text318" />
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="elevProfileCenterOnSeeker"
+     android:title="@string/preferences_text320" />
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="true"
+     android:key="gpxImportCheckpointsForNamedRoutePoints"
+     android:title="@string/preferences_text322" />
+ <com.atakmap.android.gui.PanCheckBoxPreference
+     android:defaultValue="false"
+     android:key="kmlExportGroundClamp"
+     android:title="@string/preferences_text324" />
+ <com.atakmap.android.gui.PanListPreference
+     android:defaultValue="@string/both"
+     android:entries="@array/kml_exportroute_checkpointmode_strings"
+     android:entryValues="@array/kml_exportroute_checkpointmode_values"
+     android:key="kmlExportCheckpointMode"
+     android:title="@string/preferences_text326" />
+</PreferenceScreen>

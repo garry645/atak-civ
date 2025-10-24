@@ -1,0 +1,14 @@
+ext {
+    jacocoVersion = '0.8.13'
+    takDevkitVersion = '5.1.1'
+    takKernelVersion = '8.30.3'
+    priVersion = '1.1.2'
+    kotlinVersion = '2.1.10'
+    gradleVersion = '8.9.0'
+    fragmentVersion = '1.8.7'
+    exifinterfaceVersion = '1.4.1'
+    localbroadcastVersion = '1.1.0'
+    lifecycleprocessVersion = '2.9.0'
+    collectionVersion = '1.4.5'
+    androidxcoreVersion = '1.15.0'
+}

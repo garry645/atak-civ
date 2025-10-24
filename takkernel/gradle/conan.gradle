@@ -1,0 +1,85 @@
+import java.security.MessageDigest
+
+// configure Conan
+task configureConan {
+    group = 'Build'
+    description = 'Configures the Conan repository and credentials to be used when pulling down Conan-based dependencies.'
+
+    doLast {
+        // XXX - fallback on legacy property names, remove support in future version
+        String conanRepoUrl = getProperty(project, 'takRepoConanUrl',
+                getProperty(project, 'conan.consume.url', 'http://localhost'))
+        String conanRepoUser = getProperty(project, 'takRepoUsername',
+                getProperty(project, 'conan.consume.user', 'invalid'))
+        String conanRepoPassword = getProperty(project, 'takRepoPassword',
+                getProperty(project, 'conan.consume.password', 'invalid'))
+
+        // warn use of deprecated properties
+        if (getProperty(project, 'conan.consume.url', null))
+            println('WARNING: \'conan.consume.url\' is deprecated and will be removed in 1.0.0 Update references to \'takRepoConanUrl\'')
+        if (getProperty(project, 'conan.consume.user', null))
+            println('WARNING: \'conan.consume.user\' is deprecated and will be removed in 1.0.0 Update references to \'takRepoUsername\'')
+        if (getProperty(project, 'conan.consume.password', null))
+            println('WARNING: \'conan.consume.password\' is deprecated and will be removed in 1.0.0 Update references to \'takRepoPassword\'')
+
+        if (conanRepoUrl == null || conanRepoUser == null || conanRepoPassword == null) {
+            println("Warning: Conan repo is not configured, using local cache only")
+            return
+        }
+
+        String conanDir = getProperty(project, 'conan.dir', null)
+        String conanCmd = conanDir ? (new File(conanDir, 'conan')).getAbsolutePath() : 'conan'
+
+        String remote = getExistingRemote(conanCmd, conanRepoUrl)
+        if (!remote) {
+            // Create remote with a unique remote name using a hash to avoid potential conflict with existing conan remotes
+            remote = getHash("${rootDir.getAbsolutePath()}@${conanRepoUrl}")
+            String conanVerifySsl = getProperty(project, 'conan.verifySsl', 'True')
+
+            [conanCmd, 'config', 'set', 'general.revisions_enabled=1'].execute()
+            [conanCmd, 'remote', 'add', remote, conanRepoUrl, conanVerifySsl].execute()
+        }
+
+        // Ensure that the user is logged in
+        [conanCmd, 'user', '-r', remote, '-p', conanRepoPassword, conanRepoUser].execute()
+    }
+}
+
+afterEvaluate {
+    // native build depends on conan configuration
+    def preExternalNativeBuildTask = tasks.findByName('preExternalNativeBuild')
+    if(preExternalNativeBuildTask) {
+        preExternalNativeBuildTask.dependsOn configureConan
+    }
+}
+
+/**
+ * Find an existing conan remote name in the list produced from {@code conan remote list}.  Scan each remote looking
+ * for one that has the given {@code conanRepoUrl}.  If not found, return null.
+ *
+ * @param conanCommand Conan command (or path) to execute
+ * @param conanRepoUrl Repo URL to search for
+ * @return Remote name for the given URL, or null
+ */
+String getExistingRemote(String conanCommand, String conanRepoUrl) {
+    def remotes = "$conanCommand remote list".execute().text.trim()
+
+    if (!remotes.contains(conanRepoUrl)) return null
+
+    // Looking through lines like this:
+    //    tak: https://artifacts.tak.gov/artifactory/api/conan/conan [Verify SSL: True]
+
+    for(remote in remotes.split('\n')) {
+        if (remote.contains(conanRepoUrl)) return remote.split(':')[0].trim()
+    }
+    return null
+}
+
+String getHash(String s) {
+    try {
+        def hash = MessageDigest.getInstance("SHA-256").digest(s.getBytes("UTF-8"))
+        return Base64.encoder.encodeToString(hash)
+    } catch(Exception ex) {
+        throw new GradleException('Failed to generate hash', ex)
+    }
+}

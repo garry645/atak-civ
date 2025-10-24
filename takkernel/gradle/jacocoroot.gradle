@@ -1,0 +1,14 @@
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate Jacoco coverage report from all subprojects'
+    dependsOn(subprojects.createJacocoTestReport)
+
+    additionalSourceDirs.setFrom(files(subprojects.createJacocoTestReport.additionalSourceDirs))
+    sourceDirectories.setFrom(files(subprojects.createJacocoTestReport.sourceDirectories))
+    classDirectories.setFrom(files(subprojects.createJacocoTestReport.classDirectories))
+    executionData.setFrom(files(subprojects.createJacocoTestReport.executionData).filter { f -> f.exists() })
+
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}

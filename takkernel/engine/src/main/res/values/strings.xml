@@ -1,0 +1,5 @@
+<resources>
+    <!-- @deprecated (removeAt = "2.0", forRemoval = true) -->
+    <!-- @deprecated To be removed without replacement -->
+    <string translatable="false" name="defaultTrustStorePassword"></string>
+</resources>

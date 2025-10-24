@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.atakmap.android.tools.ActionBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp">
+
+    <ImageButton
+        android:id="@+id/buttonSPI1"
+        android:contentDescription="@string/civ_stringSPIDesc"
+        android:src="@drawable/ic_spi1_off"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonSPI2"
+        android:contentDescription="@string/civ_stringSPIDesc"
+        android:visibility="gone"
+        android:src="@drawable/ic_spi2_off"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonSPI3"
+        android:contentDescription="@string/civ_stringSPIDesc"
+        android:visibility="gone"
+        android:src="@drawable/ic_spi3_off"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonLaser"
+        android:src="@drawable/ic_laser_toggle"
+        android:visibility="gone"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonCASDynamicRangeAndBearing"
+        android:src="@drawable/ic_drag_ruler_toggle"
+        android:visibility="gone"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonPlaceHostile"
+        android:src="@drawable/ic_hostile_toggle"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/hostileManager"
+        android:src="@drawable/ic_hostile_mgr"
+        android:padding="@dimen/auto_space"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/mgrsGoto"
+        android:src="@drawable/ic_mgrs_goto"
+        style="@style/ActionBarViewImageButton"/>
+
+</com.atakmap.android.tools.ActionBarView>

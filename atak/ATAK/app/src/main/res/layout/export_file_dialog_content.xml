@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/exportFileMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_marginStart="5dp"
+        android:textSize="22sp"/>
+    <CheckBox
+        android:id="@+id/exportFileReimport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginStart="5dp"
+        android:text="@string/additionally_reimport_the_exported_file" />
+    <CheckBox
+        android:id="@+id/exportFileReimportPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:layout_marginStart="5dp"
+        android:visibility="gone"
+        android:text="@string/prompt_file_import_multiple_match" />
+
+</LinearLayout>

@@ -1,0 +1,199 @@
+*** Source Bundles
+zlib - 1.3.1
+libiconv - 1.15
+openssl - 3.0.14+quic Release 1 from quictls project https://github.com/quictls/openssl
+curl - 8.9.1
+proj - 4.9.1
+expat - 2.1.0
+libkml - 1.3
+libxml2 - 2.13.3
+libmicrohttpd - 1.0.1
+mdbtools - 1.0.0
+nghttp2 - 1.62.1
+ngtcp2 - 1.6.0
+ogdi - 3.2.0
+geos - 3.4.3
+sqlcipher - 4.5.7
+cng-engine - https://github.com/rticommunity/openssl-cng-engine
+             at commit 974393f87058f16baeb380e7be9091440c34a194,
+             rewritten as a provider. Internal repository commit:
+             46545e412e8b3dd4f3b602fd25aeb7ff6c49ff42
+javasqlite-pgsc - Modified version of the native portions only of
+                  javasqlite-20140624 from
+                  http://www.ch-werner.de/javasqlite. Modification history
+                  unknown. Copy of raster/pgsc/spatialite/exp-jsql.tar.gz.
+                  Adds spatialite support and changes the package
+                  name to match those employed by the Java counterpart
+                  used by ATAK, maybe other changes as well
+libspatialite - 4.3.0a
+protobuf - cpp-3.21.0
+pdfium - pre-built (see below instructions) from 
+         https://github.com/rouault/pdfium
+         (rev b5009c4df5aa4ff923ede1c5deba1aa4be43199b)
+
+
+*** Mr. SID binary bundles in mrsid/ directory:
+
+linux-amd64.tar.gz:  
+MrSID_DSDK-9.5.4.4703-rhel6.x86-64.gcc482.tar.gz
+(rearranged and extraneous files removed)
+
+android.tar.gz:
+MrSID_DSDK-9.5.4.4709-android.universal.gcc49.tar.gz
+
+ios.tar.gz:
+MrSID_DSDK-9.5.1.4427-ios90.universal.clang70.tar.gz
+(9.5.4 builds have an unresolvable symbol in them and cannot be used)
+(rearranged and extraneous files removed)
+
+macOS-64.tar.gz
+MrSID_DSDK-9.5.4.4709-darwin16.universal.clang80.tar.gz
+(rearranged and extraneous files removed)
+
+win32.zip:
+MrSID_DSDK-9.5.4.4709-win32-vc12.zip
+(rearranged and extraneous files removed)
+
+win32-v140.zip:
+MrSID_DSDK-9.5.4.4709-win32-vc14.zip
+(rearranged and extraneous files removed)
+
+win32-v142.zip:
+MrSID_DSDK-9.5.4.5047-win32-vc16.zip
+(rearranged and extraneous files removed)
+
+win64.zip:
+MrSID_DSDK-9.5.4.4709-win64-vc12.zip
+(rearranged and extraneous files removed)
+
+win64-v140.zip:
+MrSID_DSDK-9.5.4.4709-win64-vc14.zip
+(rearranged and extraneous files removed)
+
+win64-v142.zip:
+MrSID_DSDK-9.5.4.5047-win64-vc16.zip
+(rearranged and extraneous files removed)
+
+
+*** pthreads binary bundle:
+
+pthreads-win32.zip: v2.9.1-release, rebuilt by Chris Lawrence using VS2013
+
+
+*** Patches:
+proj-pgsc.patch - Minor change to jni interface. Derived from old
+                  raster/pgsc/spatialite/exp-spatialite.sh script
+openssl-pgsc.patch - Pass PERL var to recursive make calls.
+                  Disable check for windows paths since we use cygwin perl
+libmicrohttpd-pgsc-win32.patch - Changes the VC++ project file
+                     to build static libraries against the DLL-based
+                     runtimes so that result can be used in other
+                     DLLs or apps built against the DLL runtime
+expat-pgsc.patch - Fix include for close(), read(), etc. on ios-arm64
+                   Add android arm64 to autoconf
+expat-pgsc-winproj-v*.patch - Add 64-bit build config to MSVC project files
+                   The -vXXX extension denotes the MSVC version in use as
+                   the project files to patch vary based on MSVC version.
+libspatialite-pgsc.patch - Android compatibility for package's autoconf
+                   Fix several places where library would have undefined
+                   references if OMIT_ICONV was defined (which we do)
+                   Fixes makefile.vc (windows) to not hardcode the path
+                   to supporting headers and libs
+                   Adjust config-msvc.h to match our setup (copied from old
+                     build in [CVS]/SpatiaLite)
+                   Fix buggy macro test for MSVC compilers around alternate
+                     rint() implementation inclusion
+                   Fix iconv use on ios
+                   Add android arm64 to autoconf
+                   Change makefiles to handle building for android on windows
+                     (cygwin path translations)
+                   Change configure's libtool generation to account for android
+                     being built under cygwin (path translations to native
+                     windows when invoking android tools)
+                   Fix detection of LD when running on a windows/cygwin
+                       build host and crossing for Android.
+libiconv-pgsc.patch - Fix detection of LD when running on a windows/cygwin
+                   build host and crossing for Android.  Fixes broken line
+                   endings during configure runs and deriving vars for libtool
+curl-pgsc.patch - Fix detection of LD and a few other things that break
+                  when building for android (or anything using configure)
+                  on cygwin with text mount
+protobuf-pgsc.patch - Fix detection of LD when running on a windows/cygwin
+                   build host and crossing for Android.  Fixes broken line
+                   endings during configure runs and deriving vars for libtool
+sqlcipher-pgsc.patch - Add Android host detection and arm64 to config.sub, and
+                   ability to build for android in cygwin
+ogdi-pgsc.patch - Numerous hacks to ogdi's ancient and obtuse build
+                   system for both Windows and Android and Linux.
+                   Also removes RPC parts since we don't want that as a 
+                   dependency.
+geos-pgsc.patch - Add support for newer nmake version in VS2015 Update 3 and
+                   building for android from windows/cygwin
+libkml-pgsc.patch - Fix various issues with libkml
+libkml-pgsc-postac.patch - Fixes applied after autoconf is run
+libkml-pgsc-win*.patch - Fixes for Windows project files (mostly adding 64-bit)
+                   The -vXXX extension denotes the MSVC version in use as
+                   the project files to patch vary based on MSVC version.
+pri-pgsc-winproj-vXXX.patch - Patch to update MS project file from the 
+                   base supported version for PRI to the version in the patch
+                   filename's suffix.
+
+
+
+*** Building pdfium binary bundles:
+The "pdfium" library uses Google's chromium tools for building.  It is fairly
+fickle and requires very specific setups.  Moreover, the vanilla pdfium
+distribution is not suited for use inside gdal (which is how TAK and TTP
+uses it), gdal expects an older fork of pdfium (several years older than
+current google repository), and current google pdfium uses C++ constructs
+unsupported by the TTP-required version of the Android NDK.
+Due to these restrictions, pdfium is held in takthirdparty as a set of
+pre-built binaries and associated headers.  This section provides the steps
+and info used to build those binaries outside of TTP.
+
+
+* Linux & Android builds
+Building for Android and Linux is only supported on Linux systems.
+The build script will build native Linux and all four supported Android
+variants in one run.
+The following prerequisites are known to be required:
+    gcc (9.3.0 was last used)
+    python 2.7 (3.x does not work due to upstream scripts needing 2.x)
+    python "setuptools" installed to be used by the python interpreter
+    Android NDK (version as dictated by existing takthirdparty prerequisites)
+    
+* Windows builds
+Building for Windows is only supported on Windows.
+Windows builds will only build for *either* win32 or win64 in a single
+run.  To build both, repeat the build steps twice using a separate working
+build directory for each and setting the script variable
+(see step by step below) appropriately.
+The following prerequisites are known to be required:
+    takthirdparty itself must be available (used for Visual Studio scripts)
+    python 2.7 (3.x does not work due to upstream scripts needing 2.x)
+       (the cygwin package is known to work)
+    python "setuptools" installed to be used by the python interpreter
+       (the cygwin package is known to work)
+    Visual Studio 2015
+
+* Step by step instructions (same for both system types except where noted)
+1. Create a directory somewhere to do the build.  It is recommended this
+   be done *outside* the TTP tree.  These instructions shall call this
+   "pdf_build" (but to be clear, any name can be used).
+2. Copy the build script, pdfium-build.sh, to the "pdf_build" directory
+3. Edit the top of the build script to set any options needed.
+4. [Android builds only] Be sure ANDROID_NDK environment variable is
+   set to your Android NDK location (see TTP instructions)
+5. cd into "pdf_build" and run the script:
+   cd pdf_build && ./pdfium-build.sh
+6. Let the script run. 
+7. [Android builds only] At completion you will have 4 .tar.gz files, one each
+   for your native Linux, Android armeabi-v7a, arm64-v8a, and x86.
+7. [Windows builds only] At completion you will have a .tar.gz file with
+   named for the windows variant you built for. NOTE: if you need to build
+   the other windows variant, repeat from the beginning with a new "pdf_build"
+   directory.
+8. Copy the new .tar.gz file(s) into the takthirdparty/distfiles/pdfium/
+   directory
+9. UPDATE THIS README WITH THE NEW VERSION STRING FOR PDFIUM!
+

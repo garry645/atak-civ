@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_weight=".35"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/name" />
+        <EditText
+            android:id="@+id/name"
+            android:layout_weight=".65"
+            android:singleLine="true"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <TableLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/auto_margin">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/auto_space_big"
+                android:layout_weight=".1"
+                android:text="@string/range_title"/>
+
+            <EditText
+                android:id="@+id/msd_range"
+                android:inputType="numberDecimal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".8"/>
+
+            <Spinner
+                android:id="@+id/msd_units"
+                android:layout_weight=".1"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:textColor="@color/white"
+                style="@style/darkButton"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/auto_space_big"
+                android:text="@string/details_text10"/>
+
+            <com.atakmap.android.gui.ColorButton
+                android:id="@+id/msd_color"
+                style="@style/darkColorButton"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+</LinearLayout>

@@ -1,0 +1,2426 @@
+diff -U20 -r -N -x '*.o' mdbtools.pristine/configure mdbtools/configure
+--- mdbtools.pristine/configure	2021-10-24 08:45:08.000000000 -0400
++++ mdbtools/configure	2024-12-20 10:48:26.423845400 -0500
+@@ -17879,41 +17879,41 @@
+ $as_echo "$as_me: WARNING: Bison 3.0+ is not available: SQL disabled." >&2;}
+     sql=false
+ fi
+ 
+ if test "x$sql" = "xtrue"; then
+ 	CFLAGS="$CFLAGS -DSQL"
+ 	OPTDIRS="$OPTDIRS sql"
+ fi
+ 
+  if test x$sql = xtrue; then
+   SQL_TRUE=
+   SQL_FALSE='#'
+ else
+   SQL_TRUE='#'
+   SQL_FALSE=
+ fi
+ 
+ 
+ 
+ 
+-CFLAGS="$CFLAGS -Wall -Werror"
++CFLAGS="$CFLAGS -Wall"
+ LOCALE_T=locale_t
+ case $host in #(
+   *mingw*) :
+     LDFLAGS="$LDFLAGS -no-undefined" LOCALE_T=_locale_t ;; #(
+   *) :
+      ;;
+ esac
+ 
+ 
+ # Check whether --enable-iconv was given.
+ if test "${enable_iconv+set}" = set; then :
+   enableval=$enable_iconv; enable_iconv=$enableval
+ else
+   enable_iconv=yes
+ fi
+ 
+ 
+ HAVE_ICONV_H=0
+ if test "$enable_iconv" = "yes"; then
+ 
+diff -U20 -r -N -x '*.o' mdbtools.pristine/include/mdbfakeglib.h mdbtools/include/mdbfakeglib.h
+--- mdbtools.pristine/include/mdbfakeglib.h	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/include/mdbfakeglib.h	2024-12-20 16:37:50.463529300 -0500
+@@ -7,41 +7,43 @@
+  * modify it under the terms of the GNU Library General Public
+  * License as published by the Free Software Foundation; either
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
+ #ifndef _mdbfakeglib_h_
+ #define _mdbfakeglib_h_
+ 
+ #include <time.h>
+ #include <locale.h>
+ #include <inttypes.h>
++#ifndef _WIN32
+ #include <strings.h>
++#endif
+ 
+ typedef uint16_t guint16;
+ typedef uint32_t guint32;
+ typedef uint64_t guint64;
+ typedef int32_t gint32;
+ typedef char gchar;
+ typedef int gboolean;
+ typedef int gint;
+ typedef unsigned int guint;
+ typedef void * gpointer;
+ typedef const void * gconstpointer;
+ typedef uint8_t guint8;
+ typedef guint32 GQuark;
+ typedef guint32 gunichar;
+ typedef signed long gssize;
+ 
+ typedef guint (*GHashFunc)(gconstpointer);
+ typedef int (*GCompareFunc)(gconstpointer, gconstpointer);
+ typedef gboolean (*GEqualFunc)(gconstpointer, gconstpointer);
+ typedef void (*GFunc) (gpointer data, gpointer user_data);
+@@ -95,98 +97,106 @@
+   gint         flags;
+ 
+   GOptionArg   arg;
+   gpointer     arg_data;
+ 
+   const gchar *description;
+   const gchar *arg_description;
+ } GOptionEntry;
+ 
+ typedef struct GOptionContext {
+     const char *desc;
+     const GOptionEntry *entries;
+ } GOptionContext;
+ 
+ #define g_str_hash NULL
+ 
+ #define G_GUINT32_FORMAT PRIu32
+ 
+ #define g_return_val_if_fail(a, b) if (!a) { return b; }
+ 
++#ifdef _WIN32
++#define g_ascii_strcasecmp _stricmp
++#else
+ #define g_ascii_strcasecmp strcasecmp
++#endif
+ #define g_malloc0(len) calloc(1, len)
+ #define g_malloc malloc
+ #define g_free free
+ #define g_realloc realloc
+ 
+ #define	G_STR_DELIMITERS "_-|> <."
+ 
+ #define g_ptr_array_index(array, i) \
+     ((void **)array->pdata)[i]
+ 
+ #define TRUE 1
+ #define FALSE 0
+ 
++#ifdef _WIN32
++#define GUINT32_SWAP_LE_BE(l) _byteswap_ulong((uint32_t)(l))
++#else
+ #define GUINT32_SWAP_LE_BE(l) __builtin_bswap32((uint32_t)(l))
++#endif
+ 
+ /* string functions */
+-void *g_memdup(const void *src, size_t len);
+-int g_str_equal(const void *str1, const void *str2);
+-char **g_strsplit(const char *haystack, const char *needle, int max_tokens);
+-void g_strfreev(char **dir);
+-char *g_strconcat(const char *first, ...);
+-char *g_strdup(const char *src);
+-char *g_strndup(const char *src, size_t len);
+-char *g_strdup_printf(const char *format, ...);
+-gchar *g_strdelimit(gchar *string, const gchar *delimiters, gchar new_delimiter);
+-void g_printerr(const gchar *format, ...);
++MDB_API void *g_memdup(const void *src, size_t len);
++MDB_API int g_str_equal(const void *str1, const void *str2);
++MDB_API char **g_strsplit(const char *haystack, const char *needle, int max_tokens);
++MDB_API void g_strfreev(char **dir);
++MDB_API char *g_strconcat(const char *first, ...);
++MDB_API char *g_strdup(const char *src);
++MDB_API char *g_strndup(const char *src, size_t len);
++MDB_API char *g_strdup_printf(const char *format, ...);
++MDB_API gchar *g_strdelimit(gchar *string, const gchar *delimiters, gchar new_delimiter);
++MDB_API void g_printerr(const gchar *format, ...);
+ 
+ /* conversion */
+-gint g_unichar_to_utf8(gunichar c, gchar *dst);
+-gchar *g_locale_to_utf8(const gchar *opsysstring, size_t len,
++MDB_API gint g_unichar_to_utf8(gunichar c, gchar *dst);
++MDB_API gchar *g_locale_to_utf8(const gchar *opsysstring, size_t len,
+         size_t *bytes_read, size_t *bytes_written, GError **error);
+-gchar *g_utf8_casefold(const gchar *str, gssize len);
+-gchar *g_utf8_strdown(const gchar *str, gssize len);
++MDB_API gchar *g_utf8_casefold(const gchar *str, gssize len);
++MDB_API gchar *g_utf8_strdown(const gchar *str, gssize len);
+ 
+ /* GString */
+-GString *g_string_new(const gchar *init);
+-GString *g_string_assign(GString *string, const gchar *rval);
+-GString * g_string_append (GString *string, const gchar *val);
+-gchar *g_string_free (GString *string, gboolean free_segment);
++MDB_API GString *g_string_new(const gchar *init);
++MDB_API GString *g_string_assign(GString *string, const gchar *rval);
++MDB_API GString * g_string_append (GString *string, const gchar *val);
++MDB_API gchar *g_string_free (GString *string, gboolean free_segment);
+ 
+ /* GHashTable */
+-void *g_hash_table_lookup(GHashTable *tree, const void *key);
+-gboolean g_hash_table_lookup_extended(GHashTable *table, const void *lookup_key,
++MDB_API void *g_hash_table_lookup(GHashTable *tree, const void *key);
++MDB_API gboolean g_hash_table_lookup_extended(GHashTable *table, const void *lookup_key,
+         void **orig_key, void **value);
+-void g_hash_table_insert(GHashTable *tree, void *key, void *value);
+-gboolean g_hash_table_remove(GHashTable *hash_table, const void *key);
+-GHashTable *g_hash_table_new(GHashFunc hashes, GEqualFunc equals);
+-void g_hash_table_foreach(GHashTable *tree, GHFunc function, void *data);
+-void g_hash_table_foreach_remove(GHashTable *tree, GHRFunc function, void *data);
+-void g_hash_table_destroy(GHashTable *tree);
++MDB_API void g_hash_table_insert(GHashTable *tree, void *key, void *value);
++MDB_API gboolean g_hash_table_remove(GHashTable *hash_table, const void *key);
++MDB_API GHashTable *g_hash_table_new(GHashFunc hashes, GEqualFunc equals);
++MDB_API void g_hash_table_foreach(GHashTable *tree, GHFunc function, void *data);
++MDB_API void g_hash_table_foreach_remove(GHashTable *tree, GHRFunc function, void *data);
++MDB_API void g_hash_table_destroy(GHashTable *tree);
+ 
+ /* GPtrArray */
+-void g_ptr_array_sort(GPtrArray *array, GCompareFunc func);
+-void g_ptr_array_foreach(GPtrArray *array, GFunc function, gpointer user_data);
+-GPtrArray *g_ptr_array_new(void);
+-void g_ptr_array_add(GPtrArray *array, void *entry);
+-gboolean g_ptr_array_remove (GPtrArray *array, gpointer data);
+-void g_ptr_array_free(GPtrArray *array, gboolean something);
++MDB_API void g_ptr_array_sort(GPtrArray *array, GCompareFunc func);
++MDB_API void g_ptr_array_foreach(GPtrArray *array, GFunc function, gpointer user_data);
++MDB_API GPtrArray *g_ptr_array_new(void);
++MDB_API void g_ptr_array_add(GPtrArray *array, void *entry);
++MDB_API gboolean g_ptr_array_remove (GPtrArray *array, gpointer data);
++MDB_API void g_ptr_array_free(GPtrArray *array, gboolean something);
+ 
+ /* GList */
+-GList *g_list_append(GList *list, void *data);
+-GList *g_list_last(GList *list);
+-GList *g_list_remove(GList *list, void *data);
+-void g_list_free(GList *list);
++MDB_API GList *g_list_append(GList *list, void *data);
++MDB_API GList *g_list_last(GList *list);
++MDB_API GList *g_list_remove(GList *list, void *data);
++MDB_API void g_list_free(GList *list);
+ 
+ /* GOption */
+-GOptionContext *g_option_context_new(const char *description);
+-void g_option_context_add_main_entries (GOptionContext *context,
+-        const GOptionEntry *entries,
++MDB_API GOptionContext *g_option_context_new(const char *description);
++MDB_API void g_option_context_add_main_entries (GOptionContext *context,
++         const GOptionEntry *entries,
+         const gchar *translation_domain);
+-gchar *g_option_context_get_help (GOptionContext *context,
++MDB_API gchar *g_option_context_get_help (GOptionContext *context,
+         gboolean main_help, void *group);
+-gboolean g_option_context_parse (GOptionContext *context,
++MDB_API gboolean g_option_context_parse (GOptionContext *context,
+         gint *argc, gchar ***argv, GError **error);
+-void g_option_context_free (GOptionContext *context);
++MDB_API void g_option_context_free (GOptionContext *context);
+ 
+ #endif
+diff -U20 -r -N -x '*.o' mdbtools.pristine/include/mdbsql.h mdbtools/include/mdbsql.h
+--- mdbtools.pristine/include/mdbsql.h	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/include/mdbsql.h	2024-12-20 16:43:56.281249700 -0500
+@@ -10,40 +10,50 @@
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
+ #ifndef _mdbsql_h_
+ #define _mdbsql_h_
+ 
+ #ifdef __cplusplus
+   extern "C" {
+ #endif
+ 
+ #include <stdio.h>
+ #include <string.h>
+ #include <mdbtools.h>
+ 
++#ifdef _WIN32
++#ifdef MDBSQL_EXPORTS
++#define MDBSQL_API __declspec(dllexport)
++#else
++#define MDBSQL_API __declspec(dllimport)
++#endif
++#else
++#define MDBSQL_API
++#endif
++
+ typedef struct MdbSQL
+ {
+ 	MdbHandle *mdb;
+ 	int all_columns;
+ 	int sel_count;
+ 	unsigned int num_columns;
+ 	GPtrArray *columns;
+ 	unsigned int num_tables;
+ 	GPtrArray *tables;
+ 	MdbTableDef *cur_table;
+ 	MdbSargNode *sarg_tree;
+ 	GList *sarg_stack;
+ 	GPtrArray *bound_values;
+ 	unsigned char *kludge_ttable_pg;
+ 	long max_rows;
+ 	char error_msg[1024];
+ 	int limit;
+ 	int limit_percent;
+ 	long row_count;
+ } MdbSQL;
+@@ -53,60 +63,60 @@
+ 	int  disp_size;
+ 	void *bind_addr;   /* if !NULL then cp parameter to here */
+ 	int  bind_type;
+ 	int  *bind_len;
+ 	int  bind_max;
+ } MdbSQLColumn;
+ 
+ typedef struct {
+ 	char *name;
+ 	char *alias;
+ } MdbSQLTable;
+ 
+ typedef struct {
+ 	char *col_name;
+ 	MdbSarg *sarg;
+ } MdbSQLSarg;
+ 
+ #define mdb_sql_has_error(sql) ((sql)->error_msg[0] ? 1 : 0)
+ #define mdb_sql_last_error(sql) ((sql)->error_msg)
+ 
+-void mdb_sql_error(MdbSQL* sql, const char *fmt, ...);
+-MdbSQL *mdb_sql_init(void);
+-MdbSQLSarg *mdb_sql_alloc_sarg(void);
+-MdbHandle *mdb_sql_open(MdbSQL *sql, char *db_name);
+-void mdb_sql_free_tree(MdbSargNode *tree);
+-int mdb_sql_add_sarg(MdbSQL *sql, char *col_name, int op, char *constant);
+-void mdb_sql_all_columns(MdbSQL *sql);
+-void mdb_sql_sel_count(MdbSQL *sql);
+-int mdb_sql_add_column(MdbSQL *sql, char *column_name);
+-int mdb_sql_add_table(MdbSQL *sql, char *table_name);
+-char *mdb_sql_strptime(MdbSQL *sql, char *data, char *format);
+-void mdb_sql_dump(MdbSQL *sql);
+-void mdb_sql_exit(MdbSQL *sql);
+-void mdb_sql_reset(MdbSQL *sql);
+-void mdb_sql_listtables(MdbSQL *sql);
+-void mdb_sql_select(MdbSQL *sql);
+-void mdb_sql_dump_node(MdbSargNode *node, int level);
+-void mdb_sql_close(MdbSQL *sql);
+-void mdb_sql_add_or(MdbSQL *sql);
+-void mdb_sql_add_and(MdbSQL *sql);
+-void mdb_sql_add_not(MdbSQL *sql);
+-void mdb_sql_describe_table(MdbSQL *sql);
+-MdbSQL* mdb_sql_run_query (MdbSQL*, const gchar*);
+-void mdb_sql_set_maxrow(MdbSQL *sql, int maxrow);
+-int mdb_sql_eval_expr(MdbSQL *sql, char *const1, int op, char *const2);
+-int mdb_sql_bind_all(MdbSQL *sql);
+-void mdb_sql_unbind_all(MdbSQL *sql);
+-int mdb_sql_fetch_row(MdbSQL *sql, MdbTableDef *table);
+-int mdb_sql_add_temp_col(MdbSQL *sql, MdbTableDef *ttable, int col_num, char *name, int col_type, int col_size, int is_fixed);
+-int mdb_sql_bind_column(MdbSQL *sql, int colnum, void *varaddr, int *len_ptr);
+-int mdb_sql_add_limit(MdbSQL *sql, char *limit, int percent);
+-int mdb_sql_get_limit(MdbSQL *sql);
++MDBSQL_API void mdb_sql_error(MdbSQL* sql, const char *fmt, ...);
++MDBSQL_API MdbSQL *mdb_sql_init(void);
++MDBSQL_API MdbSQLSarg *mdb_sql_alloc_sarg(void);
++MDBSQL_API MdbHandle *mdb_sql_open(MdbSQL *sql, char *db_name);
++MDBSQL_API void mdb_sql_free_tree(MdbSargNode *tree);
++MDBSQL_API int mdb_sql_add_sarg(MdbSQL *sql, char *col_name, int op, char *constant);
++MDBSQL_API void mdb_sql_all_columns(MdbSQL *sql);
++MDBSQL_API void mdb_sql_sel_count(MdbSQL *sql);
++MDBSQL_API int mdb_sql_add_column(MdbSQL *sql, char *column_name);
++MDBSQL_API int mdb_sql_add_table(MdbSQL *sql, char *table_name);
++MDBSQL_API char *mdb_sql_strptime(MdbSQL *sql, char *data, char *format);
++MDBSQL_API void mdb_sql_dump(MdbSQL *sql);
++MDBSQL_API void mdb_sql_exit(MdbSQL *sql);
++MDBSQL_API void mdb_sql_reset(MdbSQL *sql);
++MDBSQL_API void mdb_sql_listtables(MdbSQL *sql);
++MDBSQL_API void mdb_sql_select(MdbSQL *sql);
++MDBSQL_API void mdb_sql_dump_node(MdbSargNode *node, int level);
++MDBSQL_API void mdb_sql_close(MdbSQL *sql);
++MDBSQL_API void mdb_sql_add_or(MdbSQL *sql);
++MDBSQL_API void mdb_sql_add_and(MdbSQL *sql);
++MDBSQL_API void mdb_sql_add_not(MdbSQL *sql);
++MDBSQL_API void mdb_sql_describe_table(MdbSQL *sql);
++MDBSQL_API MdbSQL* mdb_sql_run_query (MdbSQL*, const gchar*);
++MDBSQL_API void mdb_sql_set_maxrow(MdbSQL *sql, int maxrow);
++MDBSQL_API int mdb_sql_eval_expr(MdbSQL *sql, char *const1, int op, char *const2);
++MDBSQL_API int mdb_sql_bind_all(MdbSQL *sql);
++MDBSQL_API void mdb_sql_unbind_all(MdbSQL *sql);
++MDBSQL_API int mdb_sql_fetch_row(MdbSQL *sql, MdbTableDef *table);
++MDBSQL_API int mdb_sql_add_temp_col(MdbSQL *sql, MdbTableDef *ttable, int col_num, char *name, int col_type, int col_size, int is_fixed);
++MDBSQL_API int mdb_sql_bind_column(MdbSQL *sql, int colnum, void *varaddr, int *len_ptr);
++MDBSQL_API int mdb_sql_add_limit(MdbSQL *sql, char *limit, int percent);
++MDBSQL_API int mdb_sql_get_limit(MdbSQL *sql);
+ 
+-int parse_sql(MdbSQL * mdb, const gchar* str);
++MDBSQL_API int parse_sql(MdbSQL * mdb, const gchar* str);
+ 
+ #ifdef __cplusplus
+   }
+ #endif
+ 
+ #endif
+diff -U20 -r -N -x '*.o' mdbtools.pristine/include/mdbtools.h mdbtools/include/mdbtools.h
+--- mdbtools.pristine/include/mdbtools.h	2021-10-24 08:45:21.000000000 -0400
++++ mdbtools/include/mdbtools.h	2024-12-20 16:44:17.560701100 -0500
+@@ -2,89 +2,113 @@
+  * Copyright (C) 2000 Brian Bruns
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+  * License as published by the Free Software Foundation; either
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ #ifndef _mdbtools_h_
+ #define _mdbtools_h_
+ 
+ #define MDBTOOLS_H_HAVE_ICONV_H 1
+-#define MDBTOOLS_H_HAVE_XLOCALE_H 1
++#define MDBTOOLS_H_HAVE_XLOCALE_H 0
+ 
+ #ifdef __cplusplus
+   extern "C" {
+ #endif
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
++#include <locale.h>
++#ifndef _WIN32
+ #include <unistd.h>
++typedef off_t mdb_off_t;
++#define mdb_fseeko fseeko
++#define mdb_ftello ftello
++#define MDB_API
++#else
++typedef __int64 mdb_off_t;
++#define mdb_fseeko _fseeki64
++#define mdb_ftello _ftelli64
++#define HAVE_ICONV
++#define ICONV_CONST
++#ifdef MDB_EXPORTS
++#define MDB_API __declspec(dllexport)
++#else
++#define MDB_API __declspec(dllimport)
++#endif
++#endif
+ #include <ctype.h>
+ #include <string.h>
+ #include <locale.h>
+ #include <mdbfakeglib.h>
+ 
+ #if MDBTOOLS_H_HAVE_ICONV_H
+ #include <iconv.h>
+ #endif
+ 
+ #if MDBTOOLS_H_HAVE_XLOCALE_H
+ #include <xlocale.h>
+ #endif
+ 
+ #ifdef _WIN32
+ #include <io.h>
+ #endif
+ 
+ /** \addtogroup mdbtools
+  *  @{
+  */
+ 
+ #define MDB_DEBUG 0
+ 
+ #define MDB_PGSIZE 4096
+ //#define MDB_MAX_OBJ_NAME (256*3) /* unicode 16 -> utf-8 worst case */
+ #define MDB_MAX_OBJ_NAME 256
+ #define MDB_MAX_COLS 256
+ #define MDB_MAX_IDX_COLS 10
+ #define MDB_CATALOG_PG 18
+ #define MDB_MEMO_OVERHEAD 12
+ #define MDB_BIND_SIZE 16384 // override with mdb_set_bind_size(MdbHandle*, size_t)
+ 
+ // This attribute is not supported by all compilers:
+ // M$VC see http://stackoverflow.com/questions/1113409/attribute-constructor-equivalent-in-vc
+ #define MDB_DEPRECATED(type, funcname) type __attribute__((deprecated)) funcname
+ 
++
++#ifdef _WIN32
++typedef _locale_t mdb_locale_t;
++typedef int64_t ssize_t;
++#else
+ typedef locale_t mdb_locale_t;
++#endif
+ 
+ enum {
+ 	MDB_PAGE_DB = 0,
+ 	MDB_PAGE_DATA,
+ 	MDB_PAGE_TABLE,
+ 	MDB_PAGE_INDEX,
+ 	MDB_PAGE_LEAF,
+ 	MDB_PAGE_MAP
+ };
+ enum {
+ 	MDB_VER_JET3 = 0,
+ 	MDB_VER_JET4 = 0x01,
+ 	MDB_VER_ACCDB_2007 = 0x02,
+ 	MDB_VER_ACCDB_2010 = 0x03,
+ 	MDB_VER_ACCDB_2013 = 0x04,
+ 	MDB_VER_ACCDB_2016 = 0x05,
+ 	MDB_VER_ACCDB_2019 = 0x06
+ };
+ enum {
+ 	MDB_FORM = 0,
+@@ -469,206 +493,206 @@
+ 
+ typedef struct {
+ 	void *value;
+ 	int siz;
+ 	int start;
+ 	unsigned char is_null;
+ 	unsigned char is_fixed;
+ 	int colnum;
+ 	int offset;
+ } MdbField;
+ 
+ typedef struct {
+ 	int	op;
+ 	MdbAny	value;
+ } MdbSarg;
+ 
+ /* version.c */
+ const char *mdb_get_version(void);
+ 
+ /* file.c */
+-ssize_t mdb_read_pg(MdbHandle *mdb, unsigned long pg);
+-ssize_t mdb_read_alt_pg(MdbHandle *mdb, unsigned long pg);
+-unsigned char mdb_get_byte(void *buf, int offset);
+-int    mdb_get_int16(void *buf, int offset);
+-long   mdb_get_int32(void *buf, int offset);
+-long   mdb_get_int32_msb(void *buf, int offset);
+-float  mdb_get_single(void *buf, int offset);
+-double mdb_get_double(void *buf, int offset);
+-unsigned char mdb_pg_get_byte(MdbHandle *mdb, int offset);
+-int    mdb_pg_get_int16(MdbHandle *mdb, int offset);
+-long   mdb_pg_get_int32(MdbHandle *mdb, int offset);
+-float  mdb_pg_get_single(MdbHandle *mdb, int offset);
+-double mdb_pg_get_double(MdbHandle *mdb, int offset);
+-MdbHandle *mdb_open(const char *filename, MdbFileFlags flags);
+-MdbHandle *mdb_open_buffer(void *buffer, size_t len, MdbFileFlags flags);
+-void mdb_close(MdbHandle *mdb);
+-MdbHandle *mdb_clone_handle(MdbHandle *mdb);
+-void mdb_swap_pgbuf(MdbHandle *mdb);
++MDB_API ssize_t mdb_read_pg(MdbHandle *mdb, unsigned long pg);
++MDB_API ssize_t mdb_read_alt_pg(MdbHandle *mdb, unsigned long pg);
++MDB_API unsigned char mdb_get_byte(void *buf, int offset);
++MDB_API int    mdb_get_int16(void *buf, int offset);
++MDB_API long   mdb_get_int32(void *buf, int offset);
++MDB_API long   mdb_get_int32_msb(void *buf, int offset);
++MDB_API float  mdb_get_single(void *buf, int offset);
++MDB_API double mdb_get_double(void *buf, int offset);
++MDB_API unsigned char mdb_pg_get_byte(MdbHandle *mdb, int offset);
++MDB_API int    mdb_pg_get_int16(MdbHandle *mdb, int offset);
++MDB_API long   mdb_pg_get_int32(MdbHandle *mdb, int offset);
++MDB_API float  mdb_pg_get_single(MdbHandle *mdb, int offset);
++MDB_API double mdb_pg_get_double(MdbHandle *mdb, int offset);
++MDB_API MdbHandle *mdb_open(const char *filename, MdbFileFlags flags);
++MDB_API MdbHandle *mdb_open_buffer(void *buffer, size_t len, MdbFileFlags flags);
++MDB_API void mdb_close(MdbHandle *mdb);
++MDB_API MdbHandle *mdb_clone_handle(MdbHandle *mdb);
++MDB_API void mdb_swap_pgbuf(MdbHandle *mdb);
+ 
+ /* catalog.c */
+-void mdb_free_catalog(MdbHandle *mdb);
+-GPtrArray *mdb_read_catalog(MdbHandle *mdb, int obj_type);
+-MdbCatalogEntry *mdb_get_catalogentry_by_name(MdbHandle *mdb, const gchar* name);
+-void mdb_dump_catalog(MdbHandle *mdb, int obj_type);
+-const char *mdb_get_objtype_string(int obj_type);
++MDB_API void mdb_free_catalog(MdbHandle *mdb);
++MDB_API GPtrArray *mdb_read_catalog(MdbHandle *mdb, int obj_type);
++MDB_API MdbCatalogEntry *mdb_get_catalogentry_by_name(MdbHandle *mdb, const gchar* name);
++MDB_API void mdb_dump_catalog(MdbHandle *mdb, int obj_type);
++MDB_API const char *mdb_get_objtype_string(int obj_type);
+ 
+ /* table.c */
+-MdbTableDef *mdb_alloc_tabledef(MdbCatalogEntry *entry);
+-void mdb_free_tabledef(MdbTableDef *table);
+-MdbTableDef *mdb_read_table(MdbCatalogEntry *entry);
+-MdbTableDef *mdb_read_table_by_name(MdbHandle *mdb, gchar *table_name, int obj_type);
+-void mdb_append_column(GPtrArray *columns, MdbColumn *in_col);
+-void mdb_free_columns(GPtrArray *columns);
+-GPtrArray *mdb_read_columns(MdbTableDef *table);
+-void mdb_table_dump(MdbCatalogEntry *entry);
+-guint8 read_pg_if_8(MdbHandle *mdb, int *cur_pos);
+-guint16 read_pg_if_16(MdbHandle *mdb, int *cur_pos);
+-guint32 read_pg_if_32(MdbHandle *mdb, int *cur_pos);
+-void *read_pg_if_n(MdbHandle *mdb, void *buf, int *cur_pos, size_t len);
+-int mdb_is_user_table(MdbCatalogEntry *entry);
+-int mdb_is_system_table(MdbCatalogEntry *entry);
+-const char *mdb_table_get_prop(const MdbTableDef *table, const gchar *key);
+-const char *mdb_col_get_prop(const MdbColumn *col, const gchar *key);
+-int mdb_col_is_shortdate(const MdbColumn *col);
++MDB_API MdbTableDef *mdb_alloc_tabledef(MdbCatalogEntry *entry);
++MDB_API void mdb_free_tabledef(MdbTableDef *table);
++MDB_API MdbTableDef *mdb_read_table(MdbCatalogEntry *entry);
++MDB_API MdbTableDef *mdb_read_table_by_name(MdbHandle *mdb, gchar *table_name, int obj_type);
++MDB_API void mdb_append_column(GPtrArray *columns, MdbColumn *in_col);
++MDB_API void mdb_free_columns(GPtrArray *columns);
++MDB_API GPtrArray *mdb_read_columns(MdbTableDef *table);
++MDB_API void mdb_table_dump(MdbCatalogEntry *entry);
++MDB_API guint8 read_pg_if_8(MdbHandle *mdb, int *cur_pos);
++MDB_API guint16 read_pg_if_16(MdbHandle *mdb, int *cur_pos);
++MDB_API guint32 read_pg_if_32(MdbHandle *mdb, int *cur_pos);
++MDB_API void *read_pg_if_n(MdbHandle *mdb, void *buf, int *cur_pos, size_t len);
++MDB_API int mdb_is_user_table(MdbCatalogEntry *entry);
++MDB_API int mdb_is_system_table(MdbCatalogEntry *entry);
++MDB_API const char *mdb_table_get_prop(const MdbTableDef *table, const gchar *key);
++MDB_API const char *mdb_col_get_prop(const MdbColumn *col, const gchar *key);
++MDB_API int mdb_col_is_shortdate(const MdbColumn *col);
+ 
+ /* data.c */
+-int mdb_bind_column_by_name(MdbTableDef *table, gchar *col_name, void *bind_ptr, int *len_ptr);
+-void mdb_data_dump(MdbTableDef *table);
+-void mdb_date_to_tm(double td, struct tm *t);
+-void mdb_tm_to_date(struct tm *t, double *td);
+-char *mdb_uuid_to_string(const void *buf, int start); /* Uses default MDB_BRACES_4_2_2_8 format */
+-char *mdb_uuid_to_string_fmt(const void *buf, int start, MdbUuidFormat format);
+-int mdb_bind_column(MdbTableDef *table, int col_num, void *bind_ptr, int *len_ptr);
+-int mdb_rewind_table(MdbTableDef *table);
+-int mdb_fetch_row(MdbTableDef *table);
+-int mdb_is_fixed_col(MdbColumn *col);
+-char *mdb_col_to_string(MdbHandle *mdb, void *buf, int start, int datatype, int size);
+-int mdb_find_pg_row(MdbHandle *mdb, int pg_row, void **buf, int *off, size_t *len);
+-int mdb_find_row(MdbHandle *mdb, int row, int *start, size_t *len);
+-int mdb_find_end_of_row(MdbHandle *mdb, int row);
+-int mdb_col_fixed_size(MdbColumn *col);
+-int mdb_col_disp_size(MdbColumn *col);
+-size_t mdb_ole_read_next(MdbHandle *mdb, MdbColumn *col, void *ole_ptr);
+-size_t mdb_ole_read(MdbHandle *mdb, MdbColumn *col, void *ole_ptr, size_t chunk_size);
+-void* mdb_ole_read_full(MdbHandle *mdb, MdbColumn *col, size_t *size);
+-void mdb_set_bind_size(MdbHandle *mdb, size_t bind_size);
+-void mdb_set_date_fmt(MdbHandle *mdb, const char *);
+-void mdb_set_shortdate_fmt(MdbHandle *mdb, const char *);
+-void mdb_set_repid_fmt(MdbHandle *mdb, MdbUuidFormat format);
+-void mdb_set_boolean_fmt_words(MdbHandle *mdb);
+-void mdb_set_boolean_fmt_numbers(MdbHandle *mdb);
+-int mdb_read_row(MdbTableDef *table, unsigned int row);
+-int mdb_read_next_dpg(MdbTableDef *table);
++MDB_API int mdb_bind_column_by_name(MdbTableDef *table, gchar *col_name, void *bind_ptr, int *len_ptr);
++MDB_API void mdb_data_dump(MdbTableDef *table);
++MDB_API void mdb_date_to_tm(double td, struct tm *t);
++MDB_API void mdb_tm_to_date(struct tm *t, double *td);
++MDB_API char *mdb_uuid_to_string(const void *buf, int start); /* Uses default MDB_BRACES_4_2_2_8 format */
++MDB_API char *mdb_uuid_to_string_fmt(const void *buf, int start, MdbUuidFormat format);
++MDB_API int mdb_bind_column(MdbTableDef *table, int col_num, void *bind_ptr, int *len_ptr);
++MDB_API int mdb_rewind_table(MdbTableDef *table);
++MDB_API int mdb_fetch_row(MdbTableDef *table);
++MDB_API int mdb_is_fixed_col(MdbColumn *col);
++MDB_API char *mdb_col_to_string(MdbHandle *mdb, void *buf, int start, int datatype, int size);
++MDB_API int mdb_find_pg_row(MdbHandle *mdb, int pg_row, void **buf, int *off, size_t *len);
++MDB_API int mdb_find_row(MdbHandle *mdb, int row, int *start, size_t *len);
++MDB_API int mdb_find_end_of_row(MdbHandle *mdb, int row);
++MDB_API int mdb_col_fixed_size(MdbColumn *col);
++MDB_API int mdb_col_disp_size(MdbColumn *col);
++MDB_API size_t mdb_ole_read_next(MdbHandle *mdb, MdbColumn *col, void *ole_ptr);
++MDB_API size_t mdb_ole_read(MdbHandle *mdb, MdbColumn *col, void *ole_ptr, size_t chunk_size);
++MDB_API void* mdb_ole_read_full(MdbHandle *mdb, MdbColumn *col, size_t *size);
++MDB_API void mdb_set_bind_size(MdbHandle *mdb, size_t bind_size);
++MDB_API void mdb_set_date_fmt(MdbHandle *mdb, const char *);
++MDB_API void mdb_set_shortdate_fmt(MdbHandle *mdb, const char *);
++MDB_API void mdb_set_repid_fmt(MdbHandle *mdb, MdbUuidFormat format);
++MDB_API void mdb_set_boolean_fmt_words(MdbHandle *mdb);
++MDB_API void mdb_set_boolean_fmt_numbers(MdbHandle *mdb);
++MDB_API int mdb_read_row(MdbTableDef *table, unsigned int row);
++MDB_API int mdb_read_next_dpg(MdbTableDef *table);
+ 
+ /* money.c */
+-char *mdb_money_to_string(MdbHandle *mdb, int start);
+-char *mdb_numeric_to_string(MdbHandle *mdb, int start, int scale, int prec);
++MDB_API char *mdb_money_to_string(MdbHandle *mdb, int start);
++MDB_API char *mdb_numeric_to_string(MdbHandle *mdb, int start, int scale, int prec);
+ 
+ /* dump.c */
+-void mdb_buffer_dump(const void *buf, off_t start, size_t len);
++MDB_API void mdb_buffer_dump(const void *buf, mdb_off_t start, size_t len);
+ 
+ /* backend.c */
+-void mdb_init_backends(MdbHandle *mdb);
+-void mdb_remove_backends(MdbHandle *mdb);
+-const MdbBackendType* mdb_get_colbacktype(const MdbColumn *col);
+-const char* mdb_get_colbacktype_string(const MdbColumn *col);
+-int mdb_colbacktype_takes_length(const MdbColumn *col);
+-void mdb_register_backend(MdbHandle *mdb, char *backend_name, guint32 capabilities,
++MDB_API void mdb_init_backends(MdbHandle *mdb);
++MDB_API void mdb_remove_backends(MdbHandle *mdb);
++MDB_API const MdbBackendType* mdb_get_colbacktype(const MdbColumn *col);
++MDB_API const char* mdb_get_colbacktype_string(const MdbColumn *col);
++MDB_API int mdb_colbacktype_takes_length(const MdbColumn *col);
++MDB_API void mdb_register_backend(MdbHandle *mdb, char *backend_name, guint32 capabilities,
+         const MdbBackendType *backend_type,
+         const MdbBackendType *type_shortdate,
+         const MdbBackendType *type_autonum,
+         const char *short_now, const char *long_now,
+         const char *date_fmt, const char *shortdate_fmt,
+         const char *charset_statement, const char *drop_statement, const char *constaint_not_empty_statement,
+         const char *column_comment_statement, const char *per_column_comment_statement,
+         const char *table_comment_statement, const char *per_table_comment_statement,
+         gchar* (*quote_schema_name)(const gchar*, const gchar*));
+-int  mdb_set_default_backend(MdbHandle *mdb, const char *backend_name);
+-int  mdb_print_schema(MdbHandle *mdb, FILE *outfile, char *tabname, char *dbnamespace, guint32 export_options);
+-void mdb_print_col(FILE *outfile, gchar *col_val, int quote_text, int col_type, int bin_len, char *quote_char, char *escape_char, int flags);
+-gchar *mdb_normalise_and_replace(MdbHandle *mdb, gchar **str);
++MDB_API int  mdb_set_default_backend(MdbHandle *mdb, const char *backend_name);
++MDB_API int  mdb_print_schema(MdbHandle *mdb, FILE *outfile, char *tabname, char *dbnamespace, guint32 export_options);
++MDB_API void mdb_print_col(FILE *outfile, gchar *col_val, int quote_text, int col_type, int bin_len, char *quote_char, char *escape_char, int flags);
++MDB_API gchar *mdb_normalise_and_replace(MdbHandle *mdb, gchar **str);
+ 
+ /* sargs.c */
+-int mdb_test_sargs(MdbTableDef *table, MdbField *fields, int num_fields);
+-int mdb_test_sarg(MdbHandle *mdb, MdbColumn *col, MdbSargNode *node, MdbField *field);
+-void mdb_sql_walk_tree(MdbSargNode *node, MdbSargTreeFunc func, gpointer data);
+-int mdb_find_indexable_sargs(MdbSargNode *node, gpointer data);
+-int mdb_add_sarg_by_name(MdbTableDef *table, char *colname, MdbSarg *in_sarg);
+-int mdb_test_string(MdbSargNode *node, char *s);
+-int mdb_test_int(MdbSargNode *node, gint32 i);
+-int mdb_add_sarg(MdbColumn *col, MdbSarg *in_sarg);
++MDB_API int mdb_test_sargs(MdbTableDef *table, MdbField *fields, int num_fields);
++MDB_API int mdb_test_sarg(MdbHandle *mdb, MdbColumn *col, MdbSargNode *node, MdbField *field);
++MDB_API void mdb_sql_walk_tree(MdbSargNode *node, MdbSargTreeFunc func, gpointer data);
++MDB_API int mdb_find_indexable_sargs(MdbSargNode *node, gpointer data);
++MDB_API int mdb_add_sarg_by_name(MdbTableDef *table, char *colname, MdbSarg *in_sarg);
++MDB_API int mdb_test_string(MdbSargNode *node, char *s);
++MDB_API int mdb_test_int(MdbSargNode *node, gint32 i);
++MDB_API int mdb_add_sarg(MdbColumn *col, MdbSarg *in_sarg);
+ 
+ 
+ 
+ /* index.c */
+-GPtrArray *mdb_read_indices(MdbTableDef *table);
+-void mdb_index_dump(MdbTableDef *table, MdbIndex *idx);
+-void mdb_index_scan_free(MdbTableDef *table);
+-int mdb_index_find_next_on_page(MdbHandle *mdb, MdbIndexPage *ipg);
+-int mdb_index_find_next(MdbHandle *mdb, MdbIndex *idx, MdbIndexChain *chain, guint32 *pg, guint16 *row);
+-void mdb_index_hash_text(MdbHandle *mdb, char *text, char *hash);
+-void mdb_index_scan_init(MdbHandle *mdb, MdbTableDef *table);
+-int mdb_index_find_row(MdbHandle *mdb, MdbIndex *idx, MdbIndexChain *chain, guint32 pg, guint16 row);
+-void mdb_index_swap_n(unsigned char *src, int sz, unsigned char *dest);
+-void mdb_free_indices(GPtrArray *indices);
+-void mdb_index_page_reset(MdbHandle *mdb, MdbIndexPage *ipg);
+-int mdb_index_pack_bitmap(MdbHandle *mdb, MdbIndexPage *ipg);
++MDB_API GPtrArray *mdb_read_indices(MdbTableDef *table);
++MDB_API void mdb_index_dump(MdbTableDef *table, MdbIndex *idx);
++MDB_API void mdb_index_scan_free(MdbTableDef *table);
++MDB_API int mdb_index_find_next_on_page(MdbHandle *mdb, MdbIndexPage *ipg);
++MDB_API int mdb_index_find_next(MdbHandle *mdb, MdbIndex *idx, MdbIndexChain *chain, guint32 *pg, guint16 *row);
++MDB_API void mdb_index_hash_text(MdbHandle *mdb, char *text, char *hash);
++MDB_API void mdb_index_scan_init(MdbHandle *mdb, MdbTableDef *table);
++MDB_API int mdb_index_find_row(MdbHandle *mdb, MdbIndex *idx, MdbIndexChain *chain, guint32 pg, guint16 row);
++MDB_API void mdb_index_swap_n(unsigned char *src, int sz, unsigned char *dest);
++MDB_API void mdb_free_indices(GPtrArray *indices);
++MDB_API void mdb_index_page_reset(MdbHandle *mdb, MdbIndexPage *ipg);
++MDB_API int mdb_index_pack_bitmap(MdbHandle *mdb, MdbIndexPage *ipg);
+ 
+ /* stats.c */
+-void mdb_stats_on(MdbHandle *mdb);
+-void mdb_stats_off(MdbHandle *mdb);
+-void mdb_dump_stats(MdbHandle *mdb);
++MDB_API void mdb_stats_on(MdbHandle *mdb);
++MDB_API void mdb_stats_off(MdbHandle *mdb);
++MDB_API void mdb_dump_stats(MdbHandle *mdb);
+ 
+ /* like.c */
+-int mdb_like_cmp(char *s, char *r);
+-int mdb_ilike_cmp(char *s, char *r);
++MDB_API int mdb_like_cmp(char *s, char *r);
++MDB_API int mdb_ilike_cmp(char *s, char *r);
+ 
+ /* write.c */
+-void mdb_put_int16(void *buf, guint32 offset, guint32 value);
+-void mdb_put_int32(void *buf, guint32 offset, guint32 value);
+-void mdb_put_int32_msb(void *buf, guint32 offset, guint32 value);
+-int mdb_crack_row(MdbTableDef *table, int row_start, size_t row_size, MdbField *fields);
+-guint16 mdb_add_row_to_pg(MdbTableDef *table, unsigned char *row_buffer, int new_row_size);
+-int mdb_update_index(MdbTableDef *table, MdbIndex *idx, unsigned int num_fields, MdbField *fields, guint32 pgnum, guint16 rownum);
+-int mdb_insert_row(MdbTableDef *table, int num_fields, MdbField *fields);
+-int mdb_pack_row(MdbTableDef *table, unsigned char *row_buffer, unsigned int num_fields, MdbField *fields);
+-int mdb_replace_row(MdbTableDef *table, int row, void *new_row, int new_row_size);
+-int mdb_pg_get_freespace(MdbHandle *mdb);
+-int mdb_update_row(MdbTableDef *table);
+-void *mdb_new_data_pg(MdbCatalogEntry *entry);
++MDB_API void mdb_put_int16(void *buf, guint32 offset, guint32 value);
++MDB_API void mdb_put_int32(void *buf, guint32 offset, guint32 value);
++MDB_API void mdb_put_int32_msb(void *buf, guint32 offset, guint32 value);
++MDB_API int mdb_crack_row(MdbTableDef *table, int row_start, size_t row_size, MdbField *fields);
++MDB_API guint16 mdb_add_row_to_pg(MdbTableDef *table, unsigned char *row_buffer, int new_row_size);
++MDB_API int mdb_update_index(MdbTableDef *table, MdbIndex *idx, unsigned int num_fields, MdbField *fields, guint32 pgnum, guint16 rownum);
++MDB_API int mdb_insert_row(MdbTableDef *table, int num_fields, MdbField *fields);
++MDB_API int mdb_pack_row(MdbTableDef *table, unsigned char *row_buffer, unsigned int num_fields, MdbField *fields);
++MDB_API int mdb_replace_row(MdbTableDef *table, int row, void *new_row, int new_row_size);
++MDB_API int mdb_pg_get_freespace(MdbHandle *mdb);
++MDB_API int mdb_update_row(MdbTableDef *table);
++MDB_API void *mdb_new_data_pg(MdbCatalogEntry *entry);
+ 
+ /* map.c */
+-gint32 mdb_map_find_next_freepage(MdbTableDef *table, int row_size);
+-gint32 mdb_map_find_next(MdbHandle *mdb, unsigned char *map, unsigned int map_sz, guint32 start_pg);
++MDB_API gint32 mdb_map_find_next_freepage(MdbTableDef *table, int row_size);
++MDB_API gint32 mdb_map_find_next(MdbHandle *mdb, unsigned char *map, unsigned int map_sz, guint32 start_pg);
+ 
+ /* props.c */
+-void mdb_free_props(MdbProperties *props);
+-void mdb_dump_props(MdbProperties *props, FILE *outfile, int show_name);
+-GPtrArray* mdb_kkd_to_props(MdbHandle *mdb, void *kkd, size_t len);
++MDB_API void mdb_free_props(MdbProperties *props);
++MDB_API void mdb_dump_props(MdbProperties *props, FILE *outfile, int show_name);
++MDB_API GPtrArray* mdb_kkd_to_props(MdbHandle *mdb, void *kkd, size_t len);
+ 
+ 
+ /* worktable.c */
+-MdbTableDef *mdb_create_temp_table(MdbHandle *mdb, char *name);
+-void mdb_temp_table_add_col(MdbTableDef *table, MdbColumn *col);
+-void mdb_fill_temp_col(MdbColumn *tcol, char *col_name, int col_size, int col_type, int is_fixed);
+-void mdb_fill_temp_field(MdbField *field, void *value, int siz, int is_fixed, int is_null, int start, int column);
+-void mdb_temp_columns_end(MdbTableDef *table);
++MDB_API MdbTableDef *mdb_create_temp_table(MdbHandle *mdb, char *name);
++MDB_API void mdb_temp_table_add_col(MdbTableDef *table, MdbColumn *col);
++MDB_API void mdb_fill_temp_col(MdbColumn *tcol, char *col_name, int col_size, int col_type, int is_fixed);
++MDB_API void mdb_fill_temp_field(MdbField *field, void *value, int siz, int is_fixed, int is_null, int start, int column);
++MDB_API void mdb_temp_columns_end(MdbTableDef *table);
+ 
+ /* options.c */
+-int mdb_get_option(unsigned long optnum);
+-void mdb_debug(int klass, char *fmt, ...);
++MDB_API int mdb_get_option(unsigned long optnum);
++MDB_API void mdb_debug(int klass, char *fmt, ...);
+ 
+ /* iconv.c */
+-int mdb_unicode2ascii(MdbHandle *mdb, const char *src, size_t slen, char *dest, size_t dlen);
+-int mdb_ascii2unicode(MdbHandle *mdb, const char *src, size_t slen, char *dest, size_t dlen);
+-void mdb_iconv_init(MdbHandle *mdb);
+-void mdb_iconv_close(MdbHandle *mdb);
+-const char* mdb_target_charset(MdbHandle *mdb);
++MDB_API int mdb_unicode2ascii(MdbHandle *mdb, const char *src, size_t slen, char *dest, size_t dlen);
++MDB_API int mdb_ascii2unicode(MdbHandle *mdb, const char *src, size_t slen, char *dest, size_t dlen);
++MDB_API void mdb_iconv_init(MdbHandle *mdb);
++MDB_API void mdb_iconv_close(MdbHandle *mdb);
++MDB_API const char* mdb_target_charset(MdbHandle *mdb);
+ 
+ /** @}*/
+ 
+ #ifdef __cplusplus
+   }
+ #endif
+ 
+ #endif /* _mdbtools_h_ */
+diff -U20 -r -N -x '*.o' mdbtools.pristine/include/mdbtools.h.in mdbtools/include/mdbtools.h.in
+--- mdbtools.pristine/include/mdbtools.h.in	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/include/mdbtools.h.in	2024-12-20 17:11:34.130976400 -0500
+@@ -13,41 +13,58 @@
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ #ifndef _mdbtools_h_
+ #define _mdbtools_h_
+ 
+ #define MDBTOOLS_H_HAVE_ICONV_H @HAVE_ICONV_H@
+ #define MDBTOOLS_H_HAVE_XLOCALE_H @HAVE_XLOCALE_H@
+ 
+ #ifdef __cplusplus
+   extern "C" {
+ #endif
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
++#ifndef _WIN32
+ #include <unistd.h>
++typedef off_t mdb_off_t;
++#define mdb_fseeko fseeko
++#define mdb_ftello ftello
++#define MDB_API
++#else
++typedef __int64 mdb_off_t;
++#define mdb_fseeko _fseeki64
++#define mdb_ftello _ftelli64
++#define HAVE_ICONV
++#define ICONV_CONST
++#ifdef MDB_EXPORTS
++#define MDB_API __declspec(dllexport)
++#else
++#define MDB_API __declspec(dllimport)
++#endif
++#endif
+ #include <ctype.h>
+ #include <string.h>
+ #include <locale.h>
+ #include <@GLIB_INCLUDE_HEADER@>
+ 
+ #if MDBTOOLS_H_HAVE_ICONV_H
+ #include <iconv.h>
+ #endif
+ 
+ #if MDBTOOLS_H_HAVE_XLOCALE_H
+ #include <xlocale.h>
+ #endif
+ 
+ #ifdef _WIN32
+ #include <io.h>
+ #endif
+ 
+ /** \addtogroup mdbtools
+  *  @{
+  */
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdb/libmdb.vcxproj mdbtools/msvc/libmdb/libmdb.vcxproj
+--- mdbtools.pristine/msvc/libmdb/libmdb.vcxproj	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdb/libmdb.vcxproj	2024-12-20 16:44:21.638257000 -0500
+@@ -0,0 +1,197 @@
++<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\include\mdbfakeglib.h" />
++    <ClInclude Include="..\..\include\mdbprivate.h" />
++    <ClInclude Include="..\..\include\mdbtools.h" />
++    <ClInclude Include="..\..\include\mdbver.h" />
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\libmdb\backend.c" />
++    <ClCompile Include="..\..\src\libmdb\catalog.c" />
++    <ClCompile Include="..\..\src\libmdb\data.c" />
++    <ClCompile Include="..\..\src\libmdb\dump.c" />
++    <ClCompile Include="..\..\src\libmdb\fakeglib.c" />
++    <ClCompile Include="..\..\src\libmdb\file.c" />
++    <ClCompile Include="..\..\src\libmdb\iconv.c" />
++    <ClCompile Include="..\..\src\libmdb\index.c" />
++    <ClCompile Include="..\..\src\libmdb\like.c" />
++    <ClCompile Include="..\..\src\libmdb\map.c" />
++    <ClCompile Include="..\..\src\libmdb\money.c" />
++    <ClCompile Include="..\..\src\libmdb\options.c" />
++    <ClCompile Include="..\..\src\libmdb\props.c" />
++    <ClCompile Include="..\..\src\libmdb\rc4.c" />
++    <ClCompile Include="..\..\src\libmdb\sargs.c" />
++    <ClCompile Include="..\..\src\libmdb\stats.c" />
++    <ClCompile Include="..\..\src\libmdb\table.c" />
++    <ClCompile Include="..\..\src\libmdb\version.c" />
++    <ClCompile Include="..\..\src\libmdb\worktable.c" />
++    <ClCompile Include="..\..\src\libmdb\write.c" />
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <VCProjectVersion>16.0</VCProjectVersion>
++    <Keyword>Win32Proj</Keyword>
++    <ProjectGuid>{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}</ProjectGuid>
++    <RootNamespace>mdbtools</RootNamespace>
++    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
++    <ProjectName>libmdb</ProjectName>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Label="Shared">
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDB_EXPORTS;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;MDBTOOLS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>$(ProjectDir)\..\..\..\lib\iconv.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDB_EXPORTS;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;MDBTOOLS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>$(ProjectDir)\..\..\..\lib\iconv.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDB_EXPORTS;_CRT_SECURE_NO_WARNINGS;_DEBUG;MDBTOOLS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>$(ProjectDir)\..\..\..\lib\iconv.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDB_EXPORTS;_CRT_SECURE_NO_WARNINGS;NDEBUG;MDBTOOLS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>$(ProjectDir)\..\..\..\lib\iconv.dll.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdb/libmdb.vcxproj.filters mdbtools/msvc/libmdb/libmdb.vcxproj.filters
+--- mdbtools.pristine/msvc/libmdb/libmdb.vcxproj.filters	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdb/libmdb.vcxproj.filters	2024-12-20 16:44:21.599892500 -0500
+@@ -0,0 +1,93 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
++      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
++      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
++    </Filter>
++    <Filter Include="Resource Files">
++      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
++      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\include\mdbfakeglib.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="..\..\include\mdbprivate.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="..\..\include\mdbtools.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="..\..\include\mdbver.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\libmdb\backend.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\catalog.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\data.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\dump.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\fakeglib.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\file.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\iconv.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\index.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\like.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\map.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\money.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\options.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\props.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\rc4.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\sargs.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\stats.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\table.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\version.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\worktable.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\libmdb\write.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdb/libmdb.vcxproj.user mdbtools/msvc/libmdb/libmdb.vcxproj.user
+--- mdbtools.pristine/msvc/libmdb/libmdb.vcxproj.user	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdb/libmdb.vcxproj.user	2024-12-20 11:48:53.152521100 -0500
+@@ -0,0 +1,4 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <PropertyGroup />
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj mdbtools/msvc/libmdbsql/libmdbsql.vcxproj
+--- mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdbsql/libmdbsql.vcxproj	2024-12-20 16:45:37.567461600 -0500
+@@ -0,0 +1,182 @@
++<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\sql\lexer.c" />
++    <ClCompile Include="..\..\src\sql\mdbsql.c" />
++    <ClCompile Include="..\..\src\sql\parser.c" />
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\include\mdbsql.h" />
++    <ClInclude Include="..\..\src\sql\parser.h" />
++  </ItemGroup>
++  <ItemGroup>
++    <ProjectReference Include="..\libmdb\libmdb.vcxproj">
++      <Project>{b0087a60-e5e0-44ce-a4f6-a64f7fce0083}</Project>
++    </ProjectReference>
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <VCProjectVersion>16.0</VCProjectVersion>
++    <Keyword>Win32Proj</Keyword>
++    <ProjectGuid>{418b6415-e080-43c8-b5ab-a77ba3126cc6}</ProjectGuid>
++    <RootNamespace>libmdbsql</RootNamespace>
++    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>DynamicLibrary</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Label="Shared">
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDBSQL_EXPORTS;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;LIBMDBSQL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDBSQL_EXPORTS;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;LIBMDBSQL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDBSQL_EXPORTS;_CRT_SECURE_NO_WARNINGS;_DEBUG;LIBMDBSQL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>MDBSQL_EXPORTS;_CRT_SECURE_NO_WARNINGS;NDEBUG;LIBMDBSQL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <PrecompiledHeader>NotUsing</PrecompiledHeader>
++      <PrecompiledHeaderFile>
++      </PrecompiledHeaderFile>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Windows</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++      <EnableUAC>false</EnableUAC>
++      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
++  </ItemDefinitionGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj.filters mdbtools/msvc/libmdbsql/libmdbsql.vcxproj.filters
+--- mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj.filters	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdbsql/libmdbsql.vcxproj.filters	2024-12-20 16:44:21.593892500 -0500
+@@ -0,0 +1,36 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
++      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
++      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
++    </Filter>
++    <Filter Include="Resource Files">
++      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
++      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\sql\lexer.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\sql\mdbsql.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++    <ClCompile Include="..\..\src\sql\parser.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++  <ItemGroup>
++    <ClInclude Include="..\..\src\sql\parser.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++    <ClInclude Include="..\..\include\mdbsql.h">
++      <Filter>Header Files</Filter>
++    </ClInclude>
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj.user mdbtools/msvc/libmdbsql/libmdbsql.vcxproj.user
+--- mdbtools.pristine/msvc/libmdbsql/libmdbsql.vcxproj.user	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/libmdbsql/libmdbsql.vcxproj.user	2024-12-20 15:52:18.274555600 -0500
+@@ -0,0 +1,4 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <PropertyGroup />
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj mdbtools/msvc/mdb-sql/mdb-sql.vcxproj
+--- mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/mdb-sql/mdb-sql.vcxproj	2024-12-20 16:53:54.812794000 -0500
+@@ -0,0 +1,159 @@
++<?xml version="1.0" encoding="utf-8"?>
++<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup Label="ProjectConfigurations">
++    <ProjectConfiguration Include="Debug|Win32">
++      <Configuration>Debug</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|Win32">
++      <Configuration>Release</Configuration>
++      <Platform>Win32</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Debug|x64">
++      <Configuration>Debug</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++    <ProjectConfiguration Include="Release|x64">
++      <Configuration>Release</Configuration>
++      <Platform>x64</Platform>
++    </ProjectConfiguration>
++  </ItemGroup>
++  <PropertyGroup Label="Globals">
++    <VCProjectVersion>16.0</VCProjectVersion>
++    <Keyword>Win32Proj</Keyword>
++    <ProjectGuid>{b6f99a06-604e-4db6-b7e0-cff8c68c4fdd}</ProjectGuid>
++    <RootNamespace>mdbsql</RootNamespace>
++    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
++    <ConfigurationType>Application</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
++    <ConfigurationType>Application</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
++    <ConfigurationType>Application</ConfigurationType>
++    <UseDebugLibraries>true</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
++    <ConfigurationType>Application</ConfigurationType>
++    <UseDebugLibraries>false</UseDebugLibraries>
++    <PlatformToolset>v142</PlatformToolset>
++    <WholeProgramOptimization>true</WholeProgramOptimization>
++    <CharacterSet>Unicode</CharacterSet>
++  </PropertyGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
++  <ImportGroup Label="ExtensionSettings">
++  </ImportGroup>
++  <ImportGroup Label="Shared">
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
++  </ImportGroup>
++  <PropertyGroup Label="UserMacros" />
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <LinkIncremental>true</LinkIncremental>
++  </PropertyGroup>
++  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <LinkIncremental>false</LinkIncremental>
++  </PropertyGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Console</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Console</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Console</SubSystem>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
++    <ClCompile>
++      <WarningLevel>Level3</WarningLevel>
++      <FunctionLevelLinking>true</FunctionLevelLinking>
++      <IntrinsicFunctions>true</IntrinsicFunctions>
++      <SDLCheck>true</SDLCheck>
++      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <ConformanceMode>true</ConformanceMode>
++      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\..\include;$(ProjectDir)\..\..\include</AdditionalIncludeDirectories>
++    </ClCompile>
++    <Link>
++      <SubSystem>Console</SubSystem>
++      <EnableCOMDATFolding>true</EnableCOMDATFolding>
++      <OptimizeReferences>true</OptimizeReferences>
++      <GenerateDebugInformation>true</GenerateDebugInformation>
++    </Link>
++  </ItemDefinitionGroup>
++  <ItemGroup>
++    <ProjectReference Include="..\libmdbsql\libmdbsql.vcxproj">
++      <Project>{418b6415-e080-43c8-b5ab-a77ba3126cc6}</Project>
++    </ProjectReference>
++    <ProjectReference Include="..\libmdb\libmdb.vcxproj">
++      <Project>{b0087a60-e5e0-44ce-a4f6-a64f7fce0083}</Project>
++    </ProjectReference>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\util\mdb-sql.c" />
++  </ItemGroup>
++  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
++  <ImportGroup Label="ExtensionTargets">
++  </ImportGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj.filters mdbtools/msvc/mdb-sql/mdb-sql.vcxproj.filters
+--- mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj.filters	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/mdb-sql/mdb-sql.vcxproj.filters	2024-12-20 16:53:25.971417700 -0500
+@@ -0,0 +1,22 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <ItemGroup>
++    <Filter Include="Source Files">
++      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
++      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
++    </Filter>
++    <Filter Include="Header Files">
++      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
++      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
++    </Filter>
++    <Filter Include="Resource Files">
++      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
++      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
++    </Filter>
++  </ItemGroup>
++  <ItemGroup>
++    <ClCompile Include="..\..\src\util\mdb-sql.c">
++      <Filter>Source Files</Filter>
++    </ClCompile>
++  </ItemGroup>
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj.user mdbtools/msvc/mdb-sql/mdb-sql.vcxproj.user
+--- mdbtools.pristine/msvc/mdb-sql/mdb-sql.vcxproj.user	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/mdb-sql/mdb-sql.vcxproj.user	2024-12-20 16:51:24.074616800 -0500
+@@ -0,0 +1,4 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <PropertyGroup />
++</Project>
+\ No newline at end of file
+diff -U20 -r -N -x '*.o' mdbtools.pristine/msvc/mdbtools.sln mdbtools/msvc/mdbtools.sln
+--- mdbtools.pristine/msvc/mdbtools.sln	1969-12-31 19:00:00.000000000 -0500
++++ mdbtools/msvc/mdbtools.sln	2024-12-20 16:53:25.980417300 -0500
+@@ -0,0 +1,54 @@
++﻿
++Microsoft Visual Studio Solution File, Format Version 12.00
++# Visual Studio Version 16
++VisualStudioVersion = 16.0.34601.136
++MinimumVisualStudioVersion = 10.0.40219.1
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmdb", "libmdb\libmdb.vcxproj", "{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}"
++EndProject
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libmdbsql", "libmdbsql\libmdbsql.vcxproj", "{418B6415-E080-43C8-B5AB-A77BA3126CC6}"
++	ProjectSection(ProjectDependencies) = postProject
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083} = {B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}
++	EndProjectSection
++EndProject
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mdb-sql", "mdb-sql\mdb-sql.vcxproj", "{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		Debug|x64 = Debug|x64
++		Debug|x86 = Debug|x86
++		Release|x64 = Release|x64
++		Release|x86 = Release|x86
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Debug|x64.ActiveCfg = Debug|x64
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Debug|x64.Build.0 = Debug|x64
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Debug|x86.ActiveCfg = Debug|Win32
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Debug|x86.Build.0 = Debug|Win32
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Release|x64.ActiveCfg = Release|x64
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Release|x64.Build.0 = Release|x64
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Release|x86.ActiveCfg = Release|Win32
++		{B0087A60-E5E0-44CE-A4F6-A64F7FCE0083}.Release|x86.Build.0 = Release|Win32
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Debug|x64.ActiveCfg = Debug|x64
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Debug|x64.Build.0 = Debug|x64
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Debug|x86.ActiveCfg = Debug|Win32
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Debug|x86.Build.0 = Debug|Win32
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Release|x64.ActiveCfg = Release|x64
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Release|x64.Build.0 = Release|x64
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Release|x86.ActiveCfg = Release|Win32
++		{418B6415-E080-43C8-B5AB-A77BA3126CC6}.Release|x86.Build.0 = Release|Win32
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Debug|x64.ActiveCfg = Debug|x64
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Debug|x64.Build.0 = Debug|x64
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Debug|x86.ActiveCfg = Debug|Win32
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Debug|x86.Build.0 = Debug|Win32
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Release|x64.ActiveCfg = Release|x64
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Release|x64.Build.0 = Release|x64
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Release|x86.ActiveCfg = Release|Win32
++		{B6F99A06-604E-4DB6-B7E0-CFF8C68C4FDD}.Release|x86.Build.0 = Release|Win32
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++	GlobalSection(ExtensibilityGlobals) = postSolution
++		SolutionGuid = {E33BB56E-33EA-4133-AA46-3D2074650969}
++	EndGlobalSection
++EndGlobal
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/backend.c mdbtools/src/libmdb/backend.c
+--- mdbtools.pristine/src/libmdb/backend.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/backend.c	2024-12-20 12:29:52.093698800 -0500
+@@ -277,41 +277,45 @@
+ 	int col_type = col->col_type;
+ 	if (col_type > MDB_NUMERIC)
+ 		return NULL;
+ 	if (col_type == MDB_LONGINT && col->is_long_auto && backend->type_autonum)
+ 		return backend->type_autonum;
+ 	if (col_type == MDB_DATETIME && backend->type_shortdate) {
+ 		if (mdb_col_is_shortdate(col))
+ 			return backend->type_shortdate;
+ 	}
+ 	if (!backend->types_table[col_type].name[0])
+ 		return NULL;
+ 	return &backend->types_table[col_type];
+ }
+ 
+ const char *
+ mdb_get_colbacktype_string(const MdbColumn *col)
+ {
+ 	const MdbBackendType *type = mdb_get_colbacktype(col);
+ 	if (!type) {
+    		// return NULL;
++#ifdef _WIN32
++		__declspec(thread) static char buf[16];
++#else
+ 		static TLS char buf[16];
++#endif
+ 		snprintf(buf, sizeof(buf), "Unknown_%04x", col->col_type);
+ 		return buf;
+ 	}
+ 	return type->name;
+ }
+ int
+ mdb_colbacktype_takes_length(const MdbColumn *col)
+ {
+ 	const MdbBackendType *type = mdb_get_colbacktype(col);
+ 	if (!type) return 0;
+ 	return type->needs_precision || type->needs_char_length || type->needs_byte_length;
+ }
+ static int
+ mdb_colbacktype_takes_length_in_characters(const MdbColumn *col)
+ {
+ 	const MdbBackendType *type = mdb_get_colbacktype(col);
+ 	if (!type) return 0;
+ 	return type->needs_char_length;
+ }
+ 
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/catalog.c mdbtools/src/libmdb/catalog.c
+--- mdbtools.pristine/src/libmdb/catalog.c	2021-09-30 09:48:46.000000000 -0400
++++ mdbtools/src/libmdb/catalog.c	2024-12-20 12:38:00.549091000 -0500
+@@ -175,29 +175,31 @@
+ 	MdbCatalogEntry *entry;
+ 
+ 	for (i=0; i<mdb->num_catalog; i++) {
+ 		entry = g_ptr_array_index(mdb->catalog, i);
+ 		if (!g_ascii_strcasecmp(entry->object_name, name))
+ 			return entry;
+ 	}
+ 	return NULL;
+ }
+ 
+ void 
+ mdb_dump_catalog(MdbHandle *mdb, int obj_type)
+ {
+ 	unsigned int i;
+ 	MdbCatalogEntry *entry;
+ 
+ 	mdb_read_catalog(mdb, obj_type);
+ 	for (i=0;i<mdb->num_catalog;i++) {
+                 entry = g_ptr_array_index(mdb->catalog,i);
+ 		if (obj_type==MDB_ANY || entry->object_type==obj_type) {
++#ifndef _WIN32
+ 			printf("Type: %-12s Name: %-48s Page: %06lx\n",
+ 			mdb_get_objtype_string(entry->object_type) ?: "Unknown",
+ 			entry->object_name,
+ 			entry->table_pg);
++#endif
+ 		}
+ 	}
+ 	return;
+ }
+ 
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/dump.c mdbtools/src/libmdb/dump.c
+--- mdbtools.pristine/src/libmdb/dump.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/dump.c	2024-12-20 13:02:04.616977700 -0500
+@@ -4,42 +4,43 @@
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+  * License as published by the Free Software Foundation; either
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
+ #include <ctype.h>
+ #include <string.h>
+ #include <stdio.h>
+ #include <inttypes.h>
+ #include <sys/types.h>
++#include "mdbtools.h"
+ 
+-void mdb_buffer_dump(const void* buf, off_t start, size_t len)
++void mdb_buffer_dump(const void* buf, mdb_off_t start, size_t len)
+ {
+ 	char asc[20];
+ 	size_t j;
+     int k = 0;
+ 
+ 	memset(asc, 0, sizeof(asc));
+ 	k = 0;
+ 	for (j=0; j<len; j++) {
+ 		unsigned int c = ((const unsigned char *)(buf))[start+j];
+ 		if (k == 0) {
+ 			fprintf(stdout, "%04" PRIu64 "x  ", (uint64_t)(start+j));
+ 		}
+ 		fprintf(stdout, "%02x ", (unsigned char)c);
+ 		asc[k] = isprint(c) ? c : '.';
+ 		k++;
+ 		if (k == 8) {
+ 			fprintf(stdout, " ");
+ 		}
+ 		if (k == 16) {
+ 			fprintf(stdout, "  %s\n", asc);
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/fakeglib.c mdbtools/src/libmdb/fakeglib.c
+--- mdbtools.pristine/src/libmdb/fakeglib.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/fakeglib.c	2024-12-20 17:02:53.607864300 -0500
+@@ -1,48 +1,53 @@
+ /* fakeglib.c - A shim for applications that require GLib
+  * without the whole kit and kaboodle.
+  *
+  * Copyright (C) 2020 Evan Miller
+  *
+  * This library is free software; you can redistribute it and/or
+  * modify it under the terms of the GNU Library General Public
+  * License as published by the Free Software Foundation; either
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
++#include "mdbtools.h"
+ #include "mdbfakeglib.h"
+ 
+ #include <stddef.h>
+ #include <stdlib.h>
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <string.h>
++#ifdef _WIN32
++#define strdup _strdup
++#else
+ #include <getopt.h>
++#endif
+ #include <errno.h>
+ #include <wctype.h>
+ #ifdef HAVE_ICONV
+ #include <iconv.h>
+ #endif
+ 
+ /* Linked from libmdb */
+ const char *mdb_iconv_name_from_code_page(int code_page);
+ 
+ /* string functions */
+ 
+ void *g_memdup(const void *src, size_t len) {
+     void *dst = malloc(len);
+     memcpy(dst, src, len);
+     return dst;
+ }
+ 
+ int g_str_equal(const void *str1, const void *str2) {
+     return strcmp(str1, str2) == 0;
+ }
+@@ -503,40 +508,47 @@
+             p += snprintf(p, end - p, "%-20s", long_name);
+             free(long_name);
+         } else {
+             p += snprintf(p, end - p, "%-20s", context->entries[i].long_name);
+         }
+         if (!context->entries[i].short_name) {
+             p += snprintf(p, end - p, "    ");
+         }
+         p += snprintf(p, end - p, "%s\n", context->entries[i].description);
+     }
+     p += snprintf(p, end - p, "\n");
+     return help;
+ }
+ 
+ GOptionContext *g_option_context_new(const char *description) {
+     GOptionContext *ctx = calloc(1, sizeof(GOptionContext));
+     ctx->desc = description;
+     return ctx;
+ }
+ 
++#ifdef _WIN32
++gboolean g_option_context_parse(GOptionContext *context,
++    gint *argc, gchar ***argv, GError **error)
++{
++    return TRUE;
++}
++#else
+ gboolean g_option_context_parse(GOptionContext *context,
+         gint *argc, gchar ***argv, GError **error) {
+     int i;
+     int count = 0;
+     int len = 0;
+     if (*argc == 2 &&
+             (strcmp((*argv)[1], "-h") == 0 || strcmp((*argv)[1], "--help") == 0)) {
+         fprintf(stderr, "%s", g_option_context_get_help(context, TRUE, NULL));
+         exit(0);
+     }
+     for (i=0; context->entries[i].long_name; i++) {
+         GOptionArg arg = context->entries[i].arg;
+         count++;
+         len++;
+         if (arg != G_OPTION_ARG_NONE)
+             len++;
+     }
+     struct option *long_opts = calloc(count+1, sizeof(struct option));
+     char *short_opts = calloc(1, len+1);
+     int j=0;
+@@ -590,24 +602,25 @@
+             }
+         } else if (entry->arg == G_OPTION_ARG_FILENAME) {
+             *(char **)entry->arg_data = strdup(optarg);
+         } else if (entry->arg == G_OPTION_ARG_STRING) {
+             char *result = g_locale_to_utf8(optarg, -1, NULL, NULL, error);
+             if (result == NULL) {
+                 free(short_opts);
+                 free(long_opts);
+                 return FALSE;
+             }
+             *(char **)entry->arg_data = result;
+         }
+     }
+     *argc -= (optind - 1);
+     *argv += (optind - 1);
+     free(short_opts);
+     free(long_opts);
+ 
+     return TRUE;
+ }
++#endif
+ 
+ void g_option_context_free(GOptionContext *context) {
+     free(context);
+ }
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/file.c mdbtools/src/libmdb/file.c
+--- mdbtools.pristine/src/libmdb/file.c	2021-09-29 09:19:47.000000000 -0400
++++ mdbtools/src/libmdb/file.c	2024-12-20 13:07:06.121867100 -0500
+@@ -337,61 +337,61 @@
+ 	ssize_t len;
+ 
+ 	if (pg && mdb->cur_pg == pg) return mdb->fmt->pg_size;
+ 
+ 	len = _mdb_read_pg(mdb, mdb->pg_buf, pg);
+ 	//fprintf(stderr, "read page %ld type %02x\n", pg, mdb->pg_buf[0]);
+ 	mdb->cur_pg = pg;
+ 	/* kan - reset the cur_pos on a new page read */
+ 	mdb->cur_pos = 0; /* kan */
+ 	return len;
+ }
+ ssize_t mdb_read_alt_pg(MdbHandle *mdb, unsigned long pg)
+ {
+ 	return _mdb_read_pg(mdb, mdb->alt_pg_buf, pg);
+ }
+ static ssize_t _mdb_read_pg(MdbHandle *mdb, void *pg_buf, unsigned long pg)
+ {
+ 	ssize_t len;
+ 	off_t offset = pg * mdb->fmt->pg_size;
+ 
+-    if (fseeko(mdb->f->stream, 0, SEEK_END) == -1) {
++    if (mdb_fseeko(mdb->f->stream, 0, SEEK_END) == -1) {
+         fprintf(stderr, "Unable to seek to end of file\n");
+         return 0;
+     }
+-    if (ftello(mdb->f->stream) < offset) { 
++    if (mdb_ftello(mdb->f->stream) < offset) { 
+         fprintf(stderr,"offset %" PRIu64 " is beyond EOF\n",(uint64_t)offset);
+         return 0;
+     }
+ 	if (mdb->stats && mdb->stats->collect) 
+ 		mdb->stats->pg_reads++;
+ 
+-	if (fseeko(mdb->f->stream, offset, SEEK_SET) == -1) {
++	if (mdb_fseeko(mdb->f->stream, offset, SEEK_SET) == -1) {
+         fprintf(stderr, "Unable to seek to page %lu\n", pg);
+         return 0;
+     }
+ 	len = fread(pg_buf, 1, mdb->fmt->pg_size, mdb->f->stream);
+ 	if (ferror(mdb->f->stream)) {
+ 		perror("read");
+ 		return 0;
+ 	}
+-    memset(pg_buf + len, 0, mdb->fmt->pg_size - len);
++    memset((char *)pg_buf + len, 0, mdb->fmt->pg_size - len);
+ 	/*
+ 	 * unencrypt the page if necessary.
+ 	 * it might make sense to cache the unencrypted data blocks?
+ 	 */
+ 	if (pg != 0 && mdb->f->db_key != 0)
+ 	{
+ 		uint32_t tmp_key_i = mdb->f->db_key ^ pg;
+ 		unsigned char tmp_key[4] = {
+ 			tmp_key_i & 0xFF, (tmp_key_i >> 8) & 0xFF,
+ 			(tmp_key_i >> 16) & 0xFF, (tmp_key_i >> 24) & 0xFF };
+ 		mdbi_rc4(tmp_key, sizeof(tmp_key), pg_buf, mdb->fmt->pg_size);
+ 	}
+ 
+ 	return mdb->fmt->pg_size;
+ }
+ void mdb_swap_pgbuf(MdbHandle *mdb)
+ {
+ char tmpbuf[MDB_PGSIZE];
+ 
+ 	memcpy(tmpbuf,mdb->pg_buf, MDB_PGSIZE);
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/index.c mdbtools/src/libmdb/index.c
+--- mdbtools.pristine/src/libmdb/index.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/index.c	2024-12-20 15:14:18.164636300 -0500
+@@ -193,41 +193,41 @@
+  * Where Index Type is:
+  * 0x01 = normal
+  * 0x01 = primary key
+  * 0x02 = foreign key index reference
+  */
+ 
+ /* Debugging helper to dump out raw hex values of index definition */
+ /*
+ static void hexdump(unsigned char *tmpbuf, int size) {
+ 	mdb_buffer_dump(tmpbuf, 0, size);
+ }
+ */
+ 
+ 
+ GPtrArray *
+ mdb_read_indices(MdbTableDef *table)
+ {
+ 	MdbCatalogEntry *entry = table->entry;
+ 	MdbHandle *mdb = entry->mdb;
+ 	MdbFormatConstants *fmt = mdb->fmt;
+-	MdbIndex *pidx;
++	MdbIndex *pidx = NULL;
+ 	unsigned int i, j, k;
+ 	int key_num, col_num, cleaned_col_num;
+ 	int cur_pos, name_sz, idx2_sz, type_offset;
+ 	int index_start_pg = mdb->cur_pg;
+ 	gchar *tmpbuf;
+ 
+ 	table->indices = g_ptr_array_new();
+ 
+ 	if (IS_JET3(mdb)) {
+ 		cur_pos = table->index_start + 39 * table->num_real_idxs;
+ 		idx2_sz = 20;
+ 		type_offset = 19;
+ 	} else {
+ 		cur_pos = table->index_start + 52 * table->num_real_idxs;
+ 		idx2_sz = 28;
+ 		type_offset = 23;
+ 	}
+ 
+ 	/* Read in the definitions of table indexes, into table->indices */
+ 
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/money.c mdbtools/src/libmdb/money.c
+--- mdbtools.pristine/src/libmdb/money.c	2021-08-28 09:45:11.000000000 -0400
++++ mdbtools/src/libmdb/money.c	2024-12-20 15:06:44.925647700 -0500
+@@ -28,77 +28,77 @@
+ 
+ static int multiply_byte(unsigned char *product, int num, unsigned char *multiplier, size_t len);
+ static int do_carry(unsigned char *product, size_t len);
+ static char *array_to_string(unsigned char *array, size_t len, int unsigned scale, int neg);
+ 
+ /**
+  * mdb_money_to_string
+  * @mdb: Handle to open MDB database file
+  * @start: Offset of the field within the current page
+  *
+  * Returns: the allocated string that has received the value.
+  */
+ char *mdb_money_to_string(MdbHandle *mdb, int start)
+ {
+ 	const int num_bytes=8, scale=4;
+ 	int i;
+ 	int neg=0;
+ 	unsigned char multiplier[MAX_MONEY_PRECISION] = { 1 };
+ 	unsigned char temp[MAX_MONEY_PRECISION];
+ 	unsigned char product[MAX_MONEY_PRECISION] = { 0 };
+-	unsigned char bytes[num_bytes];
++	unsigned char bytes[8];
+ 
+ 	memcpy(bytes, mdb->pg_buf + start, num_bytes);
+ 
+ 	/* Perform two's complement for negative numbers */
+ 	if (bytes[num_bytes-1] & 0x80) {
+ 		neg = 1;
+ 		for (i=0;i<num_bytes;i++) {
+                        bytes[i] = ~bytes[i];
+ 		}
+ 		for (i=0; i<num_bytes; i++) {
+                        bytes[i] ++;
+                        if (bytes[i]!=0) break;
+ 		}
+ 	}
+ 
+ 	for (i=0;i<num_bytes;i++) {
+ 		/* product += multiplier * current byte */
+                multiply_byte(product, bytes[i], multiplier, sizeof(multiplier));
+ 
+ 		/* multiplier = multiplier * 256 */
+                memcpy(temp, multiplier, sizeof(multiplier));
+                memset(multiplier, 0, sizeof(multiplier));
+ 		multiply_byte(multiplier, 256, temp, sizeof(multiplier));
+ 	}
+        return array_to_string(product, sizeof(product), scale, neg);
+ 
+ }
+ 
+ char *mdb_numeric_to_string(MdbHandle *mdb, int start, int scale, int prec) {
+        const int num_bytes = 16;
+        int i;
+        int neg=0;
+        unsigned char multiplier[MAX_NUMERIC_PRECISION] = { 1 };
+        unsigned char temp[MAX_NUMERIC_PRECISION];
+        unsigned char product[MAX_NUMERIC_PRECISION] = { 0 };
+-       unsigned char bytes[num_bytes];
++       unsigned char bytes[16];
+ 
+        memcpy(bytes, mdb->pg_buf + start + 1, num_bytes);
+ 
+        /* Negative bit is stored in first byte */
+        if (mdb->pg_buf[start] & 0x80) neg = 1;
+        for (i=0;i<num_bytes;i++) {
+                /* product += multiplier * current byte */
+                multiply_byte(product, bytes[12-4*(i/4)+i%4], multiplier, sizeof(multiplier));
+ 
+                /* multiplier = multiplier * 256 */
+                memcpy(temp, multiplier, sizeof(multiplier));
+                memset(multiplier, 0, sizeof(multiplier));
+                multiply_byte(multiplier, 256, temp, sizeof(multiplier));
+        }
+        return array_to_string(product, sizeof(product), prec, neg);
+ }
+ 
+ static int multiply_byte(unsigned char *product, int num, unsigned char *multiplier, size_t len)
+ {
+ 	unsigned char number[3] = { num % 10, (num/10) % 10, (num/100) % 10 };
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/options.c mdbtools/src/libmdb/options.c
+--- mdbtools.pristine/src/libmdb/options.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/options.c	2024-12-20 15:44:58.106662900 -0500
+@@ -7,42 +7,48 @@
+  * version 2 of the License, or (at your option) any later version.
+  *
+  * This library is distributed in the hope that it will be useful,
+  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  * Library General Public License for more details.
+  *
+  * You should have received a copy of the GNU Library General Public
+  * License along with this library; if not, write to the Free Software
+  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+  */
+ 
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdarg.h>
+ #include <stdlib.h>
+ #include "mdbtools.h"
+ 
+ #define DEBUG 1
+ 
++#ifdef _WIN32
++static __declspec(thread) unsigned long opts;
++static __declspec(thread) int optset;
++#define strtok_r strtok_s
++#else
+ static TLS unsigned long opts;
+ static TLS int optset;
++#endif
+ 
+ static void load_options(void);
+ 
+ void
+ mdb_debug(int klass, char *fmt, ...)
+ {
+ #ifdef DEBUG
+ 	va_list ap;
+ 
+ 	if (!optset) load_options();
+ 	if (klass & opts) {	
+     	va_start(ap, fmt);
+     	vfprintf (stderr,fmt, ap);
+     	va_end(ap);
+     	fprintf(stderr,"\n");
+ 	}
+ #endif
+ }
+ 
+ static void
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/table.c mdbtools/src/libmdb/table.c
+--- mdbtools.pristine/src/libmdb/table.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/table.c	2024-12-20 15:10:08.422306100 -0500
+@@ -153,41 +153,41 @@
+ 	read_pg_if_n(mdb, c, cur_pos, 2);
+ 	return mdb_get_int16(c, 0);
+ }
+ guint8
+ read_pg_if_8(MdbHandle *mdb, int *cur_pos)
+ {
+ 	guint8 c;
+ 
+ 	read_pg_if_n(mdb, &c, cur_pos, 1);
+ 	return c;
+ }
+ /*
+  * Read data into a buffer, advancing pages and setting the
+  * page cursor as needed.  In the case that buf in NULL, pages
+  * are still advanced and the page cursor is still updated.
+  */
+ void * 
+ read_pg_if_n(MdbHandle *mdb, void *buf, int *cur_pos, size_t len)
+ {
+ 	char* _buf = buf;
+-	char* _end = buf ? buf + len : NULL;
++	char* _end = buf ? _buf + len : NULL;
+ 
+ 	if (*cur_pos < 0)
+ 		return NULL;
+ 
+ 	/* Advance to page which contains the first byte */
+ 	while (*cur_pos >= mdb->fmt->pg_size) {
+ 		if (!mdb_read_pg(mdb, mdb_get_int32(mdb->pg_buf,4)))
+ 			return NULL;
+ 		*cur_pos -= (mdb->fmt->pg_size - 8);
+ 	}
+ 	/* Copy pages into buffer */
+ 	while (*cur_pos + len >= (size_t)mdb->fmt->pg_size) {
+ 		size_t piece_len = mdb->fmt->pg_size - *cur_pos;
+ 		if (_buf) {
+ 			if (_buf + piece_len > _end)
+ 				return NULL;
+ 			memcpy(_buf, mdb->pg_buf + *cur_pos, piece_len);
+ 			_buf += piece_len;
+ 		}
+ 		len -= piece_len;
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/libmdb/write.c mdbtools/src/libmdb/write.c
+--- mdbtools.pristine/src/libmdb/write.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/libmdb/write.c	2024-12-20 15:32:09.456791200 -0500
+@@ -59,50 +59,50 @@
+ mdb_put_int32_msb(void *buf, guint32 offset, guint32 value)
+ {
+     unsigned char *u8_buf = (unsigned char *)buf + offset;
+     u8_buf[3] = (value & 0xFF);
+     u8_buf[2] = (value >> 8) & 0xFF;
+     u8_buf[1] = (value >> 16) & 0xFF;
+     u8_buf[0] = (value >> 24) & 0xFF;
+ }
+ void
+ _mdb_put_int32_mdb(void *buf, guint32 offset, guint32 value)
+ #ifdef HAVE_ATTRIBUTE_ALIAS
+ __attribute__((alias("mdb_put_int32_msb")));
+ #else
+ { mdb_put_int32_msb(buf, offset, value); }
+ #endif
+ 
+ ssize_t
+ mdb_write_pg(MdbHandle *mdb, unsigned long pg)
+ {
+ 	ssize_t len;
+-	off_t offset = pg * mdb->fmt->pg_size;
++	mdb_off_t offset = pg * mdb->fmt->pg_size;
+ 	unsigned char *buf = mdb->pg_buf;
+ 
+-    fseeko(mdb->f->stream, 0, SEEK_END);
++    mdb_fseeko(mdb->f->stream, 0, SEEK_END);
+ 	/* is page beyond current size + 1 ? */
+-	if (ftello(mdb->f->stream) < offset + mdb->fmt->pg_size) {
++	if (mdb_ftello(mdb->f->stream) < offset + mdb->fmt->pg_size) {
+ 		fprintf(stderr,"offset %" PRIu64 " is beyond EOF\n",(uint64_t)offset);
+ 		return 0;
+ 	}
+-	fseeko(mdb->f->stream, offset, SEEK_SET);
++	mdb_fseeko(mdb->f->stream, offset, SEEK_SET);
+ 
+ 	if (pg != 0 && mdb->f->db_key != 0)
+ 	{
+ 		buf = g_memdup2(mdb->pg_buf, mdb->fmt->pg_size);
+ 		unsigned int tmp_key = mdb->f->db_key ^ pg;
+ 		mdbi_rc4((unsigned char*)&tmp_key, 4, buf, mdb->fmt->pg_size);
+ 	}
+ 
+ 	len = fwrite(buf, 1, mdb->fmt->pg_size, mdb->f->stream);
+ 
+ 	if (buf != mdb->pg_buf) {
+ 		g_free(buf);
+ 	}
+ 
+ 	if (ferror(mdb->f->stream)) {
+ 		perror("write");
+ 		return 0;
+ 	} else if (len<mdb->fmt->pg_size) {
+ 	/* fprintf(stderr,"EOF reached %d bytes returned.\n",len, mdb->pg_size); */
+ 		return 0;
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/sql/lexer.c mdbtools/src/sql/lexer.c
+--- mdbtools.pristine/src/sql/lexer.c	2021-09-29 09:14:58.000000000 -0400
++++ mdbtools/src/sql/lexer.c	2024-12-20 16:11:36.661414900 -0500
+@@ -27,40 +27,41 @@
+ 
+ #ifdef yyget_lloc
+ #define yyget_lloc_ALREADY_DEFINED
+ #else
+ #define yyget_lloc yyget_lloc
+ #endif
+ 
+ #ifdef yyset_lloc
+ #define yyset_lloc_ALREADY_DEFINED
+ #else
+ #define yyset_lloc yyset_lloc
+ #endif
+ 
+ /* First, we deal with  platform-specific or compiler-specific issues. */
+ 
+ /* begin standard C headers. */
+ #include <stdio.h>
+ #include <string.h>
+ #include <errno.h>
+ #include <stdlib.h>
++#include <stdint.h>
+ 
+ /* end standard C headers. */
+ 
+ /* flex integer type definitions */
+ 
+ #ifndef FLEXINT_H
+ #define FLEXINT_H
+ 
+ /* C99 systems have <inttypes.h>. Non-C99 systems may or may not. */
+ 
+ #if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+ 
+ /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
+  * if you want the limit (max/min) macros for int types. 
+  */
+ #ifndef __STDC_LIMIT_MACROS
+ #define __STDC_LIMIT_MACROS 1
+ #endif
+ 
+ #include <inttypes.h>
+diff -U20 -r -N -x '*.o' mdbtools.pristine/src/util/mdb-sql.c mdbtools/src/util/mdb-sql.c
+--- mdbtools.pristine/src/util/mdb-sql.c	2021-09-29 09:12:55.000000000 -0400
++++ mdbtools/src/util/mdb-sql.c	2024-12-20 16:54:59.674279700 -0500
+@@ -31,40 +31,45 @@
+ #endif /* HAVE_LIBREADLINE */
+ 
+ #ifdef HAVE_READLINE_HISTORY
+ #  if defined(HAVE_READLINE_HISTORY_H)
+ #    include <readline/history.h>
+ #  elif defined(HAVE_HISTORY_H)
+ #    include <history.h>
+ #  else
+ /* no history.h */
+ extern void add_history ();
+ extern int write_history ();
+ extern int read_history ();
+ extern void clear_history ();
+ #  endif
+ #endif /* HAVE_READLINE_HISTORY */
+ 
+ #include <string.h>
+ #include "mdbsql.h"
+ #include "mdbver.h"
+ 
++#ifdef _WIN32
++#define isatty _isatty
++#define fileno _fileno
++#endif
++
+ void dump_results(FILE *out, MdbSQL *sql, char *delimiter);
+ void dump_results_pp(FILE *out, MdbSQL *sql);
+ 
+ int headers = 1;
+ int footers = 1;
+ int pretty_print = 1;
+ int showplan = 0;
+ int noexec = 0;
+ 
+ #ifdef HAVE_READLINE_HISTORY
+ #define HISTFILE ".mdbhistory"
+ #endif
+ 
+ #ifndef HAVE_LIBREADLINE
+ char *readline(char *prompt)
+ {
+ char line[1000];
+ int i = 0;
+ 
+ 	fputs(prompt, stdout);

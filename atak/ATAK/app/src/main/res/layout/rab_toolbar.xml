@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.atakmap.android.tools.ActionBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/buttonCircle"
+        android:src="@drawable/ic_menu_rb_circle_toggle"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonDynamicRangeAndBearing"
+        android:src="@drawable/ic_drag_ruler_toggle"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonRangeAndBearing"
+        android:src="@drawable/ic_ruler_toggle"
+        style="@style/ActionBarViewImageButton"/>
+
+
+    <ImageButton
+        android:id="@+id/buttonBullseye"
+        android:src="@drawable/ic_rab_bullseye"
+        style="@style/ActionBarViewImageButton"/>
+
+</com.atakmap.android.tools.ActionBarView>

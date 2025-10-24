@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/marker_statusTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/heading_yellow"
+        android:gravity="start"
+        android:text="@string/status"
+        android:textSize="@dimen/draper_font"/>
+
+    <Spinner
+        android:id="@+id/markerStatusSpinner"
+        android:padding="6dp" style="@style/darkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:gravity="start"
+        android:paddingTop="0dp"
+        android:textColor="@color/white" />
+
+</LinearLayout>

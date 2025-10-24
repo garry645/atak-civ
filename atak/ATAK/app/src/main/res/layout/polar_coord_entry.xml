@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|end"
+            android:text="@string/relative_to"
+            android:layout_weight="2"/>
+
+        <LinearLayout
+            android:id="@+id/relativeMarkerButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_weight="9"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:enabled="false"
+            style="@style/darkButton">
+            <ImageView
+                android:id="@+id/relativeMarkerIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="@dimen/auto_space"/>
+            <TextView
+                android:id="@+id/relativeMarkerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="@dimen/draper_large_font"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|end"
+            android:text="@string/bearing"
+            android:layout_weight="2"/>
+        <EditText
+            android:id="@+id/polarBearing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="3"
+            android:inputType="numberSigned|numberDecimal"/>
+        <Spinner
+            android:id="@+id/polarBearingUnits"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:enabled="false"
+            android:padding="6dp"
+            android:entries="@array/polar_radial_units"
+            style="@style/darkButton"/>
+        <Spinner
+            android:id="@+id/polarBearingAlignment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:enabled="false"
+            android:padding="6dp"
+            android:entries="@array/polar_north_options"
+            style="@style/darkButton"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|end"
+            android:text="@string/range"
+            android:layout_weight="2"/>
+        <EditText
+            android:id="@+id/polarRange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="3"
+            android:inputType="numberDecimal"/>
+        <Spinner
+            android:id="@+id/polarRangeUnits"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:padding="6dp"
+            android:enabled="false"
+            android:entries="@array/polar_distance_units"
+            style="@style/darkButton"/>
+        <Spinner
+            android:id="@+id/polarZoom"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:padding="6dp"
+            android:enabled="false"
+            android:entries="@array/polar_zoom_method"
+            style="@style/darkButton"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|end"
+            android:text="@string/inclination"
+            android:layout_weight="2"/>
+        <EditText
+            android:id="@+id/polarInclination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="2"
+            android:inputType="numberSigned|numberDecimal"
+            android:gravity="center"
+            android:text="@string/_0" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/u00b0"
+            android:layout_weight="1"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/polarActionLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+        <RadioGroup
+            android:id="@+id/polarAction"
+            android:layout_width="wrap_content"
+            android:padding="6dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/polarActionDropPoint"
+                android:text="@string/point"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/polarActionDropRandB"
+                android:text="@string/r_amp_b_line"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/polarActionDropBoth"
+                android:text="@string/both"/>
+
+        </RadioGroup>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <RadioGroup
+            android:id="@+id/affiliationGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center" >
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropNothing"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/nopoint"
+                style="@style/darkButton"
+                android:visibility="gone"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropGeneric"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/generic"
+                style="@style/darkButton"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropUnknown"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/unknown"
+                style="@style/darkButton"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropNeutral"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/neutral"
+                style="@style/darkButton"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropHostile"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/hostile"
+                style="@style/darkButton"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogDropFriendly"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/friendly"
+                style="@style/darkButton"/>
+
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogMoveRedX"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/select_point_icon"
+                style="@style/darkButton"/>
+            <com.atakmap.android.gui.ImageRadioButton
+                android:id="@+id/coordDialogMovePOI"
+                android:padding="4dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:button="@drawable/poi"
+                style="@style/darkButton"/>
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>

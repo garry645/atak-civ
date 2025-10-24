@@ -1,0 +1,20 @@
+###########################################################
+#
+# Used to produce the final sdk release build for 
+# ATAK.   This should be periodically examined to see if 
+# we can reduce the number of exemptions.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+###########################################################
+
+##############################################################
+# SDK specific obfuscation rules based on proguard-release.txt
+##############################################################
+-keepnames class *
+
+-keepclassmembers class * {
+    !private <fields>;
+    !private <methods>;
+}
+

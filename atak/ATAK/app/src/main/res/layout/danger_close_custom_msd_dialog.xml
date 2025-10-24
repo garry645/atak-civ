@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/auto_margin"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/heading_yellow"
+            android:text="@string/name" />
+        <EditText
+            android:id="@+id/custom_name_msd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:minWidth="100dp"
+            android:maxWidth="150dp"
+            android:textSize="16sp"/>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginEnd="@dimen/auto_margin"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/heading_yellow"
+            android:text="@string/description" />
+        <EditText
+            android:id="@+id/custom_description_msd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:minWidth="100dp"
+            android:maxWidth="150dp"
+            android:textSize="16sp" />
+    </TableRow>
+
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginEnd="@dimen/auto_margin"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:textColor="@color/heading_yellow"
+            android:text="@string/minimum_safe_distance" />
+        <LinearLayout>
+            <EditText
+                android:maxLength="9"
+                android:id="@+id/custom_distance_msd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberSigned|numberDecimal"
+                android:minWidth="50dp"
+                android:maxWidth="75dp"
+                android:textSize="16sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/meter_abbreviation" />
+        </LinearLayout>
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/heading_yellow"
+            android:text="@string/dangerclose_text8" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <EditText
+                android:maxLength="3"
+                android:id="@+id/custom_rico_fan_angle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:inputType="numberSigned|numberDecimal"
+                android:minWidth="55dp"
+                android:maxWidth="55dp"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_weight=".2"
+                android:textSize="16sp"
+                android:text="@string/degree" />
+
+            <EditText
+                android:maxLength="9"
+                android:id="@+id/custom_rico_fan_distance"
+                android:layout_width="wrap_content"
+                android:layout_weight=".4"
+                android:layout_height="wrap_content"
+                android:inputType="numberSigned|numberDecimal"
+                android:minWidth="50dp"
+                android:maxWidth="75dp"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="fill_parent"
+                android:layout_weight=".2"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="@string/meter_abbreviation" />
+        </LinearLayout>
+
+    </TableRow>
+
+
+</TableLayout>

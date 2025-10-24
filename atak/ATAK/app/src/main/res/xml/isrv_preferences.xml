@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:title="@string/isrv_network_setting">
+
+    <PreferenceCategory android:title="@string/configuration"
+        android:key="configuration_category">
+
+       <com.atakmap.android.gui.PanSwitchPreference
+            android:defaultValue="true"
+            android:disableDependentsState="false"
+            android:key="network_config"
+            android:checked="true"
+            android:summary="@string/internal_network_config_summary"
+            android:title="@string/preferences_text189" />
+
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="network_config"
+            android:disableDependentsState="true"
+            android:key="network_dhcp"
+
+            android:summary="@string/preferences_text188"
+            android:title="DHCP" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/address"
+        android:key="address_category">
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:defaultValue="192.168.80.200"
+            android:dependency="network_dhcp"
+            android:dialogTitle="@string/preferences_text190"
+            android:inputType="textNoSuggestions|textUri"
+            android:key="network_static_ip_address"
+            android:summary=""
+            android:title="@string/preferences_text190" />
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:defaultValue="255.255.255.0"
+            android:dependency="network_dhcp"
+            android:dialogTitle="@string/preferences_text192"
+            android:key="network_static_subnet_mask"
+            android:summary=""
+            android:title="@string/preferences_text191" />
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:dependency="network_dhcp"
+            android:dialogTitle="@string/preferences_text194"
+            android:key="network_static_gateway"
+            android:summary=""
+            android:title="@string/preferences_text193" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory android:title="@string/preferences_text195"
+        android:key="dns_servers_category">
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:dependency="network_dhcp"
+            android:dialogTitle="DNS 1"
+            android:key="network_static_dns1"
+            android:summary=""
+            android:title="DNS 1" />
+
+        <com.atakmap.android.gui.PanEditTextPreference
+            android:dependency="network_dhcp"
+            android:dialogTitle="DNS 2"
+            android:key="network_static_dns2"
+            android:summary=""
+            android:title="DNS 2" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

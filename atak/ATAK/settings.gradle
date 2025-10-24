@@ -1,0 +1,19 @@
+apply from: '../gradle/versions.gradle'
+apply from: '../gradle/functions.gradle'
+
+
+
+include ':app'
+
+// if `takkernel` is present, include projects directly
+if((getValueFromPropertiesFile(file('local.properties'), 'takkernel.dependency.forceRemote') != 'true') &&
+        new File('../../takkernel').exists()) {
+
+    includeFlat('takkernel')
+    project(':takkernel').projectDir = new File(settingsDir, '../../takkernel')
+    include(':takkernel:annotation')
+    include(':takkernel:engine')
+    include(':takkernel:port')
+    include(':takkernel:shared')
+}
+

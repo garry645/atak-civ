@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/network_connections"
+        android:key="network_preferences_category">
+        <com.atakmap.android.gui.PanPreference
+            android:icon="@drawable/missionpackage_icon"
+            android:key="dataPackage"
+            android:title="@string/mission_package_name" />
+        <com.atakmap.android.gui.PanPreference
+            android:icon="@drawable/ic_menu_network"
+            android:key="quickConnect"
+            android:title="@string/quick_connect" />
+        <com.atakmap.android.gui.PanPreference
+            android:icon="@drawable/ic_menu_settings"
+            android:key="advanced_network_settings"
+            android:title="@string/advanced_network_settings" />
+    </PreferenceCategory>
+</PreferenceScreen>

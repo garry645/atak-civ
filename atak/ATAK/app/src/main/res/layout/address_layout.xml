@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
+        android:text="@string/address"
+        android:textColor="@color/heading_yellow"
+        android:textSize="@dimen/draper_font"/>
+
+    <TextView
+        android:id="@+id/dgInfoAddress"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
+        android:text=""
+        android:textColor="#FFF"
+        android:textSize="@dimen/draper_large_font"/>
+
+
+    <TextView
+        android:id="@+id/dgInfoAddressInfo"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:gravity="start"
+        android:text=""
+        android:textColor="#FFF"
+        android:textSize="@dimen/draper_small_font"/>
+
+</LinearLayout>
+

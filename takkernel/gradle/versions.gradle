@@ -1,0 +1,44 @@
+// Gradle script to declare our external dependency versions
+ext {
+    // android platform dependencies
+    androidBuildToolsVersion  = '35'
+    androidCompileSdkVersion = 35
+    androidMinSdkVersion = 21
+    androidTargetSdkVersion = 29
+    androidToolsBuildGradleVersion = '8.9.0'
+    androidNdkVersion = '25.1.8937393'
+    androidxFragmentVersion = '1.5.7'
+    kotlinVersion = '2.1.10'
+
+    // general dependencies
+    androidPortVersion = '6.1.2'
+    assertjVersion = '3.6.1'
+    bouncyCastleVersion = '1.78.1'
+    commonsTextVersion = '1.9'
+    commonsLang3SlimVersion = '1.0.0'
+    eventbusVersion = '3.2.0'
+    glesJoglCVersion = '1.0.3'
+    gradleCmakePluginVersion = '1.0.0'
+    guavaVersion = '30.0-jre'
+    httpclientVersion = '4.5.13'
+    j3dVersion = '3.0.1'
+    jacksonVersion = '2.13.1'
+    jacocoVersion = '0.8.9'
+    joglVersion = '2.5.0'
+    jsonVersion = '20220924'
+    junitVersion = '4.12'
+    libLasVersion = '1.8.2f'
+    kxmlVersion = '2.3.0'
+    // 2525D+ library
+    milSymAndroid = '2.4.0'
+    milSymJava = '2.1.5'
+    // 2525C library
+    milSymRendererAndroid = '0.2.1'
+    milSymRendererJava = '0.1.41'
+    mockitoVersion = '3.+'
+    okhttpVersion = '4.11.0'
+    owaspDependencyCheckVersion = '6.5.3'
+    priVersion = '1.1.3'
+    slf4jApiVersion = '1.7.30'
+    takthirdpartyVersion = '4.2.4'
+}

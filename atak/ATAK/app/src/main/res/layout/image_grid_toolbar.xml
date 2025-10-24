@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.atakmap.android.tools.ActionBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginBottom="0dp">
+
+    <ImageButton
+        android:id="@+id/importFile"
+        android:src="@drawable/ic_menu_plus"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonImageDetails"
+        android:src="@drawable/image_details"
+        style="@style/ActionBarViewImageButton"/>
+
+    <ImageButton
+        android:id="@+id/buttonImageMultiSelect"
+        android:src="@drawable/multiselect"
+        style="@style/ActionBarViewImageButton"/>
+
+    <!-- Hide the default close button -->
+    <Button
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+
+</com.atakmap.android.tools.ActionBarView>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/control_preferences"
+        android:key="control_preferences_category">
+        <com.atakmap.android.gui.PanPreference
+            android:key="mediaPreference"
+            android:title="@string/mediaPreferences"
+            android:summary="@string/preferences_text43"
+            android:icon="@drawable/media_prefs_camera" />
+        <com.atakmap.android.gui.PanPreference
+            android:key="lockBehavior"
+            android:title="@string/lockBehavior"
+            android:summary="@string/forceCenterMovingSummary" />
+        <com.atakmap.android.gui.PanPreference
+            android:key="staleData"
+            android:title="@string/staledataPreferences"
+            android:summary="@string/stale_out_disconnected_users_summary" />
+        <com.atakmap.android.gui.PanPreference
+            android:key="userTouch"
+            android:title="@string/usertouchPreferences"
+            android:summary="@string/user_touch_pref_summary" />
+        <com.atakmap.android.gui.PanPreference
+            android:key="selfCoordinate"
+            android:title="@string/additional_self_coord_controls"
+            android:summary="@string/additional_self_coord_control_summ"
+            android:icon="@drawable/ic_pref_self_coord_info" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/scroll_self_onstart"
+            android:key="scrollToSelfOnStart"
+            android:defaultValue="false"
+            android:summary="@string/scroll_self_onstart_summary" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Other General Control Preferences"
+        android:key="other_general_control_preferences_category">
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/disable_link_eud"
+            android:key="eud_api_disable_option"
+            android:defaultValue="false"
+            android:summary="@string/disable_link_eud_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/ignore_language_setting"
+            android:key="forceEnglish"
+            android:defaultValue="false"
+            android:summary="@string/ignore_language_setting_summary" />
+        <com.atakmap.android.gui.PanCheckBoxPreference
+            android:title="@string/perm_override_title"
+            android:key="override_permission_request"
+            android:defaultValue="false"
+            android:summary="@string/perm_override_summary" />
+
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

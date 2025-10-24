@@ -1,0 +1,24 @@
+<!-- modifications to this file also need to be matched in MapMenuButtonWidget::createDefaultWidgetBackground -->
+<background>
+    <state>
+        <color>#b3000000</color>
+    </state>
+    <state flags='disabled'>
+        <color>#60000000</color>
+    </state>
+    <state flags='pressed'>
+        <color>#ffdad4bc</color>
+    </state>
+    <state flags='pressed|disabled'>
+        <color>#60000000</color>
+    </state>
+    <state flags='selected'>
+        <color>#b3dad4bc</color>
+    </state>
+    <state flags='selected|pressed'>
+        <color>#ffdad4bc</color>
+    </state>
+    <state flags='selected|disabled'>
+        <color>#60000000</color>
+    </state>
+</background>

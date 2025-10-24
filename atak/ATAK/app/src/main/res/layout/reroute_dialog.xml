@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="4"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:textColor="@color/heading_yellow"
+            android:textSize="@dimen/draper_large_font"
+            android:text="@string/start_point_colon" />
+
+        <TextView
+            android:id="@+id/startpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:textColor="@color/heading_yellow"
+            android:textSize="@dimen/draper_large_font"
+            android:text="@string/end_point_colon" />
+
+        <TextView
+            android:id="@+id/endpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="4"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/heading_yellow"
+            android:layout_weight="0"
+            android:textSize="@dimen/draper_large_font"
+            android:text="@string/select_planner_colon" />
+        <Spinner
+            android:textColor="@color/white"
+            style="@style/darkButton"
+            android:layout_weight="4"
+            android:id="@+id/planspinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <CheckBox
+            android:text="@string/route_around_geofences"
+            android:id="@+id/chk_route_around_geo_fences"
+            android:textSize="@dimen/draper_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <CheckBox
+                android:text="@string/route_around_regions_in_region_manager"
+                android:id="@+id/chk_route_regions"
+                android:textSize="@dimen/draper_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btn_open_route_around"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/draper_font"
+                android:padding="6dp"
+                style="@style/darkButton"
+                android:text="@string/region_manager"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,23 @@
+<menu buttonRadius='65' buttonSpan='72' buttonWidth='72' buttonBg='bgs/button.xml'>
+
+    <button
+        angle='-90'
+        icon='icons/details.png'
+        onClick='actions/showdetails_feature.xml' />
+
+    <button icon='icons/pairing_line.png'
+            onClick='actions/pairingline.xml' />
+
+    <button icon='icons/polar_coord.png'
+            onClick='actions/polarCoords.xml'/>
+
+            
+    <button icon='icons/eye.png'
+            onClick='actions/toggleVisibility.xml'
+            disabled='${visibilityNotSupported}' />
+
+    <button icon='icons/label.png'
+        onClick='actions/label_toggle.xml'
+        selected='${labels_on}'/>
+    
+</menu>

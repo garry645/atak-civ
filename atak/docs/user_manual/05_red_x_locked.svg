@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .cls-1 {
+        filter: url(#drop-shadow-1);
+        stroke: #fee264;
+        stroke-miterlimit: 10;
+        stroke-width: 20px;
+      }
+
+      .cls-1, .cls-2 {
+        fill: #fee362;
+      }
+
+      .cls-2 {
+        filter: url(#drop-shadow-2);
+      }
+
+      .cls-3 {
+        fill: #977d64;
+      }
+    </style>
+    <filter id="drop-shadow-1" x="279.34" y="209.89" width="221" height="277" filterUnits="userSpaceOnUse">
+      <feOffset dx="10" dy="10"/>
+      <feGaussianBlur result="blur" stdDeviation="10"/>
+      <feFlood flood-color="#000" flood-opacity=".76"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="drop-shadow-2" x="19" y="11" width="473" height="473" filterUnits="userSpaceOnUse">
+      <feOffset dx="10" dy="10"/>
+      <feGaussianBlur result="blur-2" stdDeviation="10"/>
+      <feFlood flood-color="#000" flood-opacity=".76"/>
+      <feComposite in2="blur-2" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <rect class="cls-3" width="512" height="512"/>
+  <path class="cls-1" d="M448.79,332.04h-5.02v-.17h-9.79v-44.6c0-31.49-25.53-57.02-57.02-57.02h0c-31.49,0-57.02,25.53-57.02,57.02v44.6h-2.13v.17h-7.23c-6.11,0-11.06,4.95-11.06,11.06v92.26c0,6.11,4.95,11.06,11.06,11.06h138.21c6.11,0,11.06-4.95,11.06-11.06v-92.26c0-6.11-4.95-11.06-11.06-11.06ZM410.83,338.34h-64.85v-53.86c0-19.28,14.52-34.9,32.43-34.9h0c17.91,0,32.43,15.63,32.43,34.9v53.86Z"/>
+  <path class="cls-2" d="M444.72,105.4l-67.26-67.26c-4.19-4.19-9.76-6.5-15.68-6.5s-11.49,2.31-15.68,6.5l-100.82,100.82-100.82-100.82c-4.19-4.19-9.76-6.5-15.68-6.5s-11.49,2.31-15.68,6.5L45.84,105.39c-8.64,8.65-8.64,22.71-.01,31.35l100.83,100.83-100.82,100.82c-8.64,8.65-8.64,22.71-.01,31.35l67.26,67.26c4.21,4.2,9.77,6.5,15.68,6.5s11.47-2.3,15.66-6.47l100.84-100.84,22.91,22.91v-31.11l-22.91-22.91-116.38,116.38s-.08.05-.13.05-.09-.02-.13-.05l-67.25-67.25c-.07-.07-.07-.18,0-.25l116.38-116.38L61.4,121.2c-.07-.07-.07-.18,0-.25l67.25-67.25s.08-.05.13-.05.09.02.13.05l116.38,116.38,116.38-116.38s.08-.05.13-.05.09.02.13.05l67.25,67.25c.07.07.07.18,0,.25l-81.98,81.98,31.66-.55,65.88-65.88c8.64-8.65,8.64-22.71.01-31.35Z"/>
+</svg>

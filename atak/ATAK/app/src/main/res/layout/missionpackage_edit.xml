@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:atak="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TableRow
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/auto_space"
+                    android:textSize="16sp"
+                    android:singleLine="true"
+                    android:text="@string/name"/>
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:maxLines="1"
+                    android:inputType="textNoSuggestions" />
+            </TableRow>
+            <TableRow
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/auto_space"
+                    android:textSize="16sp"
+                    android:maxLines="1"
+                    android:text="@string/remarks"/>
+                <com.atakmap.android.hashtags.view.HashtagEditText
+                    android:id="@+id/remarks"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="textMultiLine|textCapSentences|textNoSuggestions"
+                    android:textSize="@dimen/draper_title_font"
+                    android:hint="@string/mission_package_remarks_hint"
+                    atak:mixedInput="true"
+                    atak:clickableTags="false"/>
+            </TableRow>
+        </TableLayout>
+
+        <TextView
+            android:id="@+id/content_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/auto_margin"
+            android:text="@string/mission_package_edit_content_text"/>
+
+    </LinearLayout>
+    
+</ScrollView>
