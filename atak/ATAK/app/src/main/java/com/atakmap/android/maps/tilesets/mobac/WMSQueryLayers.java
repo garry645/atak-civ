@@ -262,7 +262,11 @@ public class WMSQueryLayers extends QueryLayers {
                     }
                     break;
                 case XmlPullParser.END_TAG:
-                    tagStack.pop();
+                    inTag = tagStack.pop();
+                    if ("Title".equals(inTag) && title == null) {
+                        // apparently there are servers that set this as <Title/>
+                        title = "unknown";
+                    }
                     break;
                 case XmlPullParser.TEXT:
                     inTag = tagStack.peek();
