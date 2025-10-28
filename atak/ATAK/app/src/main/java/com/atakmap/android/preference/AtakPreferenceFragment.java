@@ -6,13 +6,16 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
+import android.app.LocaleManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.LocaleList;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
@@ -737,18 +740,27 @@ public abstract class AtakPreferenceFragment extends PreferenceFragment {
 
         final AtakPreferences preferences = AtakPreferences.getInstance(activity);
         final boolean forceEnglish = preferences.get("forceEnglish", false);
-        final Resources resources = activity.getResources();
-        final Configuration configuration = resources.getConfiguration();
-        if (!configuration.locale.equals(Locale.US))
-            nonUSLocale = configuration.locale;
 
-        if (forceEnglish) {
-            configuration.setLocale(Locale.US);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            LocaleManager lm = activity.getSystemService(LocaleManager.class);
+            if (forceEnglish)
+                lm.setApplicationLocales(LocaleList.forLanguageTags(Locale.US.toLanguageTag()));
+            else
+                lm.setApplicationLocales(new LocaleList());
         } else {
-            configuration.setLocale(nonUSLocale!=null?nonUSLocale:Locale.US);
+            final Resources resources = activity.getResources();
+            final Configuration configuration = resources.getConfiguration();
+            if (!configuration.locale.equals(Locale.US))
+                nonUSLocale = configuration.locale;
+
+            if (forceEnglish) {
+                configuration.setLocale(Locale.US);
+            } else {
+                configuration.setLocale(nonUSLocale != null ? nonUSLocale : Locale.US);
+            }
+            resources.updateConfiguration(configuration,
+                    resources.getDisplayMetrics());
         }
-        resources.updateConfiguration(configuration,
-                resources.getDisplayMetrics());
     }
 
     private static Locale nonUSLocale;

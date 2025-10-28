@@ -651,14 +651,8 @@ public abstract class DropDownReceiver extends BroadcastReceiver {
     private boolean fragmentReplaceTransaction(final int id,
             final Fragment frag) {
         try {
-
-            if (frag instanceof GenericFragmentAdapter) {
-                _fragmentManager.beginTransaction()
-                        .replace(id, frag).commit();
-            } else {
-                _fragmentManager.beginTransaction().replace(id, frag)
-                        .addToBackStack(null).commit();
-            }
+            _fragmentManager.beginTransaction()
+                    .replace(id, frag).commit();
 
             return true;
         } catch (IllegalStateException e) {
@@ -734,7 +728,7 @@ public abstract class DropDownReceiver extends BroadcastReceiver {
             _fragmentManager.beginTransaction()
                     .remove(_dropDown.getFragment())
                     .commitAllowingStateLoss();
-            _fragmentManager.popBackStackImmediate();
+
         } catch (Exception e) {
             Log.e(TAG,
                     "error removing fragment for: " + _dropDown.getFragment());
