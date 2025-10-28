@@ -645,7 +645,7 @@ public class CoordinateEntryCapability
         dialog.show();
 
         if (isPortrait)
-            AlertDialogHelper.adjust(dialog, .95, .55);
+            AlertDialogHelper.adjust(dialog, .95, .65);
         else
             AlertDialogHelper.adjust(dialog, .75, .95);
 

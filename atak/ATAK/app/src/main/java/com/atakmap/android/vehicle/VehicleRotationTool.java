@@ -71,11 +71,16 @@ public class VehicleRotationTool extends ButtonTool
         }
         _vehicle = (VehicleMapItem) _item;
 
+
+        final MapItem anchorItem = createAnchor();
+        if (anchorItem == null)
+            return false;
+
         _cont.displayPrompt(_mapView.getContext().getString(
                 R.string.point_dropper_text57));
         // Take control of all map events
         _mapView.getMapEventDispatcher()
-                .addMapItemEventListener(createAnchor(), this);
+                .addMapItemEventListener(anchorItem, this);
         _mapView.getMapTouchController().setToolActive(true);
         _item.addOnGroupChangedListener(this);
         return true;
@@ -122,6 +127,13 @@ public class VehicleRotationTool extends ButtonTool
             _rab = RangeAndBearingMapItem.createOrUpdateRABLine(
                     UUID.randomUUID().toString(), _vehicle.getAnchorItem(),
                     _anchor, false);
+
+            if (_rab == null) {
+                // an error occurred while starting the rotation tool
+                _anchor.removeFromGroup();
+                return null;
+            }
+
             _rab.setClickable(false);
             _anchor.getGroup().addItem(_rab);
             _rab.setZOrder(Double.NEGATIVE_INFINITY);

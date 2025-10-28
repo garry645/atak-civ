@@ -202,6 +202,10 @@ public class ATAKActivity extends MapActivity implements
             Log.d(TAG, "session identifier: "
                     + _prefs.get("core_sessionid", "not set"));
 
+
+            AtakPreferenceFragment.setLocale(this);
+
+
             if (DEVELOPER_MODE) {
 
                 StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -1693,7 +1697,12 @@ public class ATAKActivity extends MapActivity implements
         final AtakPreferences preferences = AtakPreferences.getInstance(this);
         final boolean forceEnglish = preferences.get("forceEnglish", false);
         try {
-            if (forceEnglish) {
+
+            // do not mess with the base context on newer devices since it results in
+            // pinch zoom issues when using the left hand side of the screen.  For
+            // TIRAMISU and above, we will use the  LocaleManager to modify the
+            // application level language as part of the AtakPreferenceFragment::setLocale call.
+            if (forceEnglish && (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)) {
                 final Configuration configuration = new Configuration(baseCtx.getResources().getConfiguration());
                 configuration.setLocale(Locale.US);
                 final Context ctx = baseCtx.createConfigurationContext(configuration);
@@ -1703,6 +1712,7 @@ public class ATAKActivity extends MapActivity implements
             }
         } catch (Exception ignored) {
         }
+
     }
 
 
