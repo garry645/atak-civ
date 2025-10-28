@@ -15,6 +15,14 @@ buildscript {
         google()
         mavenCentral()
         mavenLocal()
+        maven {
+            url = consumeUrl
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
+            //allowInsecureProtocol = true
+        }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
@@ -32,6 +40,13 @@ allprojects {
         google()
         mavenCentral()
         mavenLocal()
+        maven {
+            url = consumeUrl
+            credentials {
+                username = mavenUser
+                password = mavenPassword
+            }
+        }
     }
 }
 
@@ -229,6 +244,14 @@ android {
             keyPassword "tnttnt"
         }
 
+        odk {
+            storeFile file("../../android_keystore")
+            storePassword "tnttnt"
+            keyAlias "wintec_mapping"
+            keyPassword "tnttnt"
+        }
+
+
         debug {
             def kf = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyFile')
             def kfp = getValueFromPropertiesFile(project.rootProject.file('local.properties'), 'takDebugKeyFilePassword')
@@ -287,6 +310,14 @@ android {
             proguardFiles 'proguard-sdk.txt', 'proguard-release-keep.txt', 'proguard-release.txt'
             signingConfig signingConfigs.sdk
             matchingFallbacks = ['debug']
+        }
+
+        odk {
+            buildConfigField 'String', 'DEV_BANNER', '"TEST BUILD"'
+            minifyEnabled true
+            proguardFiles 'proguard-release-keep.txt', 'proguard-release.txt'
+            signingConfig signingConfigs.sdk
+            matchingFallbacks = ['release']
         }
     }
 
@@ -372,6 +403,7 @@ android {
         debug.setRoot('build-types/debug')
         release.setRoot('build-types/release')
         sdk.setRoot('build-types/sdk')
+        odk.setRoot('build-types/odk')
     }
 
     lintOptions {
@@ -574,6 +606,47 @@ afterEvaluate {
         }
     }
 
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Reports
+
+android.applicationVariants.all { variant ->
+    def outputTask = task "output${variant.name.capitalize()}DeprecatedApiReport" {
+        group 'Reports'
+        description 'Generates deprecation report for $variant.name.'
+        doFirst {
+            mkdir("./reports/outputs/deprecated-api-$variant.name")
+            file("./reports/outputs/deprecated-api-$variant.name/index.html") << "Coming soon"
+        }
+    }
+
+    def createTask = task "create${variant.name.capitalize()}DeprecatedApiReport" (type:Zip, dependsOn:outputTask)  {
+        group 'Reports'
+        archiveFileName = "deprecated-api-${variant.name}.zip"
+        destinationDirectory = file("./reports")
+        from "./reports/outputs/deprecated-api-$variant.name"
+    }
+}
+
+android.applicationVariants.all { variant ->
+    def outputTask = task "output${variant.name.capitalize()}IncubatingApiReport" {
+        group 'Reports'
+        description 'Generates incubating report for $variant.name.'
+        doFirst {
+            mkdir("./reports/outputs/incubating-api-$variant.name")
+            file("./reports/outputs/incubating-api-$variant.name/index.html") << "Coming soon"
+        }
+    }
+
+    def createTask = task "create${variant.name.capitalize()}IncubatingApiReport" (type:Zip, dependsOn:outputTask)  {
+        group 'Reports'
+        archiveFileName = "incubating-api-${variant.name}.zip"
+        destinationDirectory = file("./reports")
+        from "./reports/outputs/incubating-api-$variant.name"
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
