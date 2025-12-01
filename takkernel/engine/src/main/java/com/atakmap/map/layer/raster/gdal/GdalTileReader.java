@@ -305,6 +305,8 @@ public class GdalTileReader extends TileReader
         this.disposed = false;
 
         this.readers = new Dataset[4];
+
+        this.registerControl(this.dataset);
     }
 
     public Dataset getDataset()

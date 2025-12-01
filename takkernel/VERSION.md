@@ -1,5 +1,9 @@
 # Version History
 
+## 8.30.5 (backports 8.46.3)
+
+* More robust projection discovery when rendering imagery
+
 ## 8.30.4
 
 * Fix self-marker compass overlay label flicker (backports 8.37.2)

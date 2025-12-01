@@ -30,6 +30,7 @@ import com.atakmap.map.layer.raster.PrecisionImagery;
 import com.atakmap.map.layer.raster.PrecisionImageryFactory;
 import com.atakmap.map.layer.raster.RasterDataAccess2;
 import com.atakmap.map.layer.raster.controls.TileClientControl;
+import com.atakmap.map.layer.raster.gdal.GdalDatasetProjection2;
 import com.atakmap.map.layer.raster.opengl.GLMapLayer3;
 import com.atakmap.map.layer.raster.opengl.GLMapLayerSpi3;
 import com.atakmap.map.layer.raster.osm.OSMDroidMosaicDatabase;
@@ -179,11 +180,23 @@ public class GLTiledMapLayer2 implements GLMapLayer3, GLResolvableMapRenderable,
                 final GeoPoint ul = img.getUpperLeft();
                 final GeoPoint lr = img.getLowerRight();
 
-                DatasetProjection2 imprecise =
-                        new DefaultDatasetProjection2(this.info.getSpatialReferenceID(),
-                                this.tileReader.getWidth(),
-                                this.tileReader.getHeight(),
-                                ul, ur, lr, ll);
+                DatasetProjection2 imprecise;
+                do {
+                    // if a GDAL dataset try to use the more robuust I2G implementation
+                    final Dataset ds = this.tileReader.getControl(Dataset.class);
+                    if(ds != null) {
+                        imprecise = GdalDatasetProjection2.getInstance(ds);
+                        if(imprecise != null)
+                            break;
+                    }
+
+                    final int srid = this.info.getSpatialReferenceID();
+                    imprecise =
+                            new DefaultDatasetProjection2(srid,
+                                    this.tileReader.getWidth(),
+                                    this.tileReader.getHeight(),
+                                    ul, ur, lr, ll);
+                } while(false);
 
                 DatasetProjection2 precise = null;
                 if (img.isPrecisionImagery())

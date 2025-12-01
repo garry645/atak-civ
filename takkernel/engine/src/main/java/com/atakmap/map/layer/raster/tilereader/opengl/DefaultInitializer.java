@@ -4,7 +4,10 @@ import com.atakmap.map.layer.raster.DefaultDatasetProjection2;
 import com.atakmap.map.layer.raster.ImageInfo;
 import com.atakmap.map.layer.raster.PrecisionImagery;
 import com.atakmap.map.layer.raster.PrecisionImageryFactory;
+import com.atakmap.map.layer.raster.gdal.GdalDatasetProjection2;
 import com.atakmap.map.layer.raster.tilereader.TileReaderFactory;
+
+import org.gdal.gdal.Dataset;
 
 public class DefaultInitializer implements NodeInitializer
 {
@@ -17,15 +20,24 @@ public class DefaultInitializer implements NodeInitializer
             retval.reader = TileReaderFactory.create(info.path, opts);
             if (retval.reader == null)
                 throw new IllegalArgumentException("Image not supported");
-            retval.imprecise = new DefaultDatasetProjection2(
-                    info.srid,
-                    info.width,
-                    info.height,
-                    info.upperLeft,
-                    info.upperRight,
-                    info.lowerRight,
-                    info.lowerLeft
-            );
+            do {
+                final Dataset ds = retval.reader.getControl(Dataset.class);
+                if(ds != null) {
+                    retval.imprecise = GdalDatasetProjection2.getInstance(ds);
+                    if(retval.imprecise != null)
+                        break;
+                }
+
+                retval.imprecise = new DefaultDatasetProjection2(
+                        info.srid,
+                        info.width,
+                        info.height,
+                        info.upperLeft,
+                        info.upperRight,
+                        info.lowerRight,
+                        info.lowerLeft
+                );
+            } while(false);
             if (info.precisionImagery)
             {
                 PrecisionImagery precise = PrecisionImageryFactory.create(info.path);
