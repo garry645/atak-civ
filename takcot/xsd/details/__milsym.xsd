@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="__milsym">
+    <xs:complexType>
+      <xs:attribute name="id" use="required">
+         <xs:annotation>
+              <xs:documentation>Note:  This field can contain the APP6C, MIL-STD 2525A, B, C, D symbol identifier and it is up to the processing system to process the identifier correctly</xs:documentation>
+         </xs:annotation>
+      </xs:attribute>
+
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
