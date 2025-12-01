@@ -23,10 +23,10 @@ buildscript { scriptHandler ->
 
 def majorVersion = 8
 def minorVersion = 30
-def patchVersion = 4
+def patchVersion = 5
 
 // Version code for Android builds, you MUST increase this by 1 if you change ANY of the version components above
-ext.versionCode = 785
+ext.versionCode = 786
 
 apply from: 'gradle/buildtype.gradle'
 apply from: 'gradle/buildconfig.gradle'

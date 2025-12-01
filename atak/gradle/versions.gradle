@@ -1,7 +1,7 @@
 ext {
     jacocoVersion = '0.8.13'
     takDevkitVersion = '5.1.1'
-    takKernelVersion = '8.30.4'
+    takKernelVersion = '8.30.5'
     priVersion = '1.1.2'
     kotlinVersion = '2.1.10'
     gradleVersion = '8.9.0'
