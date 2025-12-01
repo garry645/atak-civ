@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:include schemaLocation="./__signalInfo.xsd"/>
+  <xs:include schemaLocation="../event/point.xsd"/>
+  <xs:element name="__cep">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="signalInfo" type="SignalInfo" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              The protocol-specific signal information pertaining to the LOB.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="centerLocation" type="event_point" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              The center location for the ellipse.
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+
+      <!-- CEP parameters -->
+      <xs:attribute name="majorRadius" type="xs:double" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The ellipse's major radius, in meters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="minorRadius" type="xs:double" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The ellipse's minor radius, in meters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="ellipseHeading" type="xs:double" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The ellipse's heading.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+
+      <!-- Common DF parameters --> 
+      <xs:attribute name="family" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The device's plugin family.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="deviceType" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The device type.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="deviceTime" type="xs:long" use="optional">
+        <xs:annotation>
+          <xs:documentation>
+            The time at which the device reported the message.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+      <xs:attribute name="unitId" type="xs:string" use="required">
+        <xs:annotation>
+          <xs:documentation>
+            The device's unit ID.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

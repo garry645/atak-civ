@@ -1,0 +1,33 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply plugin: 'com.android.lint'
+
+compileJava {
+    targetCompatibility = '11'
+}
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+}
+
+lintOptions {
+    htmlReport true
+    htmlOutput file("lint-report.html")
+    textReport true
+    absolutePaths false
+    ignoreTestSources true
+}
+dependencies {
+    // For a description of the below dependencies, see the main project README
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    // You typically don't need this one:
+    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-tests:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+
+    testImplementation "junit:junit:4.13.2"
+    testImplementation "com.android.tools.lint:lint:$lintVersion"
+    testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
+}

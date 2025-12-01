@@ -1,0 +1,82 @@
+buildscript {
+
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        mavenCentral()
+        mavenLocal()
+        maven {
+            url "https://jitpack.io"
+        }
+    }
+}
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 35
+    namespace 'com.atakmap.android.takdev.plugin'
+
+    bundle {
+        storeArchive {
+            enable = false
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds true
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError true
+    }
+
+    flavorDimensions "application"
+
+    packagingOptions {
+        exclude 'META-INF/INDEX.LIST'
+
+
+        // Extract native libraries from the APK - required for plugin loading
+        jniLibs.useLegacyPackaging true
+    }
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+
+        def runTasks = gradle.startParameter.taskNames
+        if(runTasks.toString().contains('bundle')) {
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        } else { 
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation project(':takdevlint')
+    implementation fileTree(dir: 'libs', include: '*.jar')
+}
+

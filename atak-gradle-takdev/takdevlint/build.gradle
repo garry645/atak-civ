@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+    tasks.register("packageAar") {
+        // depend on `assembleRelease` as default artifact producer; allow local debug builds to
+        // override artifact for development purposes
+        dependsOn 'assembleRelease'
+        doLast {
+            def copyFile = null
+            if (project.file("${project.buildDir}/outputs/aar/takdevlint-debug.aar").exists()) {
+                copyFile = "${project.buildDir}/outputs/aar/takdevlint-debug.aar"
+            } else if (project.file("${project.buildDir}/outputs/aar/takdevlint-release.aar").exists()) {
+                copyFile = "${project.buildDir}/outputs/aar/takdevlint-release.aar"
+            } else {
+                throw new GradleException("takdevlint AAR artifact not found!")
+            }
+            project.copy {
+                from copyFile
+                into "${project(':atak-gradle-takdev').projectDir}/src/main/resources/META-INF/"
+                rename {
+                    return 'takdevlint.aar'
+                }
+            }
+        }
+    }
+}
+
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 33
+    }
+    namespace 'com.atak.lint.library'
+    lint {
+        checkDependencies true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+/** Package the given lint checks library into this AAR  */
+dependencies {
+    implementation project(':checks')
+    lintPublish project(':checks')
+}

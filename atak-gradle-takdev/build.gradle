@@ -1,0 +1,38 @@
+buildscript {
+    ext {
+        kotlinVersion = '2.1.10'
+        // Current release: Flamingo / AGP 8.0
+        gradlePluginVersion = '8.8.2'
+        lintVersion = '31.1.1'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradlePluginVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+task jar {
+    dependsOn ':atak-gradle-takdev:assemble'
+    doLast {
+        project.copy {
+            from jar.outputs
+            into "${buildDir}/libs"
+        }
+    }
+}

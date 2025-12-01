@@ -4,6 +4,7 @@ package com.atakmap.android.dropdown;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -651,8 +652,16 @@ public abstract class DropDownReceiver extends BroadcastReceiver {
     private boolean fragmentReplaceTransaction(final int id,
             final Fragment frag) {
         try {
-            _fragmentManager.beginTransaction()
-                    .replace(id, frag).commit();
+            // the use of bundle arguments was done for ticket ATAK-20500 to solve a very specific problem 
+            // impacting deployment.   This is not a permanent fix but was the most benign.
+            Bundle bundle = frag.getArguments();
+            if (bundle != null && bundle.getBoolean("addToBackStack", false)) {
+                _fragmentManager.beginTransaction()
+                        .replace(id, frag).addToBackStack(null).commit();
+            } else {
+                _fragmentManager.beginTransaction()
+                        .replace(id, frag).commit();
+            }
 
             return true;
         } catch (IllegalStateException e) {
