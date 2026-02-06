@@ -105,6 +105,7 @@ import com.atakmap.android.importexport.ImportExportMapComponent;
 import com.atakmap.android.importexport.send.SendDialog;
 import com.atakmap.android.importfiles.sort.ImportMissionPackageSort.ImportMissionV1PackageSort;
 import com.atakmap.android.importfiles.sort.ImportResolver;
+import com.atakmap.android.importfiles.task.ImportFileTask;
 import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.location.framework.LocationManager;
 import com.atakmap.android.location.framework.LocationProvider;
@@ -156,7 +157,6 @@ import com.atakmap.android.util.Circle;
 import com.atakmap.android.util.NotificationUtil;
 import com.atakmap.android.util.PendingIntentHelper;
 import com.atakmap.android.util.SimpleItemSelectedListener;
-import com.atakmap.android.video.ConnectionEntry;
 import com.atakmap.android.video.StreamManagementUtils;
 import com.atakmap.app.ATAKActivity;
 import com.atakmap.comms.CommsMapComponent;
@@ -207,6 +207,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 import gov.tak.api.util.AttributeSet;
+import gov.tak.api.video.ConnectionEntry;
 
 /**
  * The DropDown Receiver should define the visual experience
@@ -2182,9 +2183,42 @@ public class HelloWorldDropDownReceiver extends DropDownReceiver implements
         importFile.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                toast("Select .hwi file");
-                AtakBroadcast.getInstance().sendBroadcast(
-                        new Intent(ImportExportMapComponent.USER_IMPORT_FILE_ACTION));
+
+                AlertDialog.Builder adb = new AlertDialog.Builder(mapView.getContext());
+                adb.setTitle("User Driven Import vs Automated Import");
+                adb.setMessage("This shows how to launch a file browser to import an arbitrary file or programatically import files without user intervention");
+                adb.setPositiveButton("User Interaction", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                toast("Select .hwi file");
+                                AtakBroadcast.getInstance().sendBroadcast(
+                                        new Intent(ImportExportMapComponent.USER_IMPORT_FILE_ACTION));
+                            }
+                        });
+                adb.setNegativeButton("Automated Import", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ImportFileTask importTask = new ImportFileTask(mapView.getContext(),
+                                null);
+                        importTask
+                                .addFlag(
+                                        ImportFileTask.FlagValidateExt
+                                                | ImportFileTask.FlagPromptOverwrite
+                                                | ImportFileTask.FlagCopyFile);
+
+                        toast("importing all files in the /sdcard/helloworld directory");
+                        File dir = new File("/sdcard/helloworld");
+                        File[] files = dir.listFiles();
+                        if (files == null || files.length == 0) {
+                            toast("no files found in the /sdcard/helloworld directory");
+                            return;
+                        }
+                        for(File f: files) {
+                            importTask.execute(f.getAbsolutePath());
+                        }
+                    }
+                });
+                adb.show();
             }
         });
 
@@ -3626,7 +3660,7 @@ public class HelloWorldDropDownReceiver extends DropDownReceiver implements
         importFileBrowserDialog.setOnDismissListener(new ImportFileBrowserDialog.DialogDismissed() {
             @Override
             public void onFileSelected(File file) {
-                HelloImportResolver ims = new HelloImportResolver(getMapView());
+                HelloImportResolver ims = new HelloImportResolver(getMapView(), pluginContext);
                 if (ims.match(file)) {
                     ims.beginImport(file, new HashSet<>());
                 } else {

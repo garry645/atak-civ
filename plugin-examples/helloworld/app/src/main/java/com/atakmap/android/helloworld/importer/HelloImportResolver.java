@@ -1,8 +1,10 @@
 package com.atakmap.android.helloworld.importer;
 
+import android.content.Context;
 import android.widget.Toast;
 
-import com.atakmap.android.importfiles.sort.ImportInternalSDResolver;
+import com.atakmap.android.helloworld.plugin.R;
+import com.atakmap.android.importfiles.sort.ImportResolver;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.coremap.filesystem.FileSystemUtils;
 import com.atakmap.coremap.log.Log;
@@ -16,7 +18,7 @@ import java.util.Set;
  * Will match/import a file with extension .hwi e.g. "sample.hwi"
  * With a body containing 'helloWorldSample' e.g. {"helloWorldSample" : "Sample File"}
  */
-public class HelloImportResolver extends ImportInternalSDResolver {
+public class HelloImportResolver extends ImportResolver {
 
     private static final String TAG = "HelloImportResolver";
 
@@ -27,8 +29,8 @@ public class HelloImportResolver extends ImportInternalSDResolver {
     public static final String FILE_EXT = ".hwi";
     private final MapView mapView;
 
-    public HelloImportResolver(MapView mapView) {
-        super(FILE_EXT, TOOL_NAME, true, false, "Hello Importer");
+    public HelloImportResolver(MapView mapView, Context pContext) {
+        super(FILE_EXT, TOOL_NAME, "Hello Importer", pContext.getDrawable(R.drawable.ic_launcher));
         this.mapView = mapView;
     }
 

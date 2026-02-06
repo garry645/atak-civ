@@ -257,8 +257,6 @@ dependencies {
         exclude module: 'customview'
     }
 
-    androidTestImplementation 'androidx.lifecycle:lifecycle-runtime:2.2.0'
-
 }
 
 configurations.all {

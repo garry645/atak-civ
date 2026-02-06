@@ -507,7 +507,7 @@ public class HelloWorldMapComponent extends DropDownMapComponent implements Shar
         });
 
         ImportExportMapComponent.getInstance().addImporterClass(
-                this.helloImporter = new HelloImportResolver(view));
+                this.helloImporter = new HelloImportResolver(view, pluginContext));
 
 
 

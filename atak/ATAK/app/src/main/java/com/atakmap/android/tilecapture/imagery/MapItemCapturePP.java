@@ -128,36 +128,7 @@ public class MapItemCapturePP extends ImageryCapturePP {
      * Draw fitted grid to canvas
      */
     protected void drawFittedGrid() {
-        if (!_grid.isValid() || !_grid.isVisible())
-            return;
-        Canvas can = getCanvas();
-        Paint paint = getPaint();
-        Path path = getPath();
-        float lineWeight = getLineWeight();
-
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(getThemeColor(_grid.getColor()));
-        paint.setStrokeWidth(_grid.getStrokeWeight() * lineWeight);
-
-        // Draw grid lines
-        double spacing = _grid.getSpacing();
-        double rangeX = getHorizontalRange() / spacing;
-        double rangeY = getVerticalRange() / spacing;
-        int colCount = (int) Math.ceil(rangeX);
-        int rowCount = (int) Math.ceil(rangeY);
-        float celSize = (float) (getWidth() / rangeX);
-        for (int i = 0; i <= colCount; i++) {
-            float x = Math.min(i * celSize, getWidth());
-            path.moveTo(x, 0);
-            path.lineTo(x, getHeight());
-        }
-        for (int i = 0; i <= rowCount; i++) {
-            float y = Math.min(i * celSize, getHeight());
-            path.moveTo(0, y);
-            path.lineTo(getWidth(), y);
-        }
-        can.drawPath(path, paint);
-        path.reset();
+        _grid.drawFittedGrid(this);
     }
 
     public double getHorizontalRange() {

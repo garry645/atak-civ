@@ -50,7 +50,7 @@ public class ImportDSMSort extends ImportResolver implements Disposable {
     private final Context _context;
 
     public ImportDSMSort(Context context) {
-        super(null, null, false, false);
+        super(null, null, "DSM Importer", context.getDrawable(R.drawable.dsm));
         _context = context;
     }
 

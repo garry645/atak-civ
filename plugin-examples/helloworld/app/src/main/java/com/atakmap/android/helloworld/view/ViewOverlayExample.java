@@ -34,6 +34,8 @@ public class ViewOverlayExample extends AbstractMapComponent
     private View overlayView;
     private RootLayoutWidget rootLayoutWidget;
 
+    boolean overlayVisible = false;
+
     @Override
     public void onCreate(Context context, Intent intent, MapView view) {
         mapView = view;
@@ -64,11 +66,10 @@ public class ViewOverlayExample extends AbstractMapComponent
         registerReceiver(context, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                // Toggle visibility of the overlay
-                if (overlayView.getVisibility() != View.VISIBLE)
-                    overlayView.setVisibility(View.VISIBLE);
-                else
-                    overlayView.setVisibility(View.INVISIBLE);
+
+                overlayVisible = !overlayVisible;
+                refreshVisibility();
+
             }
         }, new DocumentedIntentFilter(TOGGLE_OVERLAY_VIEW));
     }
@@ -86,10 +87,19 @@ public class ViewOverlayExample extends AbstractMapComponent
         updateOverlayPosition();
     }
 
+    int prevWidth = -1;
+    int prevHeight = -1;
     /**
      * Update the position of our overlay view based on the space available
      */
     private void updateOverlayPosition() {
+
+        refreshVisibility();
+
+        if (prevWidth == mapView.getWidth() && prevHeight == mapView.getHeight())
+            return;
+        prevHeight = mapView.getHeight();
+        prevWidth = mapView.getWidth();
 
         // Establish the maximum usable bounds (the entire map view)
         Rect mapRect = new Rect(0, 0, mapView.getWidth(), mapView.getHeight());
@@ -122,5 +132,13 @@ public class ViewOverlayExample extends AbstractMapComponent
         lp.topMargin = viewBounds.top;
         lp.leftMargin = viewBounds.left;
         overlayView.setLayoutParams(lp);
+    }
+
+    private void refreshVisibility() {
+        if (overlayVisible && mapView.getVisibility() == View.VISIBLE) {
+            overlayView.setVisibility(View.VISIBLE);
+        } else {
+            overlayView.setVisibility(View.INVISIBLE);
+        }
     }
 }

@@ -11,7 +11,6 @@ import android.widget.EditText;
 
 import com.atakmap.android.maps.MapItem;
 import com.atakmap.android.maps.MapView;
-import com.atakmap.android.video.ConnectionEntry;
 import com.atakmap.android.video.VideoListDialog;
 import com.atakmap.android.video.manager.VideoManager;
 import com.atakmap.android.videocollections.plugin.R;
@@ -22,6 +21,8 @@ import com.atakmap.android.videocollections.plugin.ui.VideoCollectionsInfoPane;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import gov.tak.api.video.ConnectionEntry;
 
 public class DialogUtil {
     public static void showNewCollectionDialog(MapItem item, Context pluginCtx, VideoCollectionsInfoPane infoPane, List<VideoFeed> feeds) {
@@ -65,7 +66,7 @@ public class DialogUtil {
 
     public static void showNewFeedDialog(MapItem item, Context pluginCtx, VideoCollectionsInfoPane infoPane) {
         new VideoListDialog(MapView.getMapView())
-                .show(null, VideoManager.getInstance().getEntries(), true, new VideoListDialog.Callback() {
+                .show(null, VideoManager.getInstance().getConnectionEntries(null, false), true, new VideoListDialog.Callback() {
                     @Override
                     public void onVideosSelected(List<ConnectionEntry> list) {
                         VideoCollectionList vcList = VideoCollectionList.fromMapItem(item);
