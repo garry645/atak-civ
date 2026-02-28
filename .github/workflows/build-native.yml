@@ -238,6 +238,12 @@ jobs:
           echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
           which clang
 
+          # Patch assimp CMake config to use NDK toolchain file
+          # CMake 3.14.7's built-in Android support doesn't understand NDK r25b
+          # The NDK's own toolchain file works with any CMake version
+          sed -i 's|assimp_CONFIG_EX=.*|assimp_CONFIG_EX=-DCMAKE_TOOLCHAIN_FILE=$(call PATH_CYGSAFE,$(ANDROID_NDK))/build/cmake/android.toolchain.cmake -DANDROID_ABI=$(ANDROID_ABI) -DANDROID_NATIVE_API_LEVEL=$(ANDROID_API_LEVEL) -DANDROID_STL=c++_static|' \
+            takthirdparty/target-config/android-arm64-v8a.mk
+
           cd takthirdparty
 
           echo "=== Starting TTP build for android-arm64-v8a ==="
