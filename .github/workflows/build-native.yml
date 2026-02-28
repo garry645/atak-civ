@@ -1,0 +1,297 @@
+name: Build Native Libraries
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+env:
+  ANDROID_NDK_VERSION: r25b
+  NDK_OLD_VERSION: r12b
+  CMAKE_VERSION: "3.14.7"
+
+jobs:
+  build-ttp:
+    name: Build TAK Third Party (arm64-v8a)
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout (skip LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            cmake \
+            python3 \
+            python3-pip \
+            swig \
+            ant \
+            tcl \
+            dos2unix \
+            nasm \
+            yasm \
+            patch \
+            wget \
+            unzip \
+            file
+
+      - name: Install Conan
+        run: |
+          pip3 install conan
+          conan profile detect
+          conan profile update settings.compiler.version=8 default || true
+
+      - name: Setup Android NDK (r25b for takengine CMake)
+        run: |
+          wget -q https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux.zip -O ndk.zip
+          unzip -q ndk.zip -d $HOME
+          echo "ANDROID_NDK=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
+
+      - name: Setup CMake 3.14.7
+        run: |
+          wget -q https://cmake.org/files/v3.14/cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz
+          tar xzf cmake-${CMAKE_VERSION}-Linux-x86_64.tar.gz -C $HOME
+          echo "$HOME/cmake-${CMAKE_VERSION}-Linux-x86_64/bin" >> $GITHUB_PATH
+
+      - name: Setup JDK 8 (for GDAL Java bindings)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '8'
+
+      # ============================================================
+      # Download distfiles from upstream sources
+      # Versions from takthirdparty/distfiles/README
+      # ============================================================
+      - name: Download distfiles from upstream
+        run: |
+          cd takthirdparty/distfiles
+
+          echo "=== Downloading zlib 1.3.1 ==="
+          wget -q https://zlib.net/fossils/zlib-1.3.1.tar.gz -O zlib.tar.gz
+
+          echo "=== Downloading OpenSSL 3.0.14+quic ==="
+          wget -q https://github.com/quictls/openssl/archive/refs/tags/openssl-3.0.14-quic1.tar.gz -O openssl.tar.gz
+
+          echo "=== Downloading curl 8.9.1 ==="
+          wget -q https://curl.se/download/curl-8.9.1.tar.bz2 -O curl.tar.bz2
+
+          echo "=== Downloading PROJ 4.9.1 ==="
+          wget -q https://download.osgeo.org/proj/proj-4.9.1.tar.gz -O proj.tar.gz
+
+          echo "=== Downloading expat 2.1.0 ==="
+          wget -q https://github.com/libexpat/libexpat/releases/download/R_2_1_0/expat-2.1.0.tar.gz -O expat.tar.gz
+
+          echo "=== Downloading libkml 1.3 ==="
+          wget -q https://github.com/libkml/libkml/archive/refs/tags/1.3.0.tar.gz -O libkml.tar.gz
+
+          echo "=== Downloading libxml2 2.13.3 ==="
+          wget -q https://download.gnome.org/sources/libxml2/2.13/libxml2-2.13.3.tar.xz -O libxml2.tar.xz
+
+          echo "=== Downloading libmicrohttpd 1.0.1 ==="
+          wget -q https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-1.0.1.tar.gz -O libmicrohttpd.tar.gz
+
+          echo "=== Downloading mdbtools 1.0.0 ==="
+          wget -q https://github.com/mdbtools/mdbtools/releases/download/v1.0.0/mdbtools-1.0.0.tar.gz -O mdbtools.tar.gz
+
+          echo "=== Downloading nghttp2 1.62.1 ==="
+          wget -q https://github.com/nghttp2/nghttp2/releases/download/v1.62.1/nghttp2-1.62.1.tar.bz2 -O nghttp2.tar.bz2
+
+          echo "=== Downloading ngtcp2 1.6.0 ==="
+          wget -q https://github.com/ngtcp2/ngtcp2/releases/download/v1.6.0/ngtcp2-1.6.0.tar.bz2 -O ngtcp2.tar.bz2
+
+          echo "=== Downloading ogdi 3.2.0 ==="
+          wget -q https://github.com/libogdi/ogdi/archive/refs/tags/ogdi_3_2_0.tar.gz -O ogdi.tar.gz
+
+          echo "=== Downloading GEOS 3.4.3 ==="
+          wget -q https://download.osgeo.org/geos/geos-3.4.3.tar.bz2 -O geos.tar.bz2
+
+          echo "=== Downloading SQLCipher 4.5.7 ==="
+          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
+          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
+          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
+          echo "WARNING: SQLCipher download failed, trying alternate source" && \
+          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || true
+
+          echo "=== Downloading libiconv 1.15 ==="
+          wget -q https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz -O libiconv.tar.gz
+
+          echo "=== Downloading protobuf 3.21.0 (cpp) ==="
+          wget -q https://github.com/protocolbuffers/protobuf/releases/download/v21.0/protobuf-cpp-3.21.0.tar.gz -O protobuf.tar.gz
+
+          echo "=== Verify downloads ==="
+          ls -la *.tar.gz *.tar.bz2 *.tar.xz 2>/dev/null
+          echo "=== Check for any empty/failed downloads ==="
+          find . -name "*.tar.*" -size -1k -exec echo "FAILED: {}" \;
+
+      # ============================================================
+      # Download modified depends from v4 Sinket fork as fallback,
+      # then check if they need updating
+      # ============================================================
+      - name: Download modified depends
+        run: |
+          cd depends
+
+          # These are custom-modified tarballs. Try upstream + apply our own mods,
+          # or fall back to v4 versions if the format hasn't changed.
+
+          echo "=== Downloading GDAL 2.4.4 source ==="
+          wget -q https://github.com/OSGeo/gdal/releases/download/v2.4.4/gdal-2.4.4.tar.gz -O gdal-vanilla.tar.gz || true
+
+          echo "=== Downloading ASSIMP 4.0.1 ==="
+          wget -q https://github.com/assimp/assimp/archive/refs/tags/v4.0.1.tar.gz -O assimp-vanilla.tar.gz || true
+
+          echo "=== Downloading tinygltf 2.4.1 ==="
+          wget -q https://github.com/syoyo/tinygltf/archive/refs/tags/v2.4.1.tar.gz -O tinygltf-vanilla.tar.gz || true
+
+          echo "=== Downloading tinygltfloader 0.9.5 ==="
+          wget -q https://github.com/syoyo/tinygltfloader/archive/refs/tags/v0.9.5.tar.gz -O tinygltfloader-vanilla.tar.gz || true
+
+          echo "=== Downloading LASzip 3.4.3 ==="
+          wget -q https://github.com/LASzip/LASzip/releases/download/3.4.3/laszip-src-3.4.3.tar.gz -O LASzip-vanilla.tar.gz || true
+
+          echo "=== Downloading libLAS 1.8.2 ==="
+          wget -q https://github.com/libLAS/libLAS/archive/refs/tags/1.8.2.tar.gz -O libLAS-vanilla.tar.gz || true
+
+          # For now, rename vanilla as -mod (the build will tell us if mods matter)
+          for f in gdal assimp tinygltf tinygltfloader LASzip libLAS; do
+            vanilla="${f}-vanilla.tar.gz"
+            if [ -f "$vanilla" ] && [ $(stat -c%s "$vanilla") -gt 1000 ]; then
+              echo "Using vanilla $f as starting point"
+            else
+              echo "WARNING: Failed to download $f"
+            fi
+          done
+
+          ls -la *.tar.gz 2>/dev/null
+
+      # ============================================================
+      # Unpack GDAL and ASSIMP to repo root (per BUILDING.md)
+      # ============================================================
+      - name: Prepare source trees
+        run: |
+          # GDAL - unpack to repo root as 'gdal'
+          if [ -f depends/gdal-vanilla.tar.gz ]; then
+            tar xzf depends/gdal-vanilla.tar.gz
+            mv gdal-2.4.4 gdal || mv gdal-* gdal || true
+          fi
+
+          # ASSIMP - unpack to repo root as 'assimp'
+          if [ -f depends/assimp-vanilla.tar.gz ]; then
+            tar xzf depends/assimp-vanilla.tar.gz
+            mv assimp-4.0.1 assimp || mv assimp-* assimp || true
+          fi
+
+          # tinygltf - unpack to takengine/thirdparty
+          mkdir -p takengine/thirdparty
+          if [ -f depends/tinygltf-vanilla.tar.gz ]; then
+            tar xzf depends/tinygltf-vanilla.tar.gz -C takengine/thirdparty
+            mv takengine/thirdparty/tinygltf-2.4.1 takengine/thirdparty/tinygltf || true
+          fi
+          if [ -f depends/tinygltfloader-vanilla.tar.gz ]; then
+            tar xzf depends/tinygltfloader-vanilla.tar.gz -C takengine/thirdparty
+            mv takengine/thirdparty/tinygltfloader-0.9.5 takengine/thirdparty/tinygltfloader || true
+          fi
+
+          # STLSoft
+          git clone --depth 1 https://github.com/synesissoftware/STLSoft-1.9.git stl-soft
+
+          # Also clone into takengine/thirdparty/stlsoft per BUILDING.md
+          git clone --depth 1 https://github.com/synesissoftware/STLSoft-1.9.git takengine/thirdparty/stlsoft
+
+          echo "=== Verify source trees ==="
+          ls -d gdal/ assimp/ stl-soft/ takengine/thirdparty/stlsoft/ 2>/dev/null
+
+      # ============================================================
+      # Build takthirdparty for arm64-v8a
+      # ============================================================
+      - name: Build takthirdparty (arm64-v8a)
+        run: |
+          cd takthirdparty
+
+          echo "=== Starting TTP build for android-arm64-v8a ==="
+          make TARGET=android-arm64-v8a \
+               GDAL_USE_KDU=no \
+               build_spatialite build_gdal build_commoncommo build_assimp \
+               2>&1 | tee /tmp/ttp-build.log || {
+            echo "=== BUILD FAILED - last 100 lines ==="
+            tail -100 /tmp/ttp-build.log
+            exit 1
+          }
+
+          echo "=== Build complete ==="
+          ls -la builds/android-arm64-v8a-release/lib/ 2>/dev/null | head -30
+
+      # ============================================================
+      # Publish to Conan and build takengine
+      # ============================================================
+      - name: Publish TTP to Conan
+        run: |
+          cd takthirdparty
+          ln -s builds/android-arm64-v8a-release android-arm64-v8a-release
+          cd ci-support
+          conan export-pkg . -s arch=armv8 -s os=Android -s os.api_level=29 -f || {
+            echo "Conan export failed, checking conan version..."
+            conan --version
+            # Try conan 2.x syntax if needed
+            conan create . --build=missing -s arch=armv8 -s os=Android -s os.api_level=29 || true
+          }
+
+      # ============================================================
+      # Publish tinygltf conan packages
+      # ============================================================
+      - name: Publish tinygltf Conan packages
+        run: |
+          if [ -d takengine/thirdparty/tinygltf ]; then
+            cd takengine/thirdparty/tinygltf
+            conan export-pkg . -f 2>/dev/null || true
+          fi
+          if [ -d takengine/thirdparty/tinygltfloader ]; then
+            cd takengine/thirdparty/tinygltfloader
+            conan export-pkg . -f 2>/dev/null || true
+          fi
+
+      # ============================================================
+      # Upload build artifacts
+      # ============================================================
+      - name: Collect artifacts
+        if: always()
+        run: |
+          mkdir -p artifacts/arm64-v8a
+
+          # Collect .so files from TTP build
+          if [ -d takthirdparty/builds/android-arm64-v8a-release ]; then
+            cp -r takthirdparty/builds/android-arm64-v8a-release/lib artifacts/arm64-v8a/ttp-lib || true
+            cp -r takthirdparty/builds/android-arm64-v8a-release/include artifacts/arm64-v8a/ttp-include || true
+          fi
+
+          # Collect build log
+          cp /tmp/ttp-build.log artifacts/ 2>/dev/null || true
+
+          echo "=== Artifacts ==="
+          find artifacts -name "*.so" -o -name "*.a" | head -30
+
+      - name: Upload native library artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atak-native-arm64-v8a
+          path: artifacts/
+          retention-days: 90
+
+      - name: Upload build log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/ttp-build.log
+          retention-days: 30
