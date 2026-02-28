@@ -47,7 +47,11 @@ jobs:
         run: |
           pip3 install conan
           conan profile detect
-          conan profile update settings.compiler.version=8 default || true
+          # Conan 2.x uses different syntax for profile updates
+          PROFILE_PATH=$(conan profile path default)
+          sed -i 's/compiler.version=.*/compiler.version=8/' "$PROFILE_PATH" || true
+          echo "=== Conan profile ==="
+          conan profile show
 
       - name: Setup Android NDK (r25b for takengine CMake)
         run: |
@@ -116,11 +120,8 @@ jobs:
           wget -q https://download.osgeo.org/geos/geos-3.4.3.tar.bz2 -O geos.tar.bz2
 
           echo "=== Downloading SQLCipher 4.5.7 ==="
-          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
-          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
-          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
-          echo "WARNING: SQLCipher download failed, trying alternate source" && \
-          wget -q https://github.com/nicklasaven/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || true
+          wget -q https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v4.5.7.tar.gz -O sqlcipher.tar.gz || \
+          echo "WARNING: SQLCipher download may have failed"
 
           echo "=== Downloading libiconv 1.15 ==="
           wget -q https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.15.tar.gz -O libiconv.tar.gz
@@ -179,37 +180,66 @@ jobs:
       # ============================================================
       - name: Prepare source trees
         run: |
+          set +e  # Don't fail on individual steps
+
           # GDAL - unpack to repo root as 'gdal'
-          if [ -f depends/gdal-vanilla.tar.gz ]; then
-            tar xzf depends/gdal-vanilla.tar.gz
-            mv gdal-2.4.4 gdal || mv gdal-* gdal || true
+          if [ -f depends/gdal-vanilla.tar.gz ] && [ $(stat -c%s depends/gdal-vanilla.tar.gz) -gt 1000 ]; then
+            echo "=== Unpacking GDAL ==="
+            mkdir -p gdal-tmp && tar xzf depends/gdal-vanilla.tar.gz -C gdal-tmp
+            # Find the extracted directory (could be gdal-2.4.4, gdal-release-*, etc.)
+            extracted=$(find gdal-tmp -maxdepth 1 -mindepth 1 -type d | head -1)
+            if [ -n "$extracted" ]; then
+              mv "$extracted" gdal
+              echo "GDAL extracted to gdal/"
+            fi
+            rm -rf gdal-tmp
+          else
+            echo "WARNING: No valid GDAL tarball found"
           fi
 
           # ASSIMP - unpack to repo root as 'assimp'
-          if [ -f depends/assimp-vanilla.tar.gz ]; then
-            tar xzf depends/assimp-vanilla.tar.gz
-            mv assimp-4.0.1 assimp || mv assimp-* assimp || true
+          if [ -f depends/assimp-vanilla.tar.gz ] && [ $(stat -c%s depends/assimp-vanilla.tar.gz) -gt 1000 ]; then
+            echo "=== Unpacking ASSIMP ==="
+            mkdir -p assimp-tmp && tar xzf depends/assimp-vanilla.tar.gz -C assimp-tmp
+            extracted=$(find assimp-tmp -maxdepth 1 -mindepth 1 -type d | head -1)
+            if [ -n "$extracted" ]; then
+              mv "$extracted" assimp
+              echo "ASSIMP extracted to assimp/"
+            fi
+            rm -rf assimp-tmp
+          else
+            echo "WARNING: No valid ASSIMP tarball found"
           fi
 
           # tinygltf - unpack to takengine/thirdparty
           mkdir -p takengine/thirdparty
-          if [ -f depends/tinygltf-vanilla.tar.gz ]; then
-            tar xzf depends/tinygltf-vanilla.tar.gz -C takengine/thirdparty
-            mv takengine/thirdparty/tinygltf-2.4.1 takengine/thirdparty/tinygltf || true
-          fi
-          if [ -f depends/tinygltfloader-vanilla.tar.gz ]; then
-            tar xzf depends/tinygltfloader-vanilla.tar.gz -C takengine/thirdparty
-            mv takengine/thirdparty/tinygltfloader-0.9.5 takengine/thirdparty/tinygltfloader || true
-          fi
+          for pkg in tinygltf tinygltfloader; do
+            tarball="depends/${pkg}-vanilla.tar.gz"
+            if [ -f "$tarball" ] && [ $(stat -c%s "$tarball") -gt 1000 ]; then
+              echo "=== Unpacking $pkg ==="
+              mkdir -p "${pkg}-tmp" && tar xzf "$tarball" -C "${pkg}-tmp"
+              extracted=$(find "${pkg}-tmp" -maxdepth 1 -mindepth 1 -type d | head -1)
+              if [ -n "$extracted" ]; then
+                mv "$extracted" "takengine/thirdparty/${pkg}"
+              fi
+              rm -rf "${pkg}-tmp"
+            else
+              echo "WARNING: No valid $pkg tarball"
+            fi
+          done
 
           # STLSoft
           git clone --depth 1 https://github.com/synesissoftware/STLSoft-1.9.git stl-soft
-
-          # Also clone into takengine/thirdparty/stlsoft per BUILDING.md
           git clone --depth 1 https://github.com/synesissoftware/STLSoft-1.9.git takengine/thirdparty/stlsoft
 
           echo "=== Verify source trees ==="
-          ls -d gdal/ assimp/ stl-soft/ takengine/thirdparty/stlsoft/ 2>/dev/null
+          for d in gdal assimp stl-soft takengine/thirdparty/stlsoft; do
+            if [ -d "$d" ]; then
+              echo "  OK: $d/"
+            else
+              echo "  MISSING: $d/"
+            fi
+          done
 
       # ============================================================
       # Build takthirdparty for arm64-v8a
