@@ -244,6 +244,12 @@ jobs:
           sed -i 's|assimp_CONFIG_EX=.*|assimp_CONFIG_EX=-DCMAKE_TOOLCHAIN_FILE=$(call PATH_CYGSAFE,$(ANDROID_NDK))/build/cmake/android.toolchain.cmake -DANDROID_ABI=$(ANDROID_ABI) -DANDROID_NATIVE_API_LEVEL=$(ANDROID_API_LEVEL) -DANDROID_STL=c++_static|' \
             takthirdparty/target-config/android-arm64-v8a.mk
 
+          # Vanilla assimp 4.0.1 doesn't have jassimp target (was a custom mod in LFS)
+          # Skip jassimp build and its ant/jar steps - just build native assimp lib
+          sed -i 's|make assimp && make jassimp|make assimp|' takthirdparty/mk/assimp.mk
+          sed -i '/port\/jassimp && ant/d' takthirdparty/mk/assimp.mk
+          sed -i 's|assimp: $(assimp_out_lib) $(assimp_out_jlib) assimp_install_headers|assimp: $(assimp_out_lib) assimp_install_headers|' takthirdparty/mk/assimp.mk
+
           cd takthirdparty
 
           echo "=== Starting TTP build for android-arm64-v8a ==="
