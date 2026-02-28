@@ -57,21 +57,25 @@ jobs:
           echo "ANDROID_NDK=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
 
-          # Create GCC compatibility symlinks for OpenSSL and other packages
-          # NDK r25b only ships clang, but some configure scripts look for gcc
+          # Create compatibility symlinks for OpenSSL and other configure scripts
+          # NDK r25b ships versioned tools (e.g. aarch64-linux-android21-clang)
+          # but configure scripts look for unversioned names
           NDK_TC=$HOME/android-ndk-${ANDROID_NDK_VERSION}/toolchains/llvm/prebuilt/linux-x86_64/bin
-          ln -sf aarch64-linux-android21-clang  "$NDK_TC/aarch64-linux-android-gcc"
+          ln -sf aarch64-linux-android21-clang   "$NDK_TC/aarch64-linux-android-clang"
+          ln -sf aarch64-linux-android21-clang++ "$NDK_TC/aarch64-linux-android-clang++"
+          ln -sf aarch64-linux-android21-clang   "$NDK_TC/aarch64-linux-android-gcc"
           ln -sf aarch64-linux-android21-clang++ "$NDK_TC/aarch64-linux-android-g++"
           ln -sf llvm-ar "$NDK_TC/aarch64-linux-android-ar"
           ln -sf llvm-ranlib "$NDK_TC/aarch64-linux-android-ranlib"
 
           # Add NDK toolchain to system PATH for all subsequent steps
-          # This ensures OpenSSL Configure (Perl) can find gcc shim on $PATH
+          # MUST come BEFORE system /usr/bin so NDK's clang is found first
+          # (OpenSSL Configure checks `which clang` and requires it to be in NDK)
           echo "$NDK_TC" >> $GITHUB_PATH
 
-          echo "=== Verify GCC shims ==="
-          ls -la "$NDK_TC/aarch64-linux-android-gcc"
-          "$NDK_TC/aarch64-linux-android-gcc" --version | head -1
+          echo "=== Verify NDK tools ==="
+          ls -la "$NDK_TC/clang" "$NDK_TC/aarch64-linux-android-gcc" "$NDK_TC/aarch64-linux-android-clang"
+          "$NDK_TC/clang" --version | head -1
 
       - name: Setup CMake 3.14.7
         run: |
@@ -223,11 +227,17 @@ jobs:
       - name: Build takthirdparty (arm64-v8a)
         run: |
           set -o pipefail
-          cd takthirdparty
+
+          # Ensure NDK toolchain is first on PATH (before /usr/bin/clang)
+          # OpenSSL Configure perl script checks `which clang` and needs NDK's clang
+          export PATH="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH"
 
           echo "=== Verify NDK toolchain on PATH ==="
+          which clang
           which aarch64-linux-android-gcc || echo "WARNING: gcc shim not on PATH"
-          echo "PATH includes NDK: $(echo $PATH | tr ':' '\n' | grep ndk | head -1)"
+          which aarch64-linux-android-clang || echo "WARNING: clang shim not on PATH"
+
+          cd takthirdparty
 
           echo "=== Starting TTP build for android-arm64-v8a ==="
           echo "=== Building: spatialite, commoncommo, assimp ==="
