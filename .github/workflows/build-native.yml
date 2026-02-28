@@ -65,6 +65,10 @@ jobs:
           ln -sf llvm-ar "$NDK_TC/aarch64-linux-android-ar"
           ln -sf llvm-ranlib "$NDK_TC/aarch64-linux-android-ranlib"
 
+          # Add NDK toolchain to system PATH for all subsequent steps
+          # This ensures OpenSSL Configure (Perl) can find gcc shim on $PATH
+          echo "$NDK_TC" >> $GITHUB_PATH
+
           echo "=== Verify GCC shims ==="
           ls -la "$NDK_TC/aarch64-linux-android-gcc"
           "$NDK_TC/aarch64-linux-android-gcc" --version | head -1
@@ -220,6 +224,10 @@ jobs:
         run: |
           set -o pipefail
           cd takthirdparty
+
+          echo "=== Verify NDK toolchain on PATH ==="
+          which aarch64-linux-android-gcc || echo "WARNING: gcc shim not on PATH"
+          echo "PATH includes NDK: $(echo $PATH | tr ':' '\n' | grep ndk | head -1)"
 
           echo "=== Starting TTP build for android-arm64-v8a ==="
           echo "=== Building: spatialite, commoncommo, assimp ==="
