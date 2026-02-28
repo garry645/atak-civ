@@ -56,6 +56,7 @@ jobs:
           unzip -q ndk.zip -d $HOME
           echo "ANDROID_NDK=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
           echo "ANDROID_NDK_HOME=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$HOME/android-ndk-${ANDROID_NDK_VERSION}" >> $GITHUB_ENV
 
           # Create compatibility symlinks for OpenSSL and other configure scripts
           # NDK r25b ships versioned tools (e.g. aarch64-linux-android21-clang)
@@ -232,64 +233,10 @@ jobs:
           # OpenSSL Configure perl script checks `which clang` and needs NDK's clang
           export PATH="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH"
 
-          echo "=== Verify NDK toolchain on PATH ==="
-          which clang || echo "clang: not found"
-          which aarch64-linux-android-gcc || echo "gcc shim: not found"
-          which aarch64-linux-android-clang || echo "clang shim: not found"
+          echo "=== Verify NDK toolchain ==="
           echo "ANDROID_NDK=$ANDROID_NDK"
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_HOME"
-
-          # Debug: simulate OpenSSL's Perl detection logic
-          perl -e '
-            use File::Spec::Functions;
-            my $ndk;
-            foreach (qw(ANDROID_NDK_ROOT ANDROID_NDK)) {
-              $ndk = $ENV{$_};
-              last if defined $ndk;
-            }
-            print "ndk=$ndk\n";
-            $ndk = canonpath($ndk) if $ndk;
-            print "ndk(canon)=$ndk\n";
-            print "is_ndk=" . (-f "$ndk/source.properties" ? "yes" : "no") . "\n";
-            print "is_standalone=" . (-f "$ndk/AndroidVersion.txt" ? "yes" : "no") . "\n";
-
-            # Check which clang
-            my @path = split(/:/, $ENV{PATH});
-            print "PATH entries with ndk:\n";
-            for my $d (@path) {
-              print "  $d\n" if $d =~ /ndk/;
-            }
-
-            # Simulate which()
-            sub mywhich {
-              my $name = shift;
-              for my $d (@path) {
-                my $f = "$d/$name";
-                return $f if (-f $f and -x $f);
-              }
-              return "";
-            }
-
-            my $clang = mywhich("clang");
-            print "which(clang)=$clang\n";
-            print "  matches ndk: " . ($clang =~ m|^$ndk/.*/prebuilt/([^/]+)/| ? "YES ($1)" : "NO") . "\n" if $clang;
-
-            my $gcc = mywhich("aarch64-linux-android-gcc");
-            print "which(gcc)=$gcc\n";
-            print "  matches ndk: " . ($gcc =~ m|^$ndk/.*/prebuilt/([^/]+)/| ? "YES ($1)" : "NO") . "\n" if $gcc;
-
-            my $aclang = mywhich("aarch64-linux-android-clang");
-            print "which(android-clang)=$aclang\n";
-
-            # Also try IPC::Cmd
-            if (eval { require IPC::Cmd; 1; }) {
-              IPC::Cmd->import();
-              my $r = IPC::Cmd::can_run("aarch64-linux-android-gcc");
-              print "IPC::Cmd::can_run(gcc)=" . ($r // "undef") . "\n";
-              my $c = IPC::Cmd::can_run("clang");
-              print "IPC::Cmd::can_run(clang)=" . ($c // "undef") . "\n";
-            }
-          '
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+          which clang
 
           cd takthirdparty
 
